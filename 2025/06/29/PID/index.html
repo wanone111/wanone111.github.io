@@ -1,0 +1,178 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>PID | Welcome to my blogs</title><meta name="author" content="wanone111"><meta name="copyright" content="wanone111"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="PIDPID简介PID的定义PID是比例（Proportional）、积分（Integral）、微分（Differential）的缩写PID是一种闭环控制算法，它动态改变施加到被控对象的输出值（Out），使得被控对象某一物理量的实际值（Actual），能够快速、准确、稳定地跟踪到指定的目标值（Target）PID是一种基于误差（Error）调控的算法，其中规定：误差&#x3D;目标值-实际值，PI">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PID">
+<meta property="og:url" content="http://wanone111.github.io/2025/06/29/PID/index.html">
+<meta property="og:site_name" content="Welcome to my blogs">
+<meta property="og:description" content="PIDPID简介PID的定义PID是比例（Proportional）、积分（Integral）、微分（Differential）的缩写PID是一种闭环控制算法，它动态改变施加到被控对象的输出值（Out），使得被控对象某一物理量的实际值（Actual），能够快速、准确、稳定地跟踪到指定的目标值（Target）PID是一种基于误差（Error）调控的算法，其中规定：误差&#x3D;目标值-实际值，PI">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wanone111.github.io/img/butterfly-icon.png">
+<meta property="article:published_time" content="2025-06-29T13:00:00.000Z">
+<meta property="article:modified_time" content="2025-06-29T14:07:04.051Z">
+<meta property="article:author" content="wanone111">
+<meta property="article:tag" content="STM32">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wanone111.github.io/img/butterfly-icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "PID",
+  "url": "http://wanone111.github.io/2025/06/29/PID/",
+  "image": "http://wanone111.github.io/img/butterfly-icon.png",
+  "datePublished": "2025-06-29T13:00:00.000Z",
+  "dateModified": "2025-06-29T14:07:04.051Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "wanone111",
+      "url": "http://wanone111.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/pic/%E9%87%91%E6%AF%9B.png"><link rel="canonical" href="http://wanone111.github.io/2025/06/29/PID/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'PID',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/link"><i class="fa-fw fas fa-list"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/pic/background.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Welcome to my blogs</span></a><a class="nav-page-title" href="/"><span class="site-name">PID</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/link"><i class="fa-fw fas fa-list"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">PID</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-06-29T13:00:00.000Z" title="发表于 2025-06-29 21:00:00">2025-06-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-06-29T14:07:04.051Z" title="更新于 2025-06-29 22:07:04">2025-06-29</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">1.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>4分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="PID"><a href="#PID" class="headerlink" title="PID"></a>PID</h2><h3 id="PID简介"><a href="#PID简介" class="headerlink" title="PID简介"></a>PID简介</h3><h4 id="PID的定义"><a href="#PID的定义" class="headerlink" title="PID的定义"></a>PID的定义</h4><p><strong>PID是比例（Proportional）、积分（Integral）、微分（Differential）的缩写</strong><br>PID是一种闭环控制算法，它动态改变施加到被控对象的输出值（Out），使得被控对象某一物理量的实际值（Actual），能够快速、准确、稳定地跟踪到指定的目标值（Target）<br>PID是一种基于误差（Error）调控的算法，其中规定：误差&#x3D;目标值-实际值，PID的任务是使误差始终为0<br>PID对被控对象模型要求低，无需建模，即使被控对象内部运作规律不明确，PID也能进行调控</p>
+<p><img src="/../pic/2025_32.png" alt="图片1"></p>
+<h4 id="PID公式"><a href="#PID公式" class="headerlink" title="PID公式"></a>PID公式</h4><p><img src="/../pic/2025_33.png" alt="图片2"></p>
+<p>在实际调参中，重点调参的就是Kp,Ki,Kd。</p>
+<h5 id="比例项（P）"><a href="#比例项（P）" class="headerlink" title="比例项（P）"></a>比例项（P）</h5><p>𝐾𝑝越大，比例项权重越大，系统响应越快，但超调也会随之增加<br>纯比例项控制时，系统一般会存在稳态误差，𝐾𝑝越大，稳态误差越小</p>
+<p><strong>稳态误差</strong><br>PID稳态误差：系统进入稳态时，实际值和目标值存在始终一个稳定的差值<br>稳态误差产生原因：纯比例项控制时，若误差为0，则比例项结果也为0。被控对象输入0时，一般会自发地向一个方向偏移，产生误差。产生误差后，误差非0，比例项负反馈调控输出，当调控输出力度和自发偏移力度相同时，系统达到稳态<br>判断是否会产生稳态误差：给被控对象输入0，判断被控对象会不会自发偏移<br>判断稳态误差的方向：给被控对象输入0，自发偏移方向即为稳态误差方向</p>
+<p>假设水缸在加水的过程中，存在漏水的情况，假设每次加水的过程，都会漏掉0.1米高度的水。仍然假设kp取0.5，那么会存在着某种情况，假设经过几次加水，水缸中的水位到0.8时，水位将不会再变换！！！因为，水位为0.8，则误差error&#x3D;0.2. 所以每次往水缸中加水的量为u&#x3D;0.5*0.2&#x3D;0.1.同时，每次加水缸里又会流出去0.1米的水！！！加入的水和流出的水相抵消，水位将不再变化！！<br>也就是说，我的目标是1米，但是最后系统达到0.8米的水位就不在变化了，且系统已经达到稳定。由此产生的误差就是稳态误差了。</p>
+<h5 id="积分项-I"><a href="#积分项-I" class="headerlink" title="积分项(I)"></a>积分项(I)</h5><p><img src="/../pic/2025_34.png" alt="图片3"></p>
+<p>还是用上面的例子，如果仅仅用比例，可以发现存在暂态误差，最后的水位就卡在0.8了。于是，在控制中，我们再引入一个分量，该分量和误差的积分是正比关系。第一次的误差error是0.8，第二次的误差是0.4，至此，误差的积分（离散情况下积分其实就是做累加），∫error&#x3D;0.8+0.4&#x3D;1.2. 这个时候的控制量，除了比例的那一部分，还有一部分就是一个系数ki乘以这个积分项。由于这个积分项会将前面若干次的误差进行累计，所以可以很好的消除稳态误差（假设在仅有比例项的情况下，系统卡在稳态误差了，即上例中的0.8，由于加入了积分项的存在，会让输入增大，从而使得水缸的水位可以大于0.8，渐渐到达目标的1.0.）这就是积分项的作用。</p>
+<h5 id="微分项-D"><a href="#微分项-D" class="headerlink" title="微分项(D)"></a>微分项(D)</h5><p><img src="/../pic/2025_35.png" alt="图片4"></p>
+<p>换一个另外的例子，考虑刹车情况。平稳的驾驶车辆，当发现前面有红灯时，为了使得行车平稳，基本上提前几十米就放松油门并踩刹车了。当车辆离停车线非常近的时候，则使劲踩刹车，使车辆停下来。整个过程可以看做一个加入微分的控制策略。<br>微分，说白了在离散情况下，就是error的差值，就是t时刻和t-1时刻error的差，即u&#x3D;kd*（error（t）-error（t-1）），其中的kd是一个系数项。可以看到，在刹车过程中，因为error是越来越小的，所以这个微分控制项一定是负数，在控制中加入一个负数项，他存在的作用就是为了防止汽车由于刹车不及时而闯过了线。从常识上可以理解，越是靠近停车线，越是应该注意踩刹车，不能让车过线，所以这个微分项的作用，就可以理解为刹车，当车离停车线很近并且车速还很快时，这个微分项的绝对值（实际上是一个负数）就会很大，从而表示应该用力踩刹车才能让车停下来。<br>切换到上面给水缸加水的例子，就是当发现水缸里的水快要接近1的时候，加入微分项，可以防止给水缸里的水加到超过1米的高度，说白了就是减少控制过程中的震荡。</p>
+<h5 id="PID公式的连续形式和离散形式"><a href="#PID公式的连续形式和离散形式" class="headerlink" title="PID公式的连续形式和离散形式"></a>PID公式的连续形式和离散形式</h5><p><img src="/../pic/2025_36.png" alt="图片5"></p>
+<p>离散形式中的T为离散后的调控周期，也就是系统每隔T时间，调控一次。<br>在新的公式中包含了Ki<em>T，以及Kd</em>T。</p>
+<h5 id="位置式PID和增量式PID"><a href="#位置式PID和增量式PID" class="headerlink" title="位置式PID和增量式PID"></a>位置式PID和增量式PID</h5><p><img src="/../pic/2025_37.png" alt="图片6"></p>
+<p>这里的位置式是相对于增量式而言的</p>
+<p><strong>增量式PID和位置式PID的比较</strong><br>位置式PID由连续形式PID直接离散得到，每次计算得到的是全量的输出值，可以直接给被控对象<br>增量式PID由位置式PID推导得到，每次计算得到的是输出值的增量，如果直接给被控对象，则需要被控对象内部有积分功能<br>增量式PID也可在控制器内进行积分，然后输出积分后的结果，此时增量式PID与位置式PID整体功能没有区别<br>位置式PID和增量式PID计算时产生的中间变量不同，如果对这些变量加以调节，可以实现不同的特性</p>
+<h3 id="PID程序的实现"><a href="#PID程序的实现" class="headerlink" title="PID程序的实现"></a>PID程序的实现</h3></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://wanone111.github.io">wanone111</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://wanone111.github.io/2025/06/29/PID/">http://wanone111.github.io/2025/06/29/PID/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://wanone111.github.io" target="_blank">Welcome to my blogs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/STM32/">STM32</a></div><div class="post-share"><div class="social-share" data-image="/img/butterfly-icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/06/28/STMCUBEMX%E4%BD%BF%E7%94%A8/" title="STMCUBEMX"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">STMCUBEMX</div></div><div class="info-2"><div class="info-item-1">STMCUBEMX使用基于STM32F103C8T6学习使用STMCUBEMX 时钟树框图 时钟系统STM32 有4个独立时钟源:HSI、HSE、LSI、LSE。①、HSI是高速内部时钟，RC振荡器，频率为8MHz，精度不高。②、HSE是高速外部时钟，可接石英&#x2F;陶瓷谐振器，或者接外部时钟源，频率范围为4MHz-16MHz。③、LSI是低速内部时钟，RC振荡器，频率为40kHz，提供低功耗时钟。　④、LSE是低速外部时钟，接频率为32.768kHz的石英晶体。其中LSI是作为IWDGCLK(独立看门狗)时钟源和RTC时钟源而独立使用而HSI高速内部时钟 HSE高速外部时钟 PLL锁相环时钟这三个经过分频或者倍频...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/06/28/STM32%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="STM32学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-28</div><div class="info-item-2">STM32学习笔记</div></div><div class="info-2"><div class="info-item-1">STM32的学习笔记以下的是基于各个模块来编写的 模块1按键首先是标准库的按键 1234567891011121314151617181920212223242526272829303132333435363738394041424344454647484950#include &quot;stm32f10x.h&quot;                  // Device header#include &quot;Delay.h&quot;/**  * 函    数：按键初始化  * 参    数：无  * 返 回 值：无  */void Key_Init(void)&#123; /*开启时钟*/ RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);  //开启GPIOB的时钟  /*GPIO初始化*/ GPIO_InitTypeDef GPIO_InitStructure; GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;...</div></div></div></a><a class="pagination-related" href="/2025/06/28/STMCUBEMX%E4%BD%BF%E7%94%A8/" title="STMCUBEMX"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-28</div><div class="info-item-2">STMCUBEMX</div></div><div class="info-2"><div class="info-item-1">STMCUBEMX使用基于STM32F103C8T6学习使用STMCUBEMX 时钟树框图 时钟系统STM32 有4个独立时钟源:HSI、HSE、LSI、LSE。①、HSI是高速内部时钟，RC振荡器，频率为8MHz，精度不高。②、HSE是高速外部时钟，可接石英&#x2F;陶瓷谐振器，或者接外部时钟源，频率范围为4MHz-16MHz。③、LSI是低速内部时钟，RC振荡器，频率为40kHz，提供低功耗时钟。　④、LSE是低速外部时钟，接频率为32.768kHz的石英晶体。其中LSI是作为IWDGCLK(独立看门狗)时钟源和RTC时钟源而独立使用而HSI高速内部时钟 HSE高速外部时钟 PLL锁相环时钟这三个经过分频或者倍频...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wanone111</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">3</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">1</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">0</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/wanone111"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/wanone111" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#PID"><span class="toc-number">1.</span> <span class="toc-text">PID</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#PID%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">PID简介</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#PID%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">1.1.1.</span> <span class="toc-text">PID的定义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#PID%E5%85%AC%E5%BC%8F"><span class="toc-number">1.1.2.</span> <span class="toc-text">PID公式</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%AF%94%E4%BE%8B%E9%A1%B9%EF%BC%88P%EF%BC%89"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">比例项（P）</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%A7%AF%E5%88%86%E9%A1%B9-I"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">积分项(I)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%BE%AE%E5%88%86%E9%A1%B9-D"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">微分项(D)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#PID%E5%85%AC%E5%BC%8F%E7%9A%84%E8%BF%9E%E7%BB%AD%E5%BD%A2%E5%BC%8F%E5%92%8C%E7%A6%BB%E6%95%A3%E5%BD%A2%E5%BC%8F"><span class="toc-number">1.1.2.4.</span> <span class="toc-text">PID公式的连续形式和离散形式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BD%8D%E7%BD%AE%E5%BC%8FPID%E5%92%8C%E5%A2%9E%E9%87%8F%E5%BC%8FPID"><span class="toc-number">1.1.2.5.</span> <span class="toc-text">位置式PID和增量式PID</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PID%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.2.</span> <span class="toc-text">PID程序的实现</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/29/PID/" title="PID">PID</a><time datetime="2025-06-29T13:00:00.000Z" title="发表于 2025-06-29 21:00:00">2025-06-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/28/STM32%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="STM32学习笔记">STM32学习笔记</a><time datetime="2025-06-28T07:25:00.000Z" title="发表于 2025-06-28 15:25:00">2025-06-28</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/28/STMCUBEMX%E4%BD%BF%E7%94%A8/" title="STMCUBEMX">STMCUBEMX</a><time datetime="2025-06-28T07:25:00.000Z" title="发表于 2025-06-28 15:25:00">2025-06-28</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By wanone111</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.5</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
