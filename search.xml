@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>电赛中无人机赛题除飞机以外的部分</title>
+      <link href="/2025/06/30/%E7%94%B5%E8%B5%9B/"/>
+      <url>/2025/06/30/%E7%94%B5%E8%B5%9B/</url>
+      
+        <content type="html"><![CDATA[<h2 id="电赛"><a href="#电赛" class="headerlink" title="电赛"></a>电赛</h2><p>电赛题目参考：<a href="https://github.com/CCBP/NUEDC_Topic">https://github.com/CCBP/NUEDC_Topic</a></p><h3 id="2023年电赛G题"><a href="#2023年电赛G题" class="headerlink" title="2023年电赛G题"></a>2023年电赛G题</h3><p><img src="/../pic/2025_18.png" alt="图片1"></p><h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><p>2023年无人机赛题，需要做的部分有：<br>模拟火源<br>消防车上按键启动无人机垂直起飞<br>无人机与消防车之间的通信<br>显示器显示巡逻航迹曲线，计算并显示累计巡逻航程<br>丢灭火包</p><h5 id="模拟火源"><a href="#模拟火源" class="headerlink" title="模拟火源"></a>模拟火源</h5><p>模拟火源是用电池供电的红色火源，用激光笔持续照射2s左右改变状态</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure><h3 id="2024年电赛D题"><a href="#2024年电赛D题" class="headerlink" title="2024年电赛D题"></a>2024年电赛D题</h3><p><img src="/../pic/2025_17.png" alt="图片2"></p><h4 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h4><p>2024年无人机赛题，需要做的部分有：</p><h5 id="地面站实时显示相关的盘点结果信息"><a href="#地面站实时显示相关的盘点结果信息" class="headerlink" title="地面站实时显示相关的盘点结果信息"></a>地面站实时显示相关的盘点结果信息</h5><p>地面站显示货物编号和位置坐标信息(货物编号为1-24的数值，坐标信息A1-A6,B1-B6,C1-C6，D1-D6)；<br>无人机每盘点到一个货物，地面站LED灯亮灭一次（亮1s）;<br>盘点结束后，地面站可显示全部盘点结果，并可输入货物编号查询，显示货物坐标信息；</p><h4 id="指定货物的定向盘点"><a href="#指定货物的定向盘点" class="headerlink" title="指定货物的定向盘点"></a>指定货物的定向盘点</h4><p>无人机识别随机的二维码，将识别的内容给地面站显示；<br>地面站LCD显示屏上显示规划的定点盘点航线图；<br>地面站显示无人机识别到的二维码信息，地面站显示货物编号和坐标信息，led亮一秒</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 嵌入式 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 比赛 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>PID</title>
       <link href="/2025/06/29/PID/"/>
       <url>/2025/06/29/PID/</url>
@@ -21,31 +46,6 @@
         <tags>
             
             <tag> 算法 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>电赛中无人机赛题除飞机以外的部分</title>
-      <link href="/2025/06/28/%E7%94%B5%E8%B5%9B/"/>
-      <url>/2025/06/28/%E7%94%B5%E8%B5%9B/</url>
-      
-        <content type="html"><![CDATA[<h2 id="电赛"><a href="#电赛" class="headerlink" title="电赛"></a>电赛</h2><p>电赛题目参考：<a href="https://github.com/CCBP/NUEDC_Topic">https://github.com/CCBP/NUEDC_Topic</a></p><h3 id="2023年电赛G题"><a href="#2023年电赛G题" class="headerlink" title="2023年电赛G题"></a>2023年电赛G题</h3><p><img src="/../pic/2025_18.png" alt="图片1"></p><h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><p>2023年无人机赛题，需要做的部分有：<br>模拟火源<br>消防车上按键启动无人机垂直起飞<br>无人机与消防车之间的通信<br>显示器显示巡逻航迹曲线，计算并显示累计巡逻航程<br>丢灭火包</p><h5 id="模拟火源"><a href="#模拟火源" class="headerlink" title="模拟火源"></a>模拟火源</h5><p>模拟火源是用电池供电的红色火源，用激光笔持续照射2s左右改变状态</p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure><h3 id="2024年电赛D题"><a href="#2024年电赛D题" class="headerlink" title="2024年电赛D题"></a>2024年电赛D题</h3><p><img src="/../pic/2025_17.png" alt="图片2"></p><h4 id="代码实现-1"><a href="#代码实现-1" class="headerlink" title="代码实现"></a>代码实现</h4><p>2024年无人机赛题，需要做的部分有：</p><h5 id="地面站实时显示相关的盘点结果信息"><a href="#地面站实时显示相关的盘点结果信息" class="headerlink" title="地面站实时显示相关的盘点结果信息"></a>地面站实时显示相关的盘点结果信息</h5><p>地面站显示货物编号和位置坐标信息(货物编号为1-24的数值，坐标信息A1-A6,B1-B6,C1-C6，D1-D6)；<br>无人机每盘点到一个货物，地面站LED灯亮灭一次（亮1s）;<br>盘点结束后，地面站可显示全部盘点结果，并可输入货物编号查询，显示货物坐标信息；</p><h4 id="指定货物的定向盘点"><a href="#指定货物的定向盘点" class="headerlink" title="指定货物的定向盘点"></a>指定货物的定向盘点</h4><p>无人机识别随机的二维码，将识别的内容给地面站显示；<br>地面站LCD显示屏上显示规划的定点盘点航线图；<br>地面站显示无人机识别到的二维码信息，地面站显示货物编号和坐标信息，led亮一秒</p>]]></content>
-      
-      
-      <categories>
-          
-          <category> 嵌入式 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 比赛 </tag>
             
         </tags>
       
@@ -107,9 +107,9 @@
     
     
     <entry>
-      <title>分类</title>
-      <link href="/categories/index.html"/>
-      <url>/categories/index.html</url>
+      <title>标签</title>
+      <link href="/tags/index.html"/>
+      <url>/tags/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -118,9 +118,9 @@
     
     
     <entry>
-      <title>标签</title>
-      <link href="/tags/index.html"/>
-      <url>/tags/index.html</url>
+      <title>分类</title>
+      <link href="/categories/index.html"/>
+      <url>/categories/index.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
