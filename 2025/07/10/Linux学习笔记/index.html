@@ -1,0 +1,385 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Linux学习笔记 | Welcome to my blogs</title><meta name="author" content="wanone111"><meta name="copyright" content="wanone111"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="常用Linux指令linux管理文件和目录的命令   命令 功能 命令 功能    pwd 显示当前目录 ls 查看目录下的内容   cd 改变所在目录 cat 显示文件的内容   grep 在文件中查找某字符 cp 复制文件   touch 创建文件 mv 移动文件   rm 删除文件 rmdir 删除目录   pwd命令输入pwd命令，Linux会输出当前目录 cd命令cd 命令用来改变所在目">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux学习笔记">
+<meta property="og:url" content="http://wanone111.github.io/2025/07/10/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="Welcome to my blogs">
+<meta property="og:description" content="常用Linux指令linux管理文件和目录的命令   命令 功能 命令 功能    pwd 显示当前目录 ls 查看目录下的内容   cd 改变所在目录 cat 显示文件的内容   grep 在文件中查找某字符 cp 复制文件   touch 创建文件 mv 移动文件   rm 删除文件 rmdir 删除目录   pwd命令输入pwd命令，Linux会输出当前目录 cd命令cd 命令用来改变所在目">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wanone111.github.io/img/butterfly-icon.png">
+<meta property="article:published_time" content="2025-07-10T11:20:00.000Z">
+<meta property="article:modified_time" content="2025-07-24T09:31:28.634Z">
+<meta property="article:author" content="wanone111">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wanone111.github.io/img/butterfly-icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Linux学习笔记",
+  "url": "http://wanone111.github.io/2025/07/10/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/",
+  "image": "http://wanone111.github.io/img/butterfly-icon.png",
+  "datePublished": "2025-07-10T11:20:00.000Z",
+  "dateModified": "2025-07-24T09:31:28.634Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "wanone111",
+      "url": "http://wanone111.github.io/"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/pic/%E9%87%91%E6%AF%9B.png"><link rel="canonical" href="http://wanone111.github.io/2025/07/10/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Linux学习笔记',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/link"><i class="fa-fw fas fa-list"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/pic/background.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Welcome to my blogs</span></a><a class="nav-page-title" href="/"><span class="site-name">Linux学习笔记</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/link"><i class="fa-fw fas fa-list"></i><span> 链接</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Linux学习笔记</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-07-10T11:20:00.000Z" title="发表于 2025-07-10 19:20:00">2025-07-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-24T09:31:28.634Z" title="更新于 2025-07-24 17:31:28">2025-07-24</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Linux/">Linux</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">1.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="常用Linux指令"><a href="#常用Linux指令" class="headerlink" title="常用Linux指令"></a>常用Linux指令</h2><h3 id="linux管理文件和目录的命令"><a href="#linux管理文件和目录的命令" class="headerlink" title="linux管理文件和目录的命令"></a>linux管理文件和目录的命令</h3><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>pwd</td>
+<td>显示当前目录</td>
+<td>ls</td>
+<td>查看目录下的内容</td>
+</tr>
+<tr>
+<td>cd</td>
+<td>改变所在目录</td>
+<td>cat</td>
+<td>显示文件的内容</td>
+</tr>
+<tr>
+<td>grep</td>
+<td>在文件中查找某字符</td>
+<td>cp</td>
+<td>复制文件</td>
+</tr>
+<tr>
+<td>touch</td>
+<td>创建文件</td>
+<td>mv</td>
+<td>移动文件</td>
+</tr>
+<tr>
+<td>rm</td>
+<td>删除文件</td>
+<td>rmdir</td>
+<td>删除目录</td>
+</tr>
+</tbody></table>
+<h4 id="pwd命令"><a href="#pwd命令" class="headerlink" title="pwd命令"></a>pwd命令</h4><p>输入pwd命令，Linux会输出当前目录</p>
+<h4 id="cd命令"><a href="#cd命令" class="headerlink" title="cd命令"></a>cd命令</h4><p>cd 命令用来改变所在目录。<br>cd &#x2F; 转到根目录中<br>cd ~ 转到&#x2F;home&#x2F;user 用户目录下<br>cd &#x2F;usr 转到根目录下的 usr 目录中————-绝对路径<br>cd test 转到当前目录下的 test 子目录中——-相对路径</p>
+<h4 id="ls-命令"><a href="#ls-命令" class="headerlink" title="ls 命令"></a>ls 命令</h4><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-a</td>
+<td>列举目录中的全部文件，包括隐藏文件</td>
+</tr>
+<tr>
+<td>-l</td>
+<td>列举目录中细节，包括权限、所有者、组群、大小、创建日期、文件是否是链接等</td>
+</tr>
+<tr>
+<td>-f</td>
+<td>列举的文件显示文件类型</td>
+</tr>
+<tr>
+<td>-r</td>
+<td>逆向，从后向前地列举目录中内容</td>
+</tr>
+<tr>
+<td>-R</td>
+<td>递归，该选项递归地列举当前目录下所有子目录内的内容</td>
+</tr>
+<tr>
+<td>-s</td>
+<td>大小，按文件大小排序</td>
+</tr>
+<tr>
+<td>-h</td>
+<td>以人类可读的方式显示文件的大小，如用 K、 M、 G 作单位</td>
+</tr>
+<tr>
+<td>Ls -l examples.doc</td>
+<td>列举文件 examples.doc 的所有信息</td>
+</tr>
+</tbody></table>
+<h4 id="cat命令"><a href="#cat命令" class="headerlink" title="cat命令"></a>cat命令</h4><p>cat 命令可以用来合并文件，也可以用来在屏幕上显示整个文件的内容。<br>cat snow.txt 该命令显示文件 snow.txt 的内容， ctrl+D 退出 cat。</p>
+<h4 id="grep命令"><a href="#grep命令" class="headerlink" title="grep命令"></a>grep命令</h4><p>grep 命令的最大功能是在一堆文件中查找一个特定的字符串。<br>grep money test.txt<br>以上命令在 test.txt 中查找 money 这个字符串， grep 查找是区分大小写的</p>
+<h4 id="touch-命令"><a href="#touch-命令" class="headerlink" title="touch 命令"></a>touch 命令</h4><p>touch 命令用来创建新文件，他可以创建一个空白的文件，可以在其中添加文本和数据。<br>touch newfile 该命令创建一个名为 newfile 的空白文件。</p>
+<h4 id="cp命令"><a href="#cp命令" class="headerlink" title="cp命令"></a>cp命令</h4><p>cp source “filenametarget” “filename”<br>cp t.txt Document&#x2F;t 该命令将把文件 t.txt 复制到 Document 目录下，并命名为 t。</p>
+<h2 id="vim编辑器的使用"><a href="#vim编辑器的使用" class="headerlink" title="vim编辑器的使用"></a>vim编辑器的使用</h2><p>vim模式有：<br><strong>命令行模式</strong><br><strong>插入模式</strong><br><strong>底行模式</strong></p>
+<h3 id="vim命令模式"><a href="#vim命令模式" class="headerlink" title="vim命令模式"></a>vim命令模式</h3><p>用户刚刚进入vi时，进入的是命令模式<br>此状态下敲击键盘的动作会被识别为命令，</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>i</td>
+<td>切换到输入模式，在光标当前位置开始输入文本</td>
+</tr>
+<tr>
+<td>x</td>
+<td>删除当前光标所在处的字符。</td>
+</tr>
+<tr>
+<td>：</td>
+<td>切换到底线命令模式，以在最底一行输入命令。</td>
+</tr>
+<tr>
+<td>a</td>
+<td>进入插入模式，在光标下一个位置开始输入文本。</td>
+</tr>
+<tr>
+<td>o</td>
+<td>在当前行的下方插入一个新行，并进入插入模式。</td>
+</tr>
+<tr>
+<td>dd</td>
+<td>剪切当前行</td>
+</tr>
+<tr>
+<td>yy</td>
+<td>复制当前行</td>
+</tr>
+<tr>
+<td>p(小写)</td>
+<td>粘贴剪贴板内容到光标下方</td>
+</tr>
+<tr>
+<td>P(大写)</td>
+<td>粘贴剪贴板内容到光标上方</td>
+</tr>
+<tr>
+<td>u</td>
+<td>撤销上一次的操作</td>
+</tr>
+<tr>
+<td>Ctrl + r</td>
+<td>重做上一次撤销的操作</td>
+</tr>
+</tbody></table>
+<h3 id="vim输入模式"><a href="#vim输入模式" class="headerlink" title="vim输入模式"></a>vim输入模式</h3><p>按i进入输入模式，使用Esc键可以退出输入模式，切换到命令模式</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ENTER</td>
+<td>回车键，换行</td>
+</tr>
+<tr>
+<td>BACK SPACE</td>
+<td>退格键，删除光标前一个字符</td>
+</tr>
+<tr>
+<td>DEL</td>
+<td>删除键，删除光标后一个字符</td>
+</tr>
+<tr>
+<td>方向键</td>
+<td>在文本中移动光标</td>
+</tr>
+<tr>
+<td>HOME&#x2F;END</td>
+<td>移动光标到行首&#x2F;行尾</td>
+</tr>
+<tr>
+<td>Page Up&#x2F;Page Down</td>
+<td>上&#x2F;下翻页</td>
+</tr>
+<tr>
+<td>Insert）</td>
+<td>切换光标为输入&#x2F;替换模式，光标将变成竖线&#x2F;下划线</td>
+</tr>
+<tr>
+<td>ESC</td>
+<td>退出输入模式，切换到命令模式</td>
+</tr>
+</tbody></table>
+<h3 id="vim底线命令模式"><a href="#vim底线命令模式" class="headerlink" title="vim底线命令模式"></a>vim底线命令模式</h3><p>在命令模式下按:(英文冒号)进入底线命令模式</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>:w</td>
+<td>保存文件</td>
+</tr>
+<tr>
+<td>:q</td>
+<td>退出vim编辑器</td>
+</tr>
+<tr>
+<td>:wq</td>
+<td>保存文件并退出Vim编辑器</td>
+</tr>
+<tr>
+<td>:q!</td>
+<td>强制退出Vim编辑器，不保存修改</td>
+</tr>
+</tbody></table>
+<p><img src="/../pic/vim-vi-workmodel.png" alt="vim-vi-workmodel"></p>
+<h2 id="shell的使用"><a href="#shell的使用" class="headerlink" title="shell的使用"></a>shell的使用</h2><h3 id="shell概念"><a href="#shell概念" class="headerlink" title="shell概念"></a>shell概念</h3><p>shell是一个命令行解释器，将用户命令解析为操作系统所能理解的指令，实现用户与操作系统的交互<br>当需要重复执行若干命令，可以将这些命令集合起来，加入一定的控制语句，编辑成为shell脚本。</p>
+<h3 id="shell命令"><a href="#shell命令" class="headerlink" title="shell命令"></a>shell命令</h3><h4 id="shell命令格式"><a href="#shell命令格式" class="headerlink" title="shell命令格式"></a>shell命令格式</h4><p>shell提示符标识了命令行的开始。用户在提示符后面输入一条命令并按Enter键，完成向系统提交指令。<br>通常shell命令提示符采用以下的格式</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username@hostname:direction$</span><br><span class="line"> 用户名      主机名  目录名</span><br></pre></td></tr></table></figure>
+
+<p>username：用户名，显示当前登录用户的账户名；<br>hostname：主机名，显示登录的主机名，例如若远程登录后，则显示登录的主机名；<br>direction：目录名，显示当前所处的路径，当在根目录下显示为“&#x2F;”，当在用户主目录下显示为“~”；</p>
+<p>通常一条命令包含三个要素：命令名称、选项、参数。命令名称是必须的，选项和参数都可能是可选项。命令格式如下所示:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">Command [-Options] Argument1 Argument2 …</span></span><br><span class="line">    指令      选项     参数1      参数2…</span><br></pre></td></tr></table></figure>
+
+<p>Shell提示符：如果当前用户为超级用户，提示符为“#”，其他用户的提示符均为“$”；<br>Command：命令名称，Shell命令或程序，严格区分大小写<br>Options：命令选项，用于改变命令执行动作的类型，由“-”引导，可以同时带有多个选项；<br>Argument：命令参数，指出命令作用的对象或目标，有的命令允许带多个参数。</p>
+<p><strong>一条命令的三要素之间用空格隔开；</strong><br><strong>若将多个命令在一行书写，用分号（;）将各命令隔开；</strong><br><strong>如果一条命令不能在一行写完，在行尾使用反斜杠（\）标明该条命令未结束。</strong><br><strong>需要说明的是，连续按两下TAB键或ESC键，用于命令补齐；按下一次TAB键，用于文件名补齐</strong></p>
+<p>Bash Shell还提供了history命令。该命令将命令历史表按列表形式，从记录号1开始，一次性全部显示出来。  </p>
+<p>Bash Shell将历史命令容量保存在环境变量HISTSIZE中。<br>使用“echo $HISTSIZE”查看当前历史命令容量；<br>通过直接赋值的方法，修改这个环境变量</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">linux@ubuntu:~$ echo  $HISTSIZE  #显示历史命令容量</span><br><span class="line">500</span><br><span class="line">linux@ubuntu:~$ HISTSIZE=1000  #修改历史命令容量</span><br><span class="line">linux@ubuntu:~$ echo  $HISTSIZE</span><br><span class="line">1000</span><br></pre></td></tr></table></figure>
+
+<a href="/2025/07/24/Linux%E4%B9%8Bshell/" title="Linux之shell">Linux之shell</a>
+
+<h2 id="grep"><a href="#grep" class="headerlink" title="grep"></a>grep</h2><h2 id="awk"><a href="#awk" class="headerlink" title="awk"></a>awk</h2><h2 id="sed"><a href="#sed" class="headerlink" title="sed"></a>sed</h2><h2 id="socket"><a href="#socket" class="headerlink" title="socket"></a>socket</h2><h2 id="samba"><a href="#samba" class="headerlink" title="samba"></a>samba</h2><h2 id="SSH"><a href="#SSH" class="headerlink" title="SSH"></a>SSH</h2><h2 id="mqtt"><a href="#mqtt" class="headerlink" title="mqtt"></a>mqtt</h2></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://wanone111.github.io">wanone111</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://wanone111.github.io/2025/07/10/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">http://wanone111.github.io/2025/07/10/Linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://wanone111.github.io" target="_blank">Welcome to my blogs</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Linux/">Linux</a></div><div class="post-share"><div class="social-share" data-image="/img/butterfly-icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/07/01/STM32%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="STM32学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">STM32学习笔记</div></div><div class="info-2"><div class="info-item-1">PWMPWM原理pwm 简称脉宽调制，是利用微处理器的数字输出对模拟电路进行控制的一种非常有效的技术。 PWM 信号的关键参数包括周期（Period）、频率（Frequency）和占空比（Duty Cycle） 。 周期（T）**是指 PWM 信号完成一个完整的脉冲序列所需的时间，单位通常为秒（s）、毫秒（ms）或微秒（μs） 。例如，一个 PWM 信号的周期为 10ms，表示每隔 10ms 它就会重复一次相同的脉冲序列。 频率（f）则是指在单位时间内 PWM 信号重复的次数，单位是赫兹（Hz） 。频率与周期成倒数关系，即 f &#x3D; 1&#x2F;T 。比如，若周期 T 为 10ms（0.01s），根据公式可算出频率 f &#x3D; 1&#x2F;0.01s &#x3D; 100Hz ，这意味着该 PWM 信号每秒会重复 100 次。占空比（D）是指在一个周期内，PWM 信号处于高电平的时间（TH）与整个周期时间（T）的比值，通常用百分比表示，计算公式为 D &#x3D; (TH &#x2F; T) × 100% 。例如，在一个周期为 20ms 的 PWM...</div></div></div></a><a class="pagination-related" href="/2025/07/10/ROS2%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="ROS2学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">ROS2学习笔记</div></div><div class="info-2"><div class="info-item-1">一键下载ros，这里使用的是鱼香ROS的代码1wget http://fishros.com/install -O fishros &amp;&amp; . fishros  RCLCPPRCLCPP 是 ROS2 的 C++ 客户端库的名称（ros client library for c++） 日志ROS2将日志分为五个等级 123456RCLCPP_DEBUG(this-&gt;get_logger(), &quot;我是DEBUG级别的日志，我被打印出来了!&quot;);RCLCPP_INFO(this-&gt;get_logger(), &quot;我是INFO级别的日志，我被打印出来了!&quot;);RCLCPP_WARN(this-&gt;get_logger(), &quot;我是WARN级别的日志，我被打印出来了!&quot;);RCLCPP_ERROR(this-&gt;get_logger(), &quot;我是ERROR级别的日志，我被打印出来了!&quot;);RCLCPP_FATAL(this-&gt;get_logger(),...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related no-desc" href="/2025/07/24/Linux%E4%B9%8Bmqtt/" title="Linux之mqtt"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-24</div><div class="info-item-2">Linux之mqtt</div></div></div></a><a class="pagination-related no-desc" href="/2025/07/24/Linux%E4%B9%8Bshell/" title="Linux之shell"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-24</div><div class="info-item-2">Linux之shell</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wanone111</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">8</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/wanone111"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/wanone111" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8Linux%E6%8C%87%E4%BB%A4"><span class="toc-number">1.</span> <span class="toc-text">常用Linux指令</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#linux%E7%AE%A1%E7%90%86%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.</span> <span class="toc-text">linux管理文件和目录的命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#pwd%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.1.</span> <span class="toc-text">pwd命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#cd%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.2.</span> <span class="toc-text">cd命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ls-%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.3.</span> <span class="toc-text">ls 命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#cat%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.4.</span> <span class="toc-text">cat命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#grep%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.5.</span> <span class="toc-text">grep命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#touch-%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.6.</span> <span class="toc-text">touch 命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#cp%E5%91%BD%E4%BB%A4"><span class="toc-number">1.1.7.</span> <span class="toc-text">cp命令</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#vim%E7%BC%96%E8%BE%91%E5%99%A8%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">vim编辑器的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#vim%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.1.</span> <span class="toc-text">vim命令模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vim%E8%BE%93%E5%85%A5%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.2.</span> <span class="toc-text">vim输入模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#vim%E5%BA%95%E7%BA%BF%E5%91%BD%E4%BB%A4%E6%A8%A1%E5%BC%8F"><span class="toc-number">2.3.</span> <span class="toc-text">vim底线命令模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#shell%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">shell的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#shell%E6%A6%82%E5%BF%B5"><span class="toc-number">3.1.</span> <span class="toc-text">shell概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shell%E5%91%BD%E4%BB%A4"><span class="toc-number">3.2.</span> <span class="toc-text">shell命令</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#shell%E5%91%BD%E4%BB%A4%E6%A0%BC%E5%BC%8F"><span class="toc-number">3.2.1.</span> <span class="toc-text">shell命令格式</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#grep"><span class="toc-number">4.</span> <span class="toc-text">grep</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#awk"><span class="toc-number">5.</span> <span class="toc-text">awk</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#sed"><span class="toc-number">6.</span> <span class="toc-text">sed</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#socket"><span class="toc-number">7.</span> <span class="toc-text">socket</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#samba"><span class="toc-number">8.</span> <span class="toc-text">samba</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#SSH"><span class="toc-number">9.</span> <span class="toc-text">SSH</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#mqtt"><span class="toc-number">10.</span> <span class="toc-text">mqtt</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/24/Linux%E4%B9%8Bmqtt/" title="Linux之mqtt">Linux之mqtt</a><time datetime="2025-07-24T08:40:00.000Z" title="发表于 2025-07-24 16:40:00">2025-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/24/Linux%E4%B9%8Bshell/" title="Linux之shell">Linux之shell</a><time datetime="2025-07-24T08:40:00.000Z" title="发表于 2025-07-24 16:40:00">2025-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/24/ROS2%E6%8C%87%E4%BB%A4/" title="ROS2指令">ROS2指令</a><time datetime="2025-07-24T08:40:00.000Z" title="发表于 2025-07-24 16:40:00">2025-07-24</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/18/C++/" title="C++学习笔记">C++学习笔记</a><time datetime="2025-07-18T10:20:00.000Z" title="发表于 2025-07-18 18:20:00">2025-07-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/16/%E6%97%A0%E4%BA%BA%E6%9C%BA%E5%85%A5%E9%97%A8/" title="无人机入门">无人机入门</a><time datetime="2025-07-16T07:20:00.000Z" title="发表于 2025-07-16 15:20:00">2025-07-16</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2019 - 2025 By wanone111</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.3.5</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
