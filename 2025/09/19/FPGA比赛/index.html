@@ -1,0 +1,203 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>FPGA比赛 | Welcome to Wanone111's Blog</title><meta name="author" content="wanone111"><meta name="copyright" content="wanone111"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="通信部分以太网协议米联客给的方案是使用OSI七层模型设计以太网传输模块 物理层，数据链路层，网络层，传输层，会话层，表示层，应用层 其中 MAC、ARP属于数据链路层，IP、ICMP属于网络层，UDP属于传输层。 (FPGA 的 UDP 通信只做到了传输层， 物理层一般由外部 PHY 芯片提供， 没有应用层、 表示层和会话层。) 数据帧格式数据在传输时 经过UDP层（添加8字节的头部），IP层（添">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FPGA比赛">
+<meta property="og:url" content="http://wanone111.github.io/2025/09/19/FPGA%E6%AF%94%E8%B5%9B/index.html">
+<meta property="og:site_name" content="Welcome to Wanone111&#39;s Blog">
+<meta property="og:description" content="通信部分以太网协议米联客给的方案是使用OSI七层模型设计以太网传输模块 物理层，数据链路层，网络层，传输层，会话层，表示层，应用层 其中 MAC、ARP属于数据链路层，IP、ICMP属于网络层，UDP属于传输层。 (FPGA 的 UDP 通信只做到了传输层， 物理层一般由外部 PHY 芯片提供， 没有应用层、 表示层和会话层。) 数据帧格式数据在传输时 经过UDP层（添加8字节的头部），IP层（添">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wanone111.github.io/img/butterfly-icon.png">
+<meta property="article:published_time" content="2025-09-19T13:55:30.000Z">
+<meta property="article:modified_time" content="2025-09-19T15:24:22.949Z">
+<meta property="article:author" content="wanone111">
+<meta property="article:tag" content="FPGA">
+<meta property="article:tag" content="嵌入式通信">
+<meta property="article:tag" content="图像处理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wanone111.github.io/img/butterfly-icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "FPGA比赛",
+  "url": "http://wanone111.github.io/2025/09/19/FPGA%E6%AF%94%E8%B5%9B/",
+  "image": "http://wanone111.github.io/img/butterfly-icon.png",
+  "datePublished": "2025-09-19T13:55:30.000Z",
+  "dateModified": "2025-09-19T15:24:22.949Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "wanone111",
+      "url": "http://wanone111.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://wanone111.github.io/2025/09/19/FPGA%E6%AF%94%E8%B5%9B/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'FPGA比赛',
+  isHighlightShrink: true,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group hide"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/../pic/background.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/../pic/%E9%87%91%E6%AF%9B.png" alt="Logo"><span class="site-name">Welcome to Wanone111's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">FPGA比赛</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group hide"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">FPGA比赛</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-09-19T13:55:30.000Z" title="发表于 2025-09-19 21:55:30">2025-09-19</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-09-19T15:24:22.949Z" title="更新于 2025-09-19 23:24:22">2025-09-19</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/FPGA/">FPGA</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">375</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>1分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="通信部分"><a href="#通信部分" class="headerlink" title="通信部分"></a>通信部分</h2><h3 id="以太网协议"><a href="#以太网协议" class="headerlink" title="以太网协议"></a>以太网协议</h3><p>米联客给的方案是使用OSI七层模型设计以太网传输模块</p>
+<p>物理层，数据链路层，网络层，传输层，会话层，表示层，应用层</p>
+<p>其中 MAC、ARP属于数据链路层，IP、ICMP属于网络层，UDP属于传输层。</p>
+<p>(FPGA 的 UDP 通信只做到了传输层， 物理层一般由外部 PHY 芯片提供， 没有应用层、 表<br>示层和会话层。)</p>
+<h4 id="数据帧格式"><a href="#数据帧格式" class="headerlink" title="数据帧格式"></a>数据帧格式</h4><p>数据在传输时 经过UDP层（添加8字节的头部），IP层（添加20字节头部），MAC层（添加22字节头部），以及4字节的CRC校验。最后通过PHY层传出。</p>
+<h4 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h4><p>在数据链路层中，主要是MAC协议，ARP协议，CRC校验，PAUSE流量控制帧</p>
+<h5 id="MAC接收模块"><a href="#MAC接收模块" class="headerlink" title="MAC接收模块"></a>MAC接收模块</h5><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="MAC发送模块"><a href="#MAC发送模块" class="headerlink" title="MAC发送模块"></a>MAC发送模块</h5><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="CRC校验模块"><a href="#CRC校验模块" class="headerlink" title="CRC校验模块"></a>CRC校验模块</h5><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="PAUSE帧流控制模块"><a href="#PAUSE帧流控制模块" class="headerlink" title="PAUSE帧流控制模块"></a>PAUSE帧流控制模块</h5><h5 id="IP-ARP"><a href="#IP-ARP" class="headerlink" title="IP_ARP"></a>IP_ARP</h5><p>由于 IP 和 ARP 数据包送至 MAC 层要经过同一个通道， 需要对发送的数据包类型进行判断和仲裁， 这就需要<br>额外增加一个 IP_ARP 层</p>
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">IP_ARP接收模块</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IP_ARP发送模块</span><br></pre></td></tr></table></figure>
+
+<h5 id="ARP接收模块"><a href="#ARP接收模块" class="headerlink" title="ARP接收模块"></a>ARP接收模块</h5><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="ARP发送模块"><a href="#ARP发送模块" class="headerlink" title="ARP发送模块"></a>ARP发送模块</h5><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="CACHE模块"><a href="#CACHE模块" class="headerlink" title="CACHE模块"></a>CACHE模块</h5><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a>网络层</h4><p>在网络层中，主要是IP协议，ICMP协议</p>
+<h5 id="IP接受模块"><a href="#IP接受模块" class="headerlink" title="IP接受模块"></a>IP接受模块</h5><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="IP发送模块"><a href="#IP发送模块" class="headerlink" title="IP发送模块"></a>IP发送模块</h5><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="IP首部校验模块"><a href="#IP首部校验模块" class="headerlink" title="IP首部校验模块"></a>IP首部校验模块</h5><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="ICMP"><a href="#ICMP" class="headerlink" title="ICMP"></a>ICMP</h5><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ICMP接受模块</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ICMP发送模块</span><br></pre></td></tr></table></figure>
+
+<h4 id="传输层"><a href="#传输层" class="headerlink" title="传输层"></a>传输层</h4><p>在传输层中，主要是UDP协议</p>
+<h5 id="UDP接收模块"><a href="#UDP接收模块" class="headerlink" title="UDP接收模块"></a>UDP接收模块</h5><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h5 id="UDP发送模块"><a href="#UDP发送模块" class="headerlink" title="UDP发送模块"></a>UDP发送模块</h5><figure class="highlight verilog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="DDR"><a href="#DDR" class="headerlink" title="DDR"></a>DDR</h2><h2 id="图像采集与处理"><a href="#图像采集与处理" class="headerlink" title="图像采集与处理"></a>图像采集与处理</h2></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://wanone111.github.io">wanone111</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://wanone111.github.io/2025/09/19/FPGA%E6%AF%94%E8%B5%9B/">http://wanone111.github.io/2025/09/19/FPGA%E6%AF%94%E8%B5%9B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://wanone111.github.io" target="_blank">Welcome to Wanone111's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/FPGA/">FPGA</a><a class="post-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%80%9A%E4%BF%A1/">嵌入式通信</a><a class="post-meta__tags" href="/tags/%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86/">图像处理</a></div><div class="post-share"><div class="social-share" data-image="/img/butterfly-icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/09/18/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%80%9A%E4%BF%A1/" title="嵌入式通信"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">嵌入式通信</div></div><div class="info-2"><div class="info-item-1">嵌入式通信相关术语的解释全双工：通信双方可以在同一时刻互相传输数据半双工：通信双档可以互相传输数据，但必须分时复用一根数据线单工：通信只能由一方发送到另一方，不能反向传输 异步：通信双方各自约定通信速率，为使双方的收发协调，要求发送和接收设备的时钟尽可能一致异步通信是以字符（构成的帧）为单位进行传输，字符与字符之间的间隙（时间间隔）是任意的，但每个字符中的各位是以固定的时间传送的，即字符之间是异步的（字符之间不一定有“位间隔”的整数倍的关系），但同一字符内的各位是同步的（各位之间的距离均为“位间隔”的整数倍）。 同步：通信双方靠一根时钟线来约定通信速率 总线：链接各个设备的数据传输线路 起始位：为逻辑“0”信号，占用一位，用来通知接收设备，一个新的字符开始了数据位：5-8位。数据的最低位在前，最高位在后。奇偶位：紧跟在最高位之后，占用一位，奇偶校验时，根据协议置“1”或“0”停止位：为逻辑“1”信号，占用1位或2位，当接收端收到停止位时，表示一帧数据结束。 波特率：串行通信中每秒传送的数据位数。 嵌入式通信协议UARTUART 采用全双工，异步通信，无单独时钟线，通过起始位和停止...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/09/18/FPGA%E8%BD%AF%E4%BB%B6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="FPGA软件学习笔记"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-18</div><div class="info-item-2">FPGA软件学习笔记</div></div><div class="info-2"><div class="info-item-1">软件编程语言Verilog数值种类0：逻辑 0 或 “假”1：逻辑 1 或 “真”x 或 X：未知z 或 Z：高阻 x 意味着信号数值的不确定，即在实际电路里，信号可能为 1，也可能为 0。 z 意味着信号处于高阻状态，常见于信号（input, reg）没有驱动时的逻辑结果。例如一个 pad 的 input 呈现高阻状态时，其逻辑值和上下拉的状态有关系。上拉则逻辑值为 1，下拉则为 0 。 数据类型线网（wire）wire 类型表示硬件单元之间的物理连线，由其连接的器件输出端连续驱动。如果没有驱动元件连接到 wire 型变量，缺省值一般为 “Z”。（缺省值指在特定情境下未明确设置或指定的值，也被称为默认值） 寄存器（reg）寄存器（reg）用来表示存储单元，它会保持数据原有的值，直到被改写。 赋值1、 时序电路用非阻塞2、 组合电路用阻塞3、 同一个 always 块中阻塞和非阻塞不混用 语句块Verilog 中有四种语句块， 分别是顺序块， 并行块， 嵌套块， 命名块。 顺序块顺序块用关键字 begin 和 end 来表示。 顺序块中的语句是一条条执行的。 非阻塞赋值除外 并行...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wanone111</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/wanone111"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%9A%E4%BF%A1%E9%83%A8%E5%88%86"><span class="toc-number">1.</span> <span class="toc-text">通信部分</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5%E5%A4%AA%E7%BD%91%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.1.</span> <span class="toc-text">以太网协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%B8%A7%E6%A0%BC%E5%BC%8F"><span class="toc-number">1.1.1.</span> <span class="toc-text">数据帧格式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82"><span class="toc-number">1.1.2.</span> <span class="toc-text">数据链路层</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#MAC%E6%8E%A5%E6%94%B6%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.2.1.</span> <span class="toc-text">MAC接收模块</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#MAC%E5%8F%91%E9%80%81%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.2.2.</span> <span class="toc-text">MAC发送模块</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#CRC%E6%A0%A1%E9%AA%8C%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.2.3.</span> <span class="toc-text">CRC校验模块</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#PAUSE%E5%B8%A7%E6%B5%81%E6%8E%A7%E5%88%B6%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.2.4.</span> <span class="toc-text">PAUSE帧流控制模块</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#IP-ARP"><span class="toc-number">1.1.2.5.</span> <span class="toc-text">IP_ARP</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#ARP%E6%8E%A5%E6%94%B6%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.2.6.</span> <span class="toc-text">ARP接收模块</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#ARP%E5%8F%91%E9%80%81%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.2.7.</span> <span class="toc-text">ARP发送模块</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#CACHE%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.2.8.</span> <span class="toc-text">CACHE模块</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BD%91%E7%BB%9C%E5%B1%82"><span class="toc-number">1.1.3.</span> <span class="toc-text">网络层</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#IP%E6%8E%A5%E5%8F%97%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.3.1.</span> <span class="toc-text">IP接受模块</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#IP%E5%8F%91%E9%80%81%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.3.2.</span> <span class="toc-text">IP发送模块</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#IP%E9%A6%96%E9%83%A8%E6%A0%A1%E9%AA%8C%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.3.3.</span> <span class="toc-text">IP首部校验模块</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#ICMP"><span class="toc-number">1.1.3.4.</span> <span class="toc-text">ICMP</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BC%A0%E8%BE%93%E5%B1%82"><span class="toc-number">1.1.4.</span> <span class="toc-text">传输层</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#UDP%E6%8E%A5%E6%94%B6%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.4.1.</span> <span class="toc-text">UDP接收模块</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#UDP%E5%8F%91%E9%80%81%E6%A8%A1%E5%9D%97"><span class="toc-number">1.1.4.2.</span> <span class="toc-text">UDP发送模块</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DDR"><span class="toc-number">2.</span> <span class="toc-text">DDR</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%BE%E5%83%8F%E9%87%87%E9%9B%86%E4%B8%8E%E5%A4%84%E7%90%86"><span class="toc-number">3.</span> <span class="toc-text">图像采集与处理</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/19/FPGA%E6%AF%94%E8%B5%9B/" title="FPGA比赛">FPGA比赛</a><time datetime="2025-09-19T13:55:30.000Z" title="发表于 2025-09-19 21:55:30">2025-09-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/18/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%80%9A%E4%BF%A1/" title="嵌入式通信">嵌入式通信</a><time datetime="2025-09-18T08:13:39.000Z" title="发表于 2025-09-18 16:13:39">2025-09-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/18/PID/" title="PID">PID</a><time datetime="2025-09-18T02:24:19.000Z" title="发表于 2025-09-18 10:24:19">2025-09-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/18/linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="linux学习笔记">linux学习笔记</a><time datetime="2025-09-18T02:23:05.000Z" title="发表于 2025-09-18 10:23:05">2025-09-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/18/FPGA%E8%BD%AF%E4%BB%B6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="FPGA软件学习笔记">FPGA软件学习笔记</a><time datetime="2025-09-18T02:22:49.000Z" title="发表于 2025-09-18 10:22:49">2025-09-18</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By wanone111</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

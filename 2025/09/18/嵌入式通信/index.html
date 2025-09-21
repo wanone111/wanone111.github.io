@@ -1,0 +1,185 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>嵌入式通信 | Welcome to Wanone111's Blog</title><meta name="author" content="wanone111"><meta name="copyright" content="wanone111"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="嵌入式通信相关术语的解释全双工：通信双方可以在同一时刻互相传输数据半双工：通信双档可以互相传输数据，但必须分时复用一根数据线单工：通信只能由一方发送到另一方，不能反向传输 异步：通信双方各自约定通信速率，为使双方的收发协调，要求发送和接收设备的时钟尽可能一致异步通信是以字符（构成的帧）为单位进行传输，字符与字符之间的间隙（时间间隔）是任意的，但每个字符中的各位是以固定的时间传送的，即字符之间是异步">
+<meta property="og:type" content="article">
+<meta property="og:title" content="嵌入式通信">
+<meta property="og:url" content="http://wanone111.github.io/2025/09/18/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%80%9A%E4%BF%A1/index.html">
+<meta property="og:site_name" content="Welcome to Wanone111&#39;s Blog">
+<meta property="og:description" content="嵌入式通信相关术语的解释全双工：通信双方可以在同一时刻互相传输数据半双工：通信双档可以互相传输数据，但必须分时复用一根数据线单工：通信只能由一方发送到另一方，不能反向传输 异步：通信双方各自约定通信速率，为使双方的收发协调，要求发送和接收设备的时钟尽可能一致异步通信是以字符（构成的帧）为单位进行传输，字符与字符之间的间隙（时间间隔）是任意的，但每个字符中的各位是以固定的时间传送的，即字符之间是异步">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://wanone111.github.io/img/butterfly-icon.png">
+<meta property="article:published_time" content="2025-09-18T08:13:39.000Z">
+<meta property="article:modified_time" content="2025-09-19T15:09:20.507Z">
+<meta property="article:author" content="wanone111">
+<meta property="article:tag" content="嵌入式">
+<meta property="article:tag" content="通信">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://wanone111.github.io/img/butterfly-icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "嵌入式通信",
+  "url": "http://wanone111.github.io/2025/09/18/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%80%9A%E4%BF%A1/",
+  "image": "http://wanone111.github.io/img/butterfly-icon.png",
+  "datePublished": "2025-09-18T08:13:39.000Z",
+  "dateModified": "2025-09-19T15:09:20.507Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "wanone111",
+      "url": "http://wanone111.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://wanone111.github.io/2025/09/18/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%80%9A%E4%BF%A1/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '嵌入式通信',
+  isHighlightShrink: true,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group hide"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/../pic/background.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/../pic/%E9%87%91%E6%AF%9B.png" alt="Logo"><span class="site-name">Welcome to Wanone111's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">嵌入式通信</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><span class="site-page group hide"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></span><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> Music</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> Movie</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">嵌入式通信</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-09-18T08:13:39.000Z" title="发表于 2025-09-18 16:13:39">2025-09-18</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-09-19T15:09:20.507Z" title="更新于 2025-09-19 23:09:20">2025-09-19</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">总字数:</span><span class="word-count">1.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="嵌入式通信"><a href="#嵌入式通信" class="headerlink" title="嵌入式通信"></a>嵌入式通信</h2><h3 id="相关术语的解释"><a href="#相关术语的解释" class="headerlink" title="相关术语的解释"></a>相关术语的解释</h3><p>全双工：通信双方可以在同一时刻互相传输数据<br>半双工：通信双档可以互相传输数据，但必须分时复用一根数据线<br>单工：通信只能由一方发送到另一方，不能反向传输</p>
+<p>异步：通信双方各自约定通信速率，为使双方的收发协调，要求发送和接收设备的时钟尽可能一致<br>异步通信是以字符（构成的帧）为单位进行传输，字符与字符之间的间隙（时间间隔）是任意的，但每个字符中的各位是以固定的时间传送的，即字符之间是异步的（字符之间不一定有“位间隔”的整数倍的关系），但同一字符内的各位是同步的（各位之间的距离均为“位间隔”的整数倍）。</p>
+<p>同步：通信双方靠一根时钟线来约定通信速率</p>
+<p>总线：链接各个设备的数据传输线路</p>
+<p>起始位：为逻辑“0”信号，占用一位，用来通知接收设备，一个新的字符开始了<br>数据位：5-8位。数据的最低位在前，最高位在后。<br>奇偶位：紧跟在最高位之后，占用一位，奇偶校验时，根据协议置“1”或“0”<br>停止位：为逻辑“1”信号，占用1位或2位，当接收端收到停止位时，表示一帧数据结束。</p>
+<p>波特率：串行通信中每秒传送的数据位数。</p>
+<h3 id="嵌入式通信协议"><a href="#嵌入式通信协议" class="headerlink" title="嵌入式通信协议"></a>嵌入式通信协议</h3><h4 id="UART"><a href="#UART" class="headerlink" title="UART"></a>UART</h4><p>UART 采用全双工，异步通信，无单独时钟线，通过起始位和停止位同步数据包。<br>发送方和接收方需约定一致的波特率，以保证数据正确传输。</p>
+<p>UART 数据帧包括起始位、数据位、可选校验位和停止位。<br>起始位为低电平，停止位为高电平，校验位用于简单错误检测。</p>
+<p>线路少，通常只需 2 根数据线（Tx、Rx）和地线。<br>实现简单，支持全双工通信，适合低速数据传输。</p>
+<h4 id="SPI"><a href="#SPI" class="headerlink" title="SPI"></a>SPI</h4><p>SPI 采用全双工，同步通信。使用时钟线（SCLK）进行数据同步。<br>主设备（Master）和从设备（Slave）通过时钟信号协调数据传输。</p>
+<p>SPI 主要包括四根信号线：<br>MOSI（主出从入） 主设备输出&#x2F;从设备输入引脚。该引脚在主模式下发送数据，在从模式下接收数据。<br>MISO（主入从出） 主设备输入&#x2F;从设备输出引脚。该引脚在从模式下发送数据，在主模式下接收数据。<br>SCLK（时钟）串行时钟信号，由主设备产生。<br>SS&#x2F;CS（从设备选择）从设备片选信号，由主设备控制。它的功能是用来作为“片选引脚”，也就是选择指定的从设备，让主设备可以单独地与特定从设备通讯，避免数据线上的冲突。<br>通过片选信号（SS&#x2F;CS）选择与哪个从设备通信。</p>
+<h5 id="SPI主从模式"><a href="#SPI主从模式" class="headerlink" title="SPI主从模式"></a>SPI主从模式</h5><p>SPI分为主、从两种模式，一个SPI通讯系统需要包含一个（且只能是一个）主设备，一个或多个从设备。提供时钟的为主设备（Master），接收时钟的设备为从设备（Slave），SPI接口的读写操作，都是由主设备发起。当存在多个从设备时，通过各自的片选信号进行管理。<br>SPI是全双工且SPI没有定义速度限制，一般的实现通常能达到甚至超过10 Mbps</p>
+<h5 id="SPI数据发送接收"><a href="#SPI数据发送接收" class="headerlink" title="SPI数据发送接收"></a>SPI数据发送接收</h5><p>SPI主机和从机都有一个串行移位寄存器，主机通过向它的SPI串行寄存器写入一个字节来发起一次传输。<br>首先拉低对应SS信号线，表示与该设备进行通信<br>主机通过发送SCLK时钟信号，来告诉从机写数据或者读数据<br>这里要注意，SCLK时钟信号可能是低电平有效，也可能是高电平有效，因为SPI有四种模式，这个我们在下面会介绍<br>主机(Master)将要发送的数据写到发送数据缓存区(Menory)，缓存区经过移位寄存器(07)，串行移位寄存器通过MOSI信号线将字节一位一位的移出去传送给从机，，同时MISO接口接收到的数据经过移位寄存器一位一位的移到接收缓存区。<br>从机(Slave)也将自己的串行移位寄存器(07)中的内容通过MISO信号线返回给主机。同时通过MOSI信号线接收主机发送的数据，这样，两个移位寄存器中的内容就被交换。</p>
+<p>SPI只有主模式和从模式之分，没有读和写的说法，外设的写操作和读操作是同步完成的。如果只进行写操作，主机只需忽略接收到的字节；反之，若主机要读取从机的一个字节，就必须发送一个空字节来引发从机的传输。也就是说，你发一个数据必然会收到一个数据；你要收一个数据必须也要先发一个数据。</p>
+<h4 id="IIC"><a href="#IIC" class="headerlink" title="IIC"></a>IIC</h4><p>IIC 是半双工，同步通信。使用 SDA（数据线）和 SCL（时钟线）两根线。<br>采用开漏机制，需要上拉电阻，每个从设备有唯一地址。</p>
+<p>I²C 支持多主控，主设备通过起始位、停止位和应答机制（ACK&#x2F;NACK）管理通信。<br>适合连接多个低速外设，如传感器、EEPROM 和实时时钟（RTC）。</p>
+<h5 id="IIC起始信号和终止信号"><a href="#IIC起始信号和终止信号" class="headerlink" title="IIC起始信号和终止信号"></a>IIC起始信号和终止信号</h5><p>起始信号：SCL保持高电平，SDA由高电平变为低电平后，延时(&gt;4.7us)，SCL变为低电平。<br>停止信号：SCL保持高电平。SDA由低电平变为高电平。</p>
+<h5 id="数据有效性"><a href="#数据有效性" class="headerlink" title="数据有效性"></a>数据有效性</h5><p>IIC信号在数据传输过程中，当SCL&#x3D;1高电平时，数据线SDA必须保持稳定状态，不允许有电平跳变，只有在时钟线上的信号为低电平期间，数据线上的高电平或低电平状态才允许变化。</p>
+<p>SCL&#x3D;1时 数据线SDA的任何电平变换会看做是总线的起始信号或者停止信号。</p>
+<p>也就是在IIC传输数据的过程中，SCL时钟线会频繁的转换电平，以保证数据的传输</p>
+<h6 id="应答信号"><a href="#应答信号" class="headerlink" title="应答信号"></a>应答信号</h6><p>每当主机向从机发送完一个字节的数据，主机总是需要等待从机给出一个应答信号，以确认从机是否成功接收到了数据，<br>应答信号：主机SCL拉高，读取从机SDA的电平，为低电平表示产生应答<br>应答信号为低电平时，规定为有效应答位（ACK，简称应答位），表示接收器已经成功地接收了该字节；<br>应答信号为高电平时，规定为非应答位（NACK），一般表示接收器接收该字节没有成功。</p>
+<p>每发送一个字节（8个bit）在一个字节传输的8个时钟后的第九个时钟期间，接收器接收数据后必须回一个ACK应答信号给发送器，这样才能进行数据传输。<br>应答出现在每一次主机完成8个数据位传输后紧跟着的时钟周期，低电平0表示应答，1表示非应答</p>
+<h4 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h4><h4 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h4><h4 id="IP"><a href="#IP" class="headerlink" title="IP"></a>IP</h4><h4 id="ARP"><a href="#ARP" class="headerlink" title="ARP"></a>ARP</h4></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://wanone111.github.io">wanone111</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://wanone111.github.io/2025/09/18/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%80%9A%E4%BF%A1/">http://wanone111.github.io/2025/09/18/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%80%9A%E4%BF%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="http://wanone111.github.io" target="_blank">Welcome to Wanone111's Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F/">嵌入式</a><a class="post-meta__tags" href="/tags/%E9%80%9A%E4%BF%A1/">通信</a></div><div class="post-share"><div class="social-share" data-image="/img/butterfly-icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/09/19/FPGA%E6%AF%94%E8%B5%9B/" title="FPGA比赛"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">FPGA比赛</div></div><div class="info-2"><div class="info-item-1">通信部分以太网协议米联客给的方案是使用OSI七层模型设计以太网传输模块 物理层，数据链路层，网络层，传输层，会话层，表示层，应用层 其中 MAC、ARP属于数据链路层，IP、ICMP属于网络层，UDP属于传输层。 (FPGA 的 UDP 通信只做到了传输层， 物理层一般由外部 PHY 芯片提供， 没有应用层、 表示层和会话层。) 数据帧格式数据在传输时 经过UDP层（添加8字节的头部），IP层（添加20字节头部），MAC层（添加22字节头部），以及4字节的CRC校验。最后通过PHY层传出。 数据链路层在数据链路层中，主要是MAC协议，ARP协议，CRC校验，PAUSE流量控制帧 MAC接收模块1  MAC发送模块1  CRC校验模块1  PAUSE帧流控制模块IP_ARP由于 IP 和 ARP 数据包送至 MAC 层要经过同一个通道， 需要对发送的数据包类型进行判断和仲裁， 这就需要额外增加一个 IP_ARP 层 12IP_ARP接收模块  1IP_ARP发送模块  ARP接收模块1  ARP发送模块1  CACHE模块1  网络层在网络层中，主要是IP协议，ICMP协议 IP接...</div></div></div></a><a class="pagination-related" href="/2025/09/18/PID/" title="PID"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">PID</div></div><div class="info-2"><div class="info-item-1">PIDPID简介PID的定义PID是比例（Proportional）、积分（Integral）、微分（Differential）的缩写PID是一种闭环控制算法，它动态改变施加到被控对象的输出值（Out），使得被控对象某一物理量的实际值（Actual），能够快速、准确、稳定地跟踪到指定的目标值（Target）PID是一种基于误差（Error）调控的算法，其中规定：误差&#x3D;目标值-实际值，PID的任务是使误差始终为0PID对被控对象模型要求低，无需建模，即使被控对象内部运作规律不明确，PID也能进行调控 PID公式 在实际调参中，重点调参的就是Kp,Ki,Kd。 比例项（P）𝐾𝑝越大，比例项权重越大，系统响应越快，但超调也会随之增加纯比例项控制时，系统一般会存在稳态误差，𝐾𝑝越大，稳态误差越小 稳态误差PID稳态误差：系统进入稳态时，实际值和目标值存在始终一个稳定的差值稳态误差产生原因：纯比例项控制时，若误差为0，则比例项结果也为0。被控对象输入0时，一般会自发地向一个方向偏移，产生误差。产生误差后，误差非0，比例项负反馈调控输出，当调控输出力度和自发偏移力度相同时，...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/09/18/STM32%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="STM32"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-18</div><div class="info-item-2">STM32</div></div><div class="info-2"><div class="info-item-1">STM32标准库HAL库HAL库使用的是STM32Cubemx </div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">wanone111</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">9</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">5</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/wanone111"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%80%9A%E4%BF%A1"><span class="toc-number">1.</span> <span class="toc-text">嵌入式通信</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E6%9C%AF%E8%AF%AD%E7%9A%84%E8%A7%A3%E9%87%8A"><span class="toc-number">1.1.</span> <span class="toc-text">相关术语的解释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE"><span class="toc-number">1.2.</span> <span class="toc-text">嵌入式通信协议</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#UART"><span class="toc-number">1.2.1.</span> <span class="toc-text">UART</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SPI"><span class="toc-number">1.2.2.</span> <span class="toc-text">SPI</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#SPI%E4%B8%BB%E4%BB%8E%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.2.2.1.</span> <span class="toc-text">SPI主从模式</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#SPI%E6%95%B0%E6%8D%AE%E5%8F%91%E9%80%81%E6%8E%A5%E6%94%B6"><span class="toc-number">1.2.2.2.</span> <span class="toc-text">SPI数据发送接收</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IIC"><span class="toc-number">1.2.3.</span> <span class="toc-text">IIC</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#IIC%E8%B5%B7%E5%A7%8B%E4%BF%A1%E5%8F%B7%E5%92%8C%E7%BB%88%E6%AD%A2%E4%BF%A1%E5%8F%B7"><span class="toc-number">1.2.3.1.</span> <span class="toc-text">IIC起始信号和终止信号</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E6%9C%89%E6%95%88%E6%80%A7"><span class="toc-number">1.2.3.2.</span> <span class="toc-text">数据有效性</span></a><ol class="toc-child"><li class="toc-item toc-level-6"><a class="toc-link" href="#%E5%BA%94%E7%AD%94%E4%BF%A1%E5%8F%B7"><span class="toc-number">1.2.3.2.1.</span> <span class="toc-text">应答信号</span></a></li></ol></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TCP"><span class="toc-number">1.2.4.</span> <span class="toc-text">TCP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#UDP"><span class="toc-number">1.2.5.</span> <span class="toc-text">UDP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IP"><span class="toc-number">1.2.6.</span> <span class="toc-text">IP</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ARP"><span class="toc-number">1.2.7.</span> <span class="toc-text">ARP</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/19/FPGA%E6%AF%94%E8%B5%9B/" title="FPGA比赛">FPGA比赛</a><time datetime="2025-09-19T13:55:30.000Z" title="发表于 2025-09-19 21:55:30">2025-09-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/18/%E5%B5%8C%E5%85%A5%E5%BC%8F%E9%80%9A%E4%BF%A1/" title="嵌入式通信">嵌入式通信</a><time datetime="2025-09-18T08:13:39.000Z" title="发表于 2025-09-18 16:13:39">2025-09-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/18/PID/" title="PID">PID</a><time datetime="2025-09-18T02:24:19.000Z" title="发表于 2025-09-18 10:24:19">2025-09-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/18/linux%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="linux学习笔记">linux学习笔记</a><time datetime="2025-09-18T02:23:05.000Z" title="发表于 2025-09-18 10:23:05">2025-09-18</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/18/FPGA%E8%BD%AF%E4%BB%B6%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="FPGA软件学习笔记">FPGA软件学习笔记</a><time datetime="2025-09-18T02:22:49.000Z" title="发表于 2025-09-18 10:22:49">2025-09-18</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By wanone111</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
