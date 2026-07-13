@@ -36,3 +36,16 @@ npm.cmd run content:publish
 ```
 
 该命令不会更改 Obsidian 源文件的状态，也不会推送或部署网站。
+
+## Current deployment status (2026-07-13)
+
+- The 18 legacy Hexo articles have been migrated into the private allowlisted source directory and synchronized into this site's generated content.
+- Nine public image assets are generated under `public/images/generated/`; the originals remain private in the sibling knowledge base.
+- `legacy-url-map.json` preserves 18 old public URLs with static redirects.
+- This repository is connected to `https://github.com/wanone111/wanone111.github.io.git`; GitHub Pages continues to use `https://wanone111.github.io/`.
+- Pages publishes via `.github/workflows/deploy.yml`. The workflow installs dependencies, tests, builds `dist/`, uploads a Pages artifact, and deploys it. It does not use Jekyll or a branch-folder publishing workflow.
+- Commit `38761db` makes public link and redirect checks work when GitHub Actions has checked out this repository without `../workspace.config.json` or the private `../knowledge-base` sibling.
+
+## CI verification boundary
+
+Run `npm.cmd run content:publish` locally before a content release because it validates and synchronizes the private source notes. In GitHub Actions, run only the public-repository checks already listed in `deploy.yml`; CI must not try to synchronize private source content.
