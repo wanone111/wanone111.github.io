@@ -6,18 +6,49 @@ const libraryDir = dirname(fileURLToPath(import.meta.url));
 export const websiteRoot = resolve(libraryDir, '..', '..');
 export const workspaceRoot = resolve(websiteRoot, '..');
 
-function resolveConfiguredPath(value) {
+function resolveConfiguredPath(value, baseRoot) {
   if (typeof value !== 'string' || value.length === 0) {
     throw new Error('Every workspace path must be a non-empty string.');
   }
-  return isAbsolute(value) ? resolve(value) : resolve(workspaceRoot, value);
+  return isAbsolute(value) ? resolve(value) : resolve(baseRoot, value);
 }
 
 export async function loadWorkspace() {
-  const configPath = resolve(workspaceRoot, 'workspace.config.json');
-  const config = JSON.parse(await readFile(configPath, 'utf8'));
+  const localConfigPath = resolve(workspaceRoot, 'workspace.config.json');
+  let configPath = localConfigPath;
+  let configBaseRoot = workspaceRoot;
+  let config;
+
+  try {
+    config = JSON.parse(await readFile(localConfigPath, 'utf8'));
+  } catch (error) {
+    if (error?.code !== 'ENOENT') {
+      throw error;
+    }
+
+    // GitHub Actions checks out only the public website repository. It must be
+    // able to build and verify already-generated public content without the
+    // private sibling knowledge-base or the local workspace configuration.
+    configPath = null;
+    configBaseRoot = websiteRoot;
+    config = {
+      knowledgeRoot: './.private-source-unavailable',
+      publishRoot: './.private-source-unavailable/80_Publish',
+      assetsRoot: './.private-source-unavailable/_assets',
+      websiteRoot: '.',
+      generatedContentRoot: './src/content/generated',
+      generatedBlogRoot: './src/content/generated/blog',
+      generatedDocsRoot: './src/content/docs/knowledge',
+      generatedProjectsRoot: './src/content/generated/projects',
+      generatedPagesRoot: './src/content/generated/pages',
+      generatedAssetsRoot: './public/images/generated',
+      generatedManifest: './generated-content-manifest.json',
+      contentPolicy: './tools/content-policy.json',
+    };
+  }
+
   const paths = Object.fromEntries(
-    Object.entries(config).map(([key, value]) => [key, resolveConfiguredPath(value)]),
+    Object.entries(config).map(([key, value]) => [key, resolveConfiguredPath(value, configBaseRoot)]),
   );
 
   assertInside(paths.publishRoot, paths.knowledgeRoot, 'publishRoot');
@@ -35,7 +66,7 @@ export async function loadWorkspace() {
     assertInside(paths[key], paths.websiteRoot, key);
   }
 
-  return { config, paths, configPath, workspaceRoot, websiteRoot };
+  return { config, paths, configPath, workspaceRoot: configBaseRoot, websiteRoot };
 }
 
 export function isInside(candidate, parent) {
