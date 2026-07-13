@@ -1,0 +1,25 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDate, isPublic } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('projects')).filter(isPublic);
+  return projects.map((project) => ({ params: { slug: project.data.slug }, props: { project } }));
+}
+
+interface Props { project: CollectionEntry<'projects'>; }
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<BaseLayout title={project.data.title} description={project.data.description}>
+  <article class="article-shell stack-lg">
+    <header class="stack">
+      <p class="eyebrow">Project · 更新于 {formatDate(project.data.updated)}</p>
+      <h1>{project.data.title}</h1>
+      <p class="lede">{project.data.description}</p>
+    </header>
+    <div class="prose"><Content /></div>
+  </article>
+</BaseLayout>

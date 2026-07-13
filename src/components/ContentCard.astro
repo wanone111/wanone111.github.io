@@ -1,0 +1,13 @@
+---
+interface Props { href: string; title: string; description: string; meta?: string; }
+const { href, title, description, meta } = Astro.props;
+---
+
+<a class="content-card" href={href}>
+  <div class="stack">
+    {meta && <span class="content-card__meta">{meta}</span>}
+    <h3>{title}</h3>
+    <p>{description}</p>
+  </div>
+  <span aria-hidden="true">查看 →</span>
+</a>

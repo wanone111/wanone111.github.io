@@ -1,0 +1,44 @@
+---
+const pathname = Astro.url.pathname;
+const items = [
+  { href: '/', label: '首页' },
+  { href: '/projects/', label: '项目' },
+  { href: '/blog/', label: '博客' },
+  { href: '/knowledge/', label: '知识库' },
+  { href: '/resume/', label: '简历' },
+  { href: '/about/', label: '关于' },
+];
+
+const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
+---
+
+<header class="site-header">
+  <div class="page-shell site-header__inner">
+    <a class="brand" href="/" aria-label="Wanone 首页">
+      <span class="brand__mark" aria-hidden="true">W</span>
+      <span>Wanone</span>
+    </a>
+    <nav aria-label="主导航">
+      <ul>
+        {items.map((item) => (
+          <li><a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header { min-height: var(--header-height); border-bottom: 1px solid var(--color-border); background: color-mix(in srgb, var(--color-surface) 92%, transparent); }
+  .site-header__inner { display: flex; min-height: var(--header-height); align-items: center; justify-content: space-between; gap: var(--space-5); }
+  .brand { display: inline-flex; align-items: center; gap: var(--space-2); font-weight: 800; letter-spacing: -0.02em; text-decoration: none; }
+  .brand__mark { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: var(--radius-sm); background: var(--color-text); color: var(--color-accent-soft); font-size: 0.9rem; }
+  ul { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0 var(--space-1); margin: 0; padding: 0; list-style: none; }
+  nav a { display: block; border-radius: var(--radius-sm); padding: 0.45rem 0.7rem; color: var(--color-text-muted); font-size: 0.9rem; font-weight: 650; text-decoration: none; }
+  nav a:hover, nav a[aria-current='page'] { background: var(--color-surface-muted); color: var(--color-text); }
+  @media (max-width: 50rem) {
+    .site-header__inner { align-items: flex-start; flex-direction: column; padding-block: var(--space-3); }
+    nav { width: 100%; overflow-x: auto; }
+    ul { width: max-content; flex-wrap: nowrap; justify-content: flex-start; }
+  }
+</style>

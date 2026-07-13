@@ -1,0 +1,16 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import { isPublic } from '../../lib/content';
+
+const posts = (await getCollection('blog')).filter(isPublic);
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort((a, b) => a.localeCompare(b, 'zh-CN'));
+---
+
+<BaseLayout title="标签" description="按技术标签浏览博客文章。">
+  <div class="stack-lg">
+    <PageIntro eyebrow="Tags" title="标签" description="按具体技术、工具和平台查找文章。" />
+    {tags.length > 0 ? <div class="tag-list">{tags.map((tag) => <span class="tag" id={tag}>{tag}</span>)}</div> : <div class="empty-state">迁移文章后将自动生成标签。</div>}
+  </div>
+</BaseLayout>

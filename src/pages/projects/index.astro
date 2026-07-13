@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContentCard from '../../components/ContentCard.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import { byNewest, isPublic } from '../../lib/content';
+
+const projects = (await getCollection('projects')).filter(isPublic).sort(byNewest);
+---
+
+<BaseLayout title="项目" description="Wanone 的嵌入式、机器人、FPGA 与边缘 AI 项目。">
+  <div class="stack-lg">
+    <PageIntro eyebrow="Projects" title="项目" description="展示项目目标、系统架构、关键实现和验证结果。旧站项目资料将在后续迁移阶段整理。" />
+    {projects.length > 0 ? (
+      <div class="card-grid">
+        {projects.map((project) => <ContentCard href={`/projects/${project.data.slug}/`} title={project.data.title} description={project.data.description} meta={project.data.category} />)}
+      </div>
+    ) : (
+      <div class="empty-state">项目内容尚未同步。未来将从 Obsidian 的 `80_Publish/projects` 自动生成。</div>
+    )}
+  </div>
+</BaseLayout>

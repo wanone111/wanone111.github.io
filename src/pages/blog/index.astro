@@ -1,0 +1,22 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContentCard from '../../components/ContentCard.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import { byNewest, formatDate, isPublic } from '../../lib/content';
+
+const posts = (await getCollection('blog')).filter(isPublic).sort(byNewest);
+---
+
+<BaseLayout title="博客" description="开发记录、完整教程、项目复盘和技术思考。">
+  <div class="stack-lg">
+    <PageIntro eyebrow="Blog" title="博客" description="以时间为线索记录工程实践、调试过程和项目复盘。" />
+    {posts.length > 0 ? (
+      <div class="card-grid">
+        {posts.map((post) => <ContentCard href={`/blog/${post.data.slug}/`} title={post.data.title} description={post.data.description} meta={`${post.data.category ?? '未分类'} · ${formatDate(post.data.updated)}`} />)}
+      </div>
+    ) : (
+      <div class="empty-state">旧 Hexo 文章尚未迁移，因此博客列表暂时为空。</div>
+    )}
+  </div>
+</BaseLayout>

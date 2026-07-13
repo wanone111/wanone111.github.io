@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import { getCollection, render } from 'astro:content';
+import { isPublic } from '../../lib/content';
+
+const page = (await getCollection('pages')).find((entry) => isPublic(entry) && entry.data.slug === 'resume');
+const rendered = page ? await render(page) : undefined;
+const Content = rendered?.Content;
+---
+
+<BaseLayout title="简历" description="Wanone 的教育、技能和项目经历。">
+  <div class="stack-lg">
+    <PageIntro eyebrow="Resume" title="简历" description="该页面保留为结构化网页简历入口，内容将在后续从现有资料中整理并经确认后发布。" />
+    {Content ? <section class="article-shell prose"><Content /></section> : (
+      <div class="empty-state">当前不会自动公开旧站中的 DOCX 简历。待内容确认后再实现教育经历、技能和项目经历模块。</div>
+    )}
+  </div>
+</BaseLayout>

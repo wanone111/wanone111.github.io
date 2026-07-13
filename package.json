@@ -1,0 +1,31 @@
+{
+  "name": "wanone-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node tools/run-astro.mjs dev",
+    "content:validate": "node tools/validate-content.mjs",
+    "content:check-secrets": "node tools/check-secrets.mjs",
+    "content:sync": "node tools/sync-content.mjs",
+    "content:clean": "node tools/clean-generated.mjs",
+    "content:clean:apply": "node tools/clean-generated.mjs --apply",
+    "content:publish": "npm run content:validate && npm run content:check-secrets && npm run content:sync && npm run test:content && npm run check && npm run build && npm run test:links && npm run test:routes && npm run test:redirects",
+    "check": "node tools/run-astro.mjs check",
+    "build": "node tools/run-astro.mjs build",
+    "preview": "node tools/run-astro.mjs preview",
+    "test:content": "node --test tests/*.test.mjs",
+    "test:links": "node tools/check-links.mjs",
+    "test:routes": "node tools/check-routes.mjs",
+    "test:redirects": "node tools/check-legacy-redirects.mjs"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.41.3",
+    "astro": "^7.0.7",
+    "yaml": "^2.9.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,61 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContentCard from '../components/ContentCard.astro';
+import { byNewest, isPublic } from '../lib/content';
+
+const latestPosts = (await getCollection('blog')).filter(isPublic).sort(byNewest).slice(0, 3);
+---
+
+<BaseLayout title="首页" description="Wanone 的个人主页、技术博客、项目展示和公开知识库。">
+  <div class="stack-lg">
+    <section class="hero stack-lg">
+      <div class="stack">
+        <p class="eyebrow">Embedded · Robotics · FPGA · Edge AI</p>
+        <h1>记录工程实践，沉淀可复用的技术知识。</h1>
+        <p class="lede">这里汇集个人项目、开发复盘与结构化知识。网站仍处于新架构建设阶段，内容将从现有博客逐步迁移。</p>
+      </div>
+      <div class="button-row">
+        <a class="button" href="/projects/">查看项目</a>
+        <a class="button secondary" href="/knowledge/">进入知识库</a>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="directions-title">
+      <div class="section-heading">
+        <div class="stack">
+          <p class="eyebrow">Focus</p>
+          <h2 id="directions-title">技术方向</h2>
+        </div>
+      </div>
+      <div class="card-grid">
+        <ContentCard href="/knowledge/embedded/" title="嵌入式与通信" description="STM32、总线协议、调试流程与工程实践。" />
+        <ContentCard href="/knowledge/robotics/" title="机器人系统" description="ROS 2、PX4、仿真与控制系统。" />
+        <ContentCard href="/knowledge/fpga-edge-ai/" title="FPGA 与边缘 AI" description="FPGA、PYNQ、视频链路与边缘推理。" />
+        <ContentCard href="/knowledge/linux-tools/" title="Linux 与工程工具" description="开发环境、Git、WSL 和工程化流程。" />
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="latest-title">
+      <div class="section-heading">
+        <div class="stack">
+          <p class="eyebrow">Writing</p>
+          <h2 id="latest-title">最新文章</h2>
+        </div>
+        <a href="/blog/">全部文章</a>
+      </div>
+      {latestPosts.length > 0 ? (
+        <div class="card-grid">
+          {latestPosts.map((post) => <ContentCard href={`/blog/${post.data.slug}/`} title={post.data.title} description={post.data.description} meta={post.data.category} />)}
+        </div>
+      ) : (
+        <div class="empty-state">尚未迁移旧博客文章。内容发布系统完成后，这里会自动显示最新文章。</div>
+      )}
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .hero { padding-block: clamp(3rem, 10vw, 8rem); }
+  .hero h1 { max-width: 58rem; }
+</style>

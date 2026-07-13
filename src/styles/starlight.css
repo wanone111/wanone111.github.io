@@ -1,0 +1,17 @@
+@import './tokens.css';
+
+:root {
+  --sl-font: var(--font-sans);
+  --sl-font-mono: var(--font-mono);
+  --sl-color-accent-low: var(--color-accent-soft);
+  --sl-color-accent: var(--color-accent);
+  --sl-color-accent-high: var(--color-accent-strong);
+  --sl-color-bg: var(--color-bg);
+  --sl-color-bg-nav: var(--color-surface);
+  --sl-color-bg-sidebar: var(--color-surface);
+  --sl-color-hairline: var(--color-border);
+  --sl-content-width: var(--article-width);
+}
+
+header.header { border-bottom-color: var(--color-border); box-shadow: none; }
+.site-title { letter-spacing: -0.02em; }

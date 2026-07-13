@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import { getCollection, render } from 'astro:content';
+import { isPublic } from '../../lib/content';
+
+const page = (await getCollection('pages')).find((entry) => isPublic(entry) && entry.data.slug === 'about');
+const rendered = page ? await render(page) : undefined;
+const Content = rendered?.Content;
+---
+
+<BaseLayout title="关于" description="关于 Wanone 和这个知识网站。">
+  <div class="stack-lg">
+    <PageIntro eyebrow="About" title="关于" description="这个网站用于连接项目实践、技术文章和可复用的公开知识。" />
+    {Content ? <section class="article-shell prose"><Content /></section> : (
+      <section class="article-shell stack">
+        <h2>内容结构</h2>
+        <p class="lede">博客保留开发过程与复盘，知识库将经过验证的结论整理成主题化文档，项目页面展示系统架构和成果。</p>
+        <h2>维护方式</h2>
+        <p class="lede">内容主要在 Obsidian 中编写，网站由 Astro 与 Starlight 生成。私有知识与公开内容采用白名单隔离。</p>
+      </section>
+    )}
+  </div>
+</BaseLayout>

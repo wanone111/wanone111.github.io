@@ -1,0 +1,22 @@
+{
+  "allowedPageSlugs": ["about", "resume"],
+  "reservedRoutes": [
+    "/",
+    "/projects/",
+    "/blog/",
+    "/knowledge/",
+    "/knowledge/embedded/",
+    "/knowledge/robotics/",
+    "/knowledge/fpga-edge-ai/",
+    "/knowledge/linux-tools/",
+    "/tags/",
+    "/archive/",
+    "/404.html"
+  ],
+  "allowedEmails": [],
+  "allowedPrivateIps": ["127.0.0.1"],
+  "allowedAbsolutePaths": [],
+  "allowedFindingFingerprints": [
+    "81f37d06c2b49cf1"
+  ]
+}
