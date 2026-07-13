@@ -45,6 +45,7 @@ npm.cmd run content:publish
 - This repository is connected to `https://github.com/wanone111/wanone111.github.io.git`; GitHub Pages continues to use `https://wanone111.github.io/`.
 - Pages publishes via `.github/workflows/deploy.yml`. The workflow installs dependencies, tests, builds `dist/`, uploads a Pages artifact, and deploys it. It does not use Jekyll or a branch-folder publishing workflow.
 - Commit `38761db` makes public link and redirect checks work when GitHub Actions has checked out this repository without `../workspace.config.json` or the private `../knowledge-base` sibling.
+- The corresponding GitHub Actions deployment completed successfully, and the new homepage was manually confirmed at `https://wanone111.github.io/`.
 
 ## CI verification boundary
 
