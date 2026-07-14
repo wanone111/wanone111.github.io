@@ -1,0 +1,15 @@
+{
+  "runs": 3,
+  "port": 4322,
+  "routes": [
+    { "name": "home", "path": "/" },
+    { "name": "blog", "path": "/blog/" },
+    { "name": "knowledge", "path": "/knowledge/" }
+  ],
+  "minimumScores": {
+    "performance": 0.95,
+    "accessibility": 1,
+    "best-practices": 1,
+    "seo": 1
+  }
+}

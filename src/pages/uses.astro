@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import UsesExplorer from '../components/UsesExplorer.astro';
+---
+
+<BaseLayout title="使用的工具" description="Wanone 的工作区、软件工具与工程用途。">
+  <header class="uses-hero stack-lg">
+    <p class="eyebrow">/uses · Workbench</p>
+    <h1>工具本身不重要，重要的是它帮我把哪类问题变清楚。</h1>
+    <p class="lede">这里不列品牌和型号，只记录真实使用方式。图片上的亮点可以点击；同样的信息也保留在旁边的按钮和文字中。</p>
+  </header>
+  <UsesExplorer />
+  <section class="uses-principles section-grid" aria-labelledby="uses-principles-title">
+    <div class="stack"><p class="eyebrow">Working rules</p><h2 id="uses-principles-title">一套会继续生长的工作方式</h2></div>
+    <div class="uses-principles__list">
+      <article><strong>先验证，再抽象</strong><p>从能复现的小实验开始，确认接口、时序和数据流。</p></article>
+      <article><strong>内容源与展示分离</strong><p>知识库负责思考，网站只接收明确允许公开的内容。</p></article>
+      <article><strong>工具服务于问题</strong><p>只有当新工具能减少不确定性或重复劳动时，才把它留在工作流里。</p></article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .uses-hero { max-width: 68rem; padding-block: clamp(4rem, 10vw, 8rem); }
+  .uses-hero h1 { max-width: 15ch; font-size: clamp(3rem, 8vw, 7rem); }
+  .uses-principles { margin-top: var(--space-section); border-top: 1px solid var(--color-border-strong); padding-top: var(--space-7); }
+  .uses-principles > .stack { grid-column: 1 / span 4; }
+  .uses-principles__list { grid-column: 6 / -1; display: grid; gap: var(--space-3); }
+  .uses-principles article { display: grid; grid-template-columns: minmax(9rem, .35fr) 1fr; gap: var(--space-4); border-bottom: 1px solid var(--color-border); padding-block: var(--space-4); }
+  .uses-principles article p { color: var(--color-text-muted); }
+  @media (max-width: 48rem) { .uses-principles > .stack, .uses-principles__list { grid-column: 1 / -1; } .uses-principles article { grid-template-columns: 1fr; gap: var(--space-2); } }
+</style>

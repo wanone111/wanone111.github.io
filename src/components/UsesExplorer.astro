@@ -1,0 +1,80 @@
+---
+const items = [
+  { id: 'laptop', label: '开发电脑', eyebrow: 'Linux workstation', title: '把代码、仿真和发布放在同一条工作流里', detail: '主要用于 C/C++、ROS 2、PX4 与 Gazebo 开发，也负责 Astro / Starlight 站点的本地构建。' },
+  { id: 'notebook', label: '笔记与 Obsidian', eyebrow: 'Editorial source', title: '先在私有知识库里思考，再选择性公开', detail: 'Obsidian 是内容源头；只有明确标记为公开并通过检查的笔记，才会进入这个网站。' },
+  { id: 'books', label: '知识路径', eyebrow: 'Reference shelf', title: '按问题组织资料，而不是堆成收藏夹', detail: '嵌入式、机器人、FPGA 和 Linux 是目前持续生长的四条公开知识路径。' },
+  { id: 'bench', label: '硬件实验台', eyebrow: 'Embedded bench', title: '用小实验确认接口、时序与控制假设', detail: 'STM32 HAL、UART、PWM 与控制算法会先在可复现的小实验中验证，再写成项目或笔记。' },
+];
+---
+
+<section class="uses-explorer" data-uses-explorer aria-labelledby="uses-explorer-title">
+  <div class="uses-explorer__visual">
+    <img src="/images/brand/engineering-workbench-v2.webp" width="1536" height="1024" alt="包含台灯、开发电脑、书本、笔记、咖啡和植物的个人工作桌插画" decoding="async" fetchpriority="high" />
+    <button class="uses-hotspot uses-hotspot--laptop" type="button" aria-label="查看开发电脑用途" aria-pressed="true" data-use="laptop"><span>开发电脑</span></button>
+    <button class="uses-hotspot uses-hotspot--notebook" type="button" aria-label="查看笔记与 Obsidian 用途" aria-pressed="false" data-use="notebook"><span>笔记</span></button>
+    <button class="uses-hotspot uses-hotspot--books" type="button" aria-label="查看知识路径用途" aria-pressed="false" data-use="books"><span>书本</span></button>
+    <button class="uses-hotspot uses-hotspot--bench" type="button" aria-label="查看硬件实验台用途" aria-pressed="false" data-use="bench"><span>实验台</span></button>
+  </div>
+
+  <div class="uses-explorer__content stack-lg">
+    <div>
+      <p class="eyebrow">Clickable setup</p>
+      <h2 id="uses-explorer-title">点击工作区，看看每样东西解决什么问题。</h2>
+    </div>
+    <div class="uses-explorer__tabs" aria-label="工作区项目">
+      {items.map((item, index) => <button type="button" aria-pressed={index === 0 ? 'true' : 'false'} data-use={item.id}>{item.label}</button>)}
+    </div>
+    <div class="uses-explorer__panels" aria-live="polite">
+      {items.map((item) => (
+        <article class="uses-explorer__detail" data-use-panel={item.id}>
+          <p class="eyebrow">{item.eyebrow}</p>
+          <h3 data-use-title={item.id}>{item.title}</h3>
+          <p data-use-detail={item.id}>{item.detail}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-uses-explorer]').forEach((root) => {
+    const controls = root.querySelectorAll<HTMLButtonElement>('[data-use]');
+    const panels = root.querySelectorAll<HTMLElement>('[data-use-panel]');
+    root.dataset.enhanced = 'true';
+    const select = (id: string) => {
+      controls.forEach((candidate) => candidate.setAttribute('aria-pressed', String(candidate.dataset.use === id)));
+      panels.forEach((panel) => panel.toggleAttribute('hidden', panel.dataset.usePanel !== id));
+    };
+    select('laptop');
+    controls.forEach((control) => control.addEventListener('click', () => {
+      if (control.dataset.use) select(control.dataset.use);
+    }));
+  });
+</script>
+
+<style>
+  .uses-explorer { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(20rem, .9fr); align-items: center; gap: clamp(2rem, 6vw, 6rem); }
+  .uses-explorer__visual { position: relative; overflow: hidden; aspect-ratio: 3 / 2; border: 1px solid color-mix(in srgb, var(--color-personal) 32%, var(--color-border)); border-radius: var(--radius-xl); background: var(--color-accent-soft); box-shadow: var(--shadow-card); }
+  .uses-explorer__visual > img { width: 100%; height: 100%; object-fit: cover; }
+  .uses-hotspot { position: absolute; z-index: 2; width: 2.8rem; height: 2.8rem; transform: translate(-50%, -50%); border: 2px solid var(--color-surface); border-radius: 50%; background: color-mix(in srgb, var(--color-personal) 86%, transparent); box-shadow: 0 0 0 .25rem rgb(48 37 31 / .18); cursor: pointer; transition: transform var(--transition-fast), background var(--transition-fast); }
+  .uses-hotspot::after { content: ''; position: absolute; inset: .67rem; border-radius: 50%; background: var(--color-surface); }
+  .uses-hotspot[aria-pressed='true'], .uses-hotspot:hover, .uses-hotspot:focus-visible { transform: translate(-50%, -50%) scale(1.08); background: var(--color-status); }
+  .uses-hotspot span { position: absolute; bottom: calc(100% + .45rem); left: 50%; transform: translateX(-50%); width: max-content; border-radius: var(--radius-pill); padding: .38rem .6rem; background: var(--color-text); color: var(--color-bg); font: 700 .66rem/1 var(--font-mono); opacity: 0; }
+  .uses-hotspot[aria-pressed='true'] span, .uses-hotspot:hover span, .uses-hotspot:focus-visible span { opacity: 1; }
+  .uses-hotspot--laptop { left: 61%; top: 48%; }
+  .uses-hotspot--notebook { left: 24%; top: 78%; }
+  .uses-hotspot--books { left: 44%; top: 46%; }
+  .uses-hotspot--bench { left: 82%; top: 72%; }
+  .uses-explorer__content h2 { max-width: 17ch; font-size: clamp(2rem, 4vw, 3.6rem); }
+  .uses-explorer__tabs { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .uses-explorer__tabs button { border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: .6rem .85rem; background: var(--color-surface); color: var(--color-text-muted); font: 750 .75rem/1 var(--font-mono); cursor: pointer; }
+  .uses-explorer__tabs button[aria-pressed='true'] { border-color: var(--color-personal); background: color-mix(in srgb, var(--color-personal) 18%, var(--color-surface)); color: var(--color-text); }
+  .uses-explorer__panels { display: grid; gap: var(--space-3); }
+  .uses-explorer[data-enhanced='true'] .uses-explorer__panels { min-height: 12rem; }
+  .uses-explorer__detail { border-left: .35rem solid var(--color-personal); border-radius: 0 var(--radius-lg) var(--radius-lg) 0; padding: var(--space-5); background: var(--color-surface); box-shadow: var(--shadow-soft); }
+  .uses-explorer[data-enhanced='true'] .uses-explorer__detail { min-height: 12rem; }
+  .uses-explorer__detail h3 { margin-block: var(--space-2); font-size: clamp(1.3rem, 2.5vw, 1.8rem); }
+  .uses-explorer__detail p:last-child { color: var(--color-text-muted); line-height: 1.7; }
+  @media (max-width: 56rem) { .uses-explorer { grid-template-columns: 1fr; } .uses-explorer__content h2 { max-width: 22ch; } }
+  @media (max-width: 34rem) { .uses-hotspot span { display: none; } .uses-explorer__detail { min-height: 14rem; } }
+</style>

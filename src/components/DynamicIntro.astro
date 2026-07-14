@@ -1,0 +1,55 @@
+<section class="dynamic-intro" aria-label="动态自我介绍" data-dynamic-intro>
+  <p class="dynamic-intro__sentence">
+    我在这里记录
+    <button type="button" aria-pressed="true" data-intro-topic="software">软件</button>、
+    <button type="button" aria-pressed="false" data-intro-topic="knowledge">知识</button>与
+    <button type="button" aria-pressed="false" data-intro-topic="exploration">探索过程</button>。
+  </p>
+
+  <div class="dynamic-intro__stage" aria-live="polite">
+    <div class="dynamic-intro__panel" data-intro-panel="software">
+      <span class="dynamic-intro__index">01</span>
+      <p><strong>软件</strong>从真实问题开始：目前推荐阅读公开内容发布系统。</p>
+      <a href="/projects/obsidian-astro-publishing/">查看推荐项目</a>
+    </div>
+    <div class="dynamic-intro__panel" data-intro-panel="knowledge" hidden>
+      <span class="dynamic-intro__index">02</span>
+      <p><strong>知识</strong>沿四条路径生长，从嵌入式到机器人、FPGA 与工程工具。</p>
+      <a href="/knowledge/">浏览知识路径</a>
+    </div>
+    <div class="dynamic-intro__panel" data-intro-panel="exploration" hidden>
+      <span class="dynamic-intro__index">03</span>
+      <p><strong>探索过程</strong>保留调试现场、实验记录和能复现的工程判断。</p>
+      <a href="/blog/">阅读博客与实验</a>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-dynamic-intro]').forEach((root) => {
+    const controls = root.querySelectorAll<HTMLButtonElement>('[data-intro-topic]');
+    const panels = root.querySelectorAll<HTMLElement>('[data-intro-panel]');
+    controls.forEach((control) => control.addEventListener('click', () => {
+      const topic = control.dataset.introTopic;
+      controls.forEach((item) => item.setAttribute('aria-pressed', String(item === control)));
+      panels.forEach((panel) => panel.toggleAttribute('hidden', panel.dataset.introPanel !== topic));
+    }));
+  });
+</script>
+
+<style>
+  .dynamic-intro { display: grid; gap: var(--space-4); }
+  .dynamic-intro__sentence { max-width: 42rem; color: var(--color-text-muted); font-size: clamp(1.04rem, 1.8vw, 1.28rem); }
+  .dynamic-intro__sentence button { position: relative; border: 0; border-bottom: 2px solid var(--color-blog); padding: .08rem .12rem; background: transparent; color: color-mix(in srgb, var(--color-blog-ink) 78%, var(--color-text)); font-weight: 800; cursor: pointer; transition: color var(--transition-fast), background var(--transition-fast); }
+  .dynamic-intro__sentence button:nth-of-type(2) { border-bottom-color: var(--color-knowledge); color: var(--color-knowledge-ink); }
+  .dynamic-intro__sentence button:nth-of-type(3) { border-bottom-color: var(--color-experiment); color: var(--color-experiment-ink); }
+  .dynamic-intro__sentence button[aria-pressed='true'] { border-bottom-width: 4px; background: transparent; }
+  .dynamic-intro__stage { min-height: 7.5rem; border-left: 2px solid var(--color-border-strong); padding-left: var(--space-4); }
+  .dynamic-intro__panel:not([hidden]) { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--space-2) var(--space-4); align-items: start; animation: intro-in var(--transition-smooth) both; }
+  .dynamic-intro__index { grid-row: span 2; color: var(--color-text-muted); font: 750 .72rem/1.5 var(--font-mono); }
+  .dynamic-intro__panel p { color: var(--color-text-muted); }
+  .dynamic-intro__panel a { width: fit-content; color: var(--color-text); font-size: .88rem; font-weight: 800; text-underline-offset: .25rem; }
+  @keyframes intro-in { from { transform: translateY(.35rem); } }
+  @media (max-width: 42rem) { .dynamic-intro__stage { min-height: 9rem; } }
+  @media (prefers-reduced-motion: reduce) { .dynamic-intro__panel:not([hidden]) { animation: none; } }
+</style>

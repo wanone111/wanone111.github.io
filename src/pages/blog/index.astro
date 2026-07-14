@@ -24,7 +24,7 @@ const categories = [...new Set(posts.map((post) => post.data.category).filter(Bo
         <div class="article-list" aria-live="polite">
           {posts.map((post) => (
             <div data-post-category={post.data.category ?? ''}>
-              <ArticleRow href={`/blog/${post.data.slug}/`} title={post.data.title} description={post.data.description} category={post.data.category} meta={formatDate(post.data.updated)} />
+              <ArticleRow href={`/blog/${post.data.slug}/`} title={post.data.title} description={post.data.description} category={post.data.category} meta={formatDate(post.data.updated)} headingLevel="h2" />
             </div>
           ))}
         </div>

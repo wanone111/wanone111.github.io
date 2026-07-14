@@ -1,0 +1,122 @@
+<section class="tech-ecosystem" aria-labelledby="tech-ecosystem-title" data-tech-ecosystem data-active="all">
+  <div class="tech-ecosystem__heading">
+    <div class="stack">
+      <p class="eyebrow">Connected practice</p>
+      <h2 id="tech-ecosystem-title">技术不是 Logo 墙。</h2>
+    </div>
+    <p>它们通过真实项目、文章和知识路径连接起来。选择一个节点，看看它在哪里被使用。</p>
+  </div>
+
+  <div class="tech-ecosystem__layout">
+    <div class="tech-map" aria-label="按技术筛选相关内容">
+      <span class="tech-map__edge edge--astro" aria-hidden="true"></span>
+      <span class="tech-map__edge edge--embedded" aria-hidden="true"></span>
+      <span class="tech-map__edge edge--robotics" aria-hidden="true"></span>
+      <span class="tech-map__edge edge--fpga" aria-hidden="true"></span>
+      <span class="tech-map__edge edge--linux" aria-hidden="true"></span>
+      <button class="tech-node tech-node--center" type="button" aria-pressed="true" aria-controls="tech-results" data-tech="all">全部内容</button>
+      <button class="tech-node tech-node--astro" type="button" aria-pressed="false" aria-controls="tech-results" data-tech="astro">Astro</button>
+      <button class="tech-node tech-node--embedded" type="button" aria-pressed="false" aria-controls="tech-results" data-tech="embedded">Embedded</button>
+      <button class="tech-node tech-node--robotics" type="button" aria-pressed="false" aria-controls="tech-results" data-tech="robotics">Robotics</button>
+      <button class="tech-node tech-node--fpga" type="button" aria-pressed="false" aria-controls="tech-results" data-tech="fpga">FPGA</button>
+      <button class="tech-node tech-node--linux" type="button" aria-pressed="false" aria-controls="tech-results" data-tech="linux">Linux</button>
+    </div>
+
+    <div class="tech-results">
+      <div class="tech-results__meta"><span data-tech-count>6 个相关入口</span><small aria-live="polite">项目 · 文章 · 知识</small></div>
+      <ul id="tech-results">
+        <li data-tech-tags="astro linux">
+          <a href="/projects/obsidian-astro-publishing/"><span>项目</span><strong>Obsidian 与 Astro 内容发布系统</strong><small>Astro · Linux · GitHub Actions</small></a>
+        </li>
+        <li data-tech-tags="embedded linux">
+          <a href="/blog/embedded/stm32-notes/"><span>文章</span><strong>STM32 学习笔记</strong><small>Embedded · C · 调试</small></a>
+        </li>
+        <li data-tech-tags="robotics linux">
+          <a href="/blog/robotics/ros2-notes/"><span>文章</span><strong>ROS 2 学习笔记</strong><small>Robotics · C++ · Linux</small></a>
+        </li>
+        <li data-tech-tags="fpga">
+          <a href="/blog/fpga/verilog-notes/"><span>文章</span><strong>Verilog 学习笔记</strong><small>FPGA · RTL · Verification</small></a>
+        </li>
+        <li data-tech-tags="linux">
+          <a href="/blog/networking/linux-socket/"><span>文章</span><strong>Linux Socket</strong><small>Linux · Network · C++</small></a>
+        </li>
+        <li data-tech-tags="embedded robotics fpga linux">
+          <a href="/knowledge/"><span>知识</span><strong>公开知识路径</strong><small>Embedded · Robotics · FPGA · Tooling</small></a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-tech-ecosystem]').forEach((root) => {
+    const controls = root.querySelectorAll<HTMLButtonElement>('[data-tech]');
+    const items = root.querySelectorAll<HTMLElement>('[data-tech-tags]');
+    const count = root.querySelector<HTMLElement>('[data-tech-count]');
+    controls.forEach((control) => control.addEventListener('click', () => {
+      const selected = control.dataset.tech ?? 'all';
+      root.dataset.active = selected;
+      controls.forEach((item) => item.setAttribute('aria-pressed', String(item === control)));
+      let visible = 0;
+      items.forEach((item) => {
+        const matches = selected === 'all' || item.dataset.techTags?.split(' ').includes(selected);
+        item.toggleAttribute('hidden', !matches);
+        if (matches) visible += 1;
+      });
+      if (count) count.textContent = `${visible} 个相关入口`;
+    }));
+  });
+</script>
+
+<style>
+  .tech-ecosystem { display: grid; gap: var(--space-7); border-block: 1px solid var(--color-border-strong); padding-block: var(--space-section); }
+  .tech-ecosystem__heading { display: grid; grid-template-columns: 5fr 4fr; gap: var(--space-7); align-items: end; }
+  .tech-ecosystem__heading h2 { max-width: 11ch; }
+  .tech-ecosystem__heading > p { max-width: 36rem; color: var(--color-text-muted); }
+  .tech-ecosystem__layout { display: grid; grid-template-columns: minmax(20rem, 5fr) minmax(24rem, 6fr); gap: clamp(2rem, 6vw, 6rem); align-items: center; }
+
+  .tech-map { position: relative; min-height: 30rem; border-radius: 50%; background: radial-gradient(circle at center, color-mix(in srgb, var(--color-blog) 14%, transparent), transparent 46%), linear-gradient(var(--color-border), var(--color-border)) center/1px 72% no-repeat, linear-gradient(90deg, var(--color-border), var(--color-border)) center/72% 1px no-repeat; }
+  .tech-node { position: absolute; z-index: 2; min-width: 6.2rem; min-height: 3rem; transform: translate(-50%, -50%); border: 1px solid var(--color-border-strong); border-radius: var(--radius-pill); padding: .6rem .9rem; background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-soft); font: 750 .76rem/1 var(--font-mono); cursor: pointer; transition: transform var(--transition-fast), border-color var(--transition-fast), background var(--transition-fast); }
+  .tech-node:hover, .tech-node:focus-visible { transform: translate(-50%, -50%) scale(1.04); }
+  .tech-node[aria-pressed='true'] { border-color: var(--color-text); background: var(--color-text); color: var(--color-bg); }
+  .tech-node--center { left: 50%; top: 50%; min-width: 7.5rem; }
+  .tech-node--astro { left: 50%; top: 10%; border-color: var(--color-blog); }
+  .tech-node--embedded { left: 14%; top: 33%; border-color: var(--color-project); }
+  .tech-node--robotics { left: 86%; top: 33%; border-color: var(--color-personal); }
+  .tech-node--fpga { left: 20%; top: 82%; border-color: var(--color-experiment); }
+  .tech-node--linux { left: 80%; top: 82%; border-color: var(--color-knowledge); }
+  .tech-map__edge { position: absolute; z-index: 1; left: 50%; top: 50%; width: 2px; background: var(--color-border-strong); transform-origin: top; transition: background var(--transition-fast), opacity var(--transition-fast); }
+  .edge--astro { height: 12rem; transform: rotate(180deg); }
+  .edge--embedded { height: 11.5rem; transform: rotate(247deg); }
+  .edge--robotics { height: 11.5rem; transform: rotate(113deg); }
+  .edge--fpga { height: 12.5rem; transform: rotate(42deg); }
+  .edge--linux { height: 12.5rem; transform: rotate(-42deg); }
+  [data-active='astro'] .edge--astro { background: var(--color-blog); }
+  [data-active='embedded'] .edge--embedded { background: var(--color-project); }
+  [data-active='robotics'] .edge--robotics { background: var(--color-personal); }
+  [data-active='fpga'] .edge--fpga { background: var(--color-experiment); }
+  [data-active='linux'] .edge--linux { background: var(--color-knowledge); }
+
+  .tech-results { min-height: 31rem; }
+  .tech-results__meta { display: flex; justify-content: space-between; gap: var(--space-4); border-bottom: 1px solid var(--color-border-strong); padding-bottom: var(--space-3); color: var(--color-text-muted); font: 700 .72rem/1.4 var(--font-mono); }
+  .tech-results__meta small { font: inherit; }
+  .tech-results ul { display: grid; margin: 0; padding: 0; list-style: none; }
+  .tech-results li { border-bottom: 1px solid var(--color-border); }
+  .tech-results a { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr) auto; gap: var(--space-4); align-items: center; min-height: 4.7rem; color: var(--color-text); text-decoration: none; }
+  .tech-results a > span { color: var(--color-blog-ink); font: 750 .68rem/1 var(--font-mono); }
+  .tech-results a > strong { overflow-wrap: anywhere; }
+  .tech-results a > small { color: var(--color-text-muted); font: 600 .68rem/1.4 var(--font-mono); text-align: right; }
+  .tech-results a:hover strong { text-decoration: underline; text-decoration-color: var(--color-project); text-underline-offset: .3rem; }
+
+  @media (max-width: 62rem) { .tech-ecosystem__layout { grid-template-columns: 1fr; } .tech-map { min-height: 26rem; } .tech-results { min-height: 0; } }
+  @media (max-width: 42rem) {
+    .tech-ecosystem__heading { grid-template-columns: 1fr; }
+    .tech-map { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); min-height: 0; border-radius: 0; background: none; }
+    .tech-map__edge { display: none; }
+    .tech-node { position: static; width: 100%; transform: none; }
+    .tech-node:hover, .tech-node:focus-visible { transform: none; }
+    .tech-node--center { grid-column: 1 / -1; }
+    .tech-results a { grid-template-columns: 3.5rem 1fr; padding-block: var(--space-3); }
+    .tech-results a > small { grid-column: 2; text-align: left; }
+  }
+</style>

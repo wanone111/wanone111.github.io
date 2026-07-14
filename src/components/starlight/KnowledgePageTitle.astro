@@ -1,0 +1,90 @@
+---
+import KnowledgeGarden from '../KnowledgeGarden.astro';
+import { getCollection } from 'astro:content';
+import { formatDate, isPublic } from '../../lib/content';
+
+const title = Astro.locals.starlightRoute.entry.data.title;
+const pathname = Astro.url.pathname.replace(/\/$/, '');
+const isKnowledgeRoot = pathname === '/knowledge';
+const pathLabels: Record<string, string> = {
+  '/knowledge/embedded': '嵌入式与通信',
+  '/knowledge/robotics': '机器人系统',
+  '/knowledge/fpga-edge-ai': 'FPGA 与边缘 AI',
+  '/knowledge/linux-tools': 'Linux 与工程工具',
+};
+const pathLabel = pathLabels[pathname];
+const pathFilters: Record<string, (slug: string) => boolean> = {
+  '/knowledge/embedded': (slug) => slug.startsWith('embedded/') || slug.startsWith('networking/'),
+  '/knowledge/robotics': (slug) => slug.startsWith('robotics/') || slug === 'algorithms/pid',
+  '/knowledge/fpga-edge-ai': (slug) => slug.startsWith('fpga/'),
+  '/knowledge/linux-tools': (slug) => slug.startsWith('tools/') || slug.startsWith('programming/'),
+};
+const relatedPosts = pathFilters[pathname]
+  ? (await getCollection('blog'))
+      .filter(isPublic)
+      .filter((post) => pathFilters[pathname](post.data.slug))
+      .sort((a, b) => b.data.updated.valueOf() - a.data.updated.valueOf())
+      .slice(0, 4)
+  : [];
+---
+
+<div class="knowledge-title">
+  <div class="knowledge-title__row">
+    <div>
+      <p>Knowledge path</p>
+      <h1 id="_top">{title}</h1>
+    </div>
+    {!isKnowledgeRoot && pathLabel && (
+      <div class="maturity-badge" aria-label={`${pathLabel}成熟度：Growing`}>
+        <img src="/images/brand/knowledge-growing-v1.webp" width="320" height="320" alt="" />
+        <span><small>MATURITY</small><strong>Growing</strong></span>
+      </div>
+    )}
+  </div>
+  {!isKnowledgeRoot && pathLabel && (
+    <p class="maturity-note">已有公开笔记，路径仍在扩展。内容形成稳定结构并经过持续复核后，才会进入 Evergreen。</p>
+  )}
+  {relatedPosts.length > 0 && (
+    <nav class="related-notes" aria-label={`${pathLabel}相关文章`}>
+      <p>沿此路径继续</p>
+      <ul>
+        {relatedPosts.map((post) => (
+          <li>
+            <a href={`/blog/${post.data.slug}/`}>
+              <strong>{post.data.title}</strong>
+              <time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )}
+</div>
+
+{isKnowledgeRoot && <KnowledgeGarden />}
+
+<style>
+  .knowledge-title__row { display: flex; justify-content: space-between; gap: 2rem; align-items: end; }
+  .knowledge-title__row > div:first-child > p { margin: 0 0 .7rem; color: var(--color-knowledge-ink); font: 750 .68rem/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+  h1 { margin-top: 0; font-size: var(--sl-text-h1); line-height: var(--sl-line-height-headings); font-weight: 600; color: var(--sl-color-white); }
+  .maturity-badge { display: grid; grid-template-columns: 4.8rem auto; gap: .75rem; align-items: center; flex: 0 0 auto; border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: .5rem .85rem .5rem .45rem; background: var(--color-surface); }
+  .maturity-badge img { width: 4.8rem; height: 4.8rem; border: 0; object-fit: contain; box-shadow: none; }
+  .maturity-badge span { display: grid; gap: .25rem; }
+  .maturity-badge small { color: var(--color-text-muted); font: 700 .58rem/1 var(--font-mono); letter-spacing: .1em; }
+  .maturity-badge strong { color: var(--color-knowledge-ink); font: 750 .82rem/1 var(--font-mono); }
+  .maturity-note { max-width: 48rem; margin: 1rem 0 0; color: var(--color-text-muted); font-size: .82rem; }
+  .related-notes { margin-top: 1.8rem; border-block: 1px solid var(--color-border); padding-block: 1rem; }
+  .related-notes > p { margin: 0 0 .75rem; color: var(--color-knowledge-ink); font: 750 .62rem/1 var(--font-mono); letter-spacing: .08em; }
+  .related-notes ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.25rem; margin: 0; padding: 0; list-style: none; }
+  .related-notes li { border-top: 1px solid var(--color-border); }
+  .related-notes a { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; min-height: 3.2rem; padding-block: .75rem; color: var(--color-text); text-decoration: none; }
+  .related-notes a:hover strong { text-decoration: underline; text-decoration-color: var(--color-knowledge); text-underline-offset: .25rem; }
+  .related-notes strong { overflow-wrap: anywhere; font-size: .82rem; }
+  .related-notes time { flex: 0 0 auto; color: var(--color-text-muted); font: 650 .6rem/1 var(--font-mono); }
+  @media (max-width: 38rem) {
+    .knowledge-title__row { display: grid; }
+    .maturity-badge { width: fit-content; grid-template-columns: 3.8rem auto; }
+    .maturity-badge img { width: 3.8rem; height: 3.8rem; }
+    .related-notes ul { grid-template-columns: 1fr; }
+  }
+</style>

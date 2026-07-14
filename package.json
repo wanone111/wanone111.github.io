@@ -10,7 +10,7 @@
     "content:sync": "node tools/sync-content.mjs",
     "content:clean": "node tools/clean-generated.mjs",
     "content:clean:apply": "node tools/clean-generated.mjs --apply",
-    "content:publish": "npm run content:validate && npm run content:check-secrets && npm run content:sync && npm run test:generated && npm run test:content && npm run check && npm run build && npm run test:links && npm run test:routes && npm run test:redirects",
+    "content:publish": "npm run content:validate && npm run content:check-secrets && npm run content:sync && npm run test:generated && npm run test:content && npm run check && npm run build && npm run test:links && npm run test:routes && npm run test:redirects && npm run test:qa",
     "health:status": "node tools/health-status.mjs",
     "health:check": "npm run content:publish && npm run health:status",
     "check": "node tools/run-astro.mjs check",
@@ -20,7 +20,12 @@
     "test:content": "node --test tests/*.test.mjs",
     "test:links": "node tools/check-links.mjs",
     "test:routes": "node tools/check-routes.mjs",
-    "test:redirects": "node tools/check-legacy-redirects.mjs"
+    "test:redirects": "node tools/check-legacy-redirects.mjs",
+    "test:browser": "node tools/run-playwright.mjs tests/browser/smoke.spec.ts tests/browser/interactions.spec.ts",
+    "test:a11y": "node tools/run-playwright.mjs tests/browser/accessibility.spec.ts",
+    "test:lighthouse": "node tools/lighthouse-baseline.mjs",
+    "test:visual": "node tools/run-playwright.mjs tests/browser/visual-evidence.spec.ts",
+    "test:qa": "npm run test:browser && npm run test:a11y && npm run test:lighthouse"
   },
   "dependencies": {
     "@astrojs/starlight": "^0.41.3",
@@ -29,6 +34,10 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@axe-core/playwright": "4.12.1",
+    "@playwright/test": "1.61.1",
+    "chrome-launcher": "1.2.1",
+    "lighthouse": "12.6.1",
     "typescript": "^6.0.3"
   }
 }

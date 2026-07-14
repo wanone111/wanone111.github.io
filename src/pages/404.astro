@@ -3,10 +3,80 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="页面未找到" description="请求的页面不存在。">
-  <div class="stack-lg article-shell">
-    <p class="eyebrow">404</p>
-    <h1>这里暂时没有内容。</h1>
-    <p class="lede">页面可能尚未迁移，或者地址已经变化。迁移旧站时会为已有公开链接建立兼容映射。</p>
-    <div class="button-row"><a class="button" href="/">返回首页</a><a class="button secondary" href="/blog/">查看博客</a></div>
-  </div>
+  <section class="not-found">
+    <div class="not-found__copy stack-lg">
+      <p class="eyebrow">404 · Loose notes</p>
+      <h1>这页走丢了，几张知识卡片也散在桌上。</h1>
+      <p class="lede">可以拖动卡片整理一下，也可以直接回到稳定的主路径。卡片不是导航的唯一入口。</p>
+      <div class="button-row"><a class="button" href="/">返回首页</a><a class="button secondary" href="/blog/">查看博客</a><a class="button secondary" href="/knowledge/">进入知识库</a></div>
+    </div>
+    <div class="knowledge-scatter" data-knowledge-scatter aria-label="可拖动的知识卡片">
+      <a class="scatter-card scatter-card--embedded" href="/knowledge/embedded/" data-scatter-card style="--x: 8%; --y: 12%; --r: -5deg;"><small>Path 01</small><strong>嵌入式</strong><span>接口 · 时序 · 控制</span></a>
+      <a class="scatter-card scatter-card--robotics" href="/knowledge/robotics/" data-scatter-card style="--x: 52%; --y: 8%; --r: 4deg;"><small>Path 02</small><strong>机器人</strong><span>ROS 2 · PX4 · 仿真</span></a>
+      <a class="scatter-card scatter-card--fpga" href="/knowledge/fpga-edge-ai/" data-scatter-card style="--x: 18%; --y: 52%; --r: 3deg;"><small>Path 03</small><strong>FPGA</strong><span>并行 · HLS · PYNQ</span></a>
+      <a class="scatter-card scatter-card--linux" href="/knowledge/linux-tools/" data-scatter-card style="--x: 59%; --y: 50%; --r: -4deg;"><small>Path 04</small><strong>Linux</strong><span>系统 · 工具 · 自动化</span></a>
+    </div>
+  </section>
 </BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-scatter-card]').forEach((card) => {
+    let startX = 0;
+    let startY = 0;
+    let originX = 0;
+    let originY = 0;
+    let moved = false;
+    const readPosition = () => ({
+      x: Number.parseFloat(card.dataset.dragX ?? '0'),
+      y: Number.parseFloat(card.dataset.dragY ?? '0'),
+    });
+    card.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0) return;
+      const position = readPosition();
+      startX = event.clientX;
+      startY = event.clientY;
+      originX = position.x;
+      originY = position.y;
+      moved = false;
+      card.setPointerCapture(event.pointerId);
+      card.dataset.dragging = 'true';
+    });
+    card.addEventListener('pointermove', (event) => {
+      if (!card.hasPointerCapture(event.pointerId)) return;
+      const x = originX + event.clientX - startX;
+      const y = originY + event.clientY - startY;
+      moved ||= Math.abs(x - originX) + Math.abs(y - originY) > 5;
+      card.dataset.dragX = String(x);
+      card.dataset.dragY = String(y);
+      card.style.setProperty('--drag-x', `${x}px`);
+      card.style.setProperty('--drag-y', `${y}px`);
+    });
+    const endDrag = (event: PointerEvent) => {
+      if (card.hasPointerCapture(event.pointerId)) card.releasePointerCapture(event.pointerId);
+      delete card.dataset.dragging;
+    };
+    card.addEventListener('pointerup', endDrag);
+    card.addEventListener('pointercancel', endDrag);
+    card.addEventListener('click', (event) => {
+      if (moved) event.preventDefault();
+    });
+  });
+</script>
+
+<style>
+  .not-found { display: grid; grid-template-columns: minmax(28rem, .95fr) minmax(30rem, 1.05fr); align-items: center; gap: clamp(2rem, 5vw, 5rem); padding-block: clamp(3rem, 7vw, 6.5rem); }
+  .not-found__copy h1 { max-width: 14ch; font-size: clamp(2.75rem, 6vw, 5.2rem); }
+  .knowledge-scatter { position: relative; min-height: 36rem; border: 1px dashed color-mix(in srgb, var(--color-knowledge) 55%, var(--color-border)); border-radius: var(--radius-xl); background: color-mix(in srgb, var(--color-knowledge) 7%, var(--color-surface)); }
+  .knowledge-scatter::before { content: '拖动整理 · 点击进入'; position: absolute; right: var(--space-4); bottom: var(--space-4); color: var(--color-text-muted); font: 650 .68rem/1 var(--font-mono); }
+  .scatter-card { --drag-x: 0px; --drag-y: 0px; position: absolute; left: var(--x); top: var(--y); display: grid; width: min(15rem, 38%); min-height: 11rem; align-content: center; gap: .45rem; transform: translate(var(--drag-x), var(--drag-y)) rotate(var(--r)); border: 1px solid var(--color-border-strong); border-radius: var(--radius-lg); padding: var(--space-5); background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-card); text-decoration: none; touch-action: none; user-select: none; cursor: grab; }
+  .scatter-card[data-dragging='true'] { z-index: 4; box-shadow: var(--shadow-float); cursor: grabbing; }
+  .scatter-card small { color: var(--color-text-muted); font: 650 .68rem/1 var(--font-mono); }
+  .scatter-card strong { font-size: 1.45rem; }
+  .scatter-card span { color: var(--color-text-muted); font-size: .82rem; }
+  .scatter-card--embedded { border-top: .4rem solid var(--color-project); }
+  .scatter-card--robotics { border-top: .4rem solid var(--color-blog); }
+  .scatter-card--fpga { border-top: .4rem solid var(--color-experiment); }
+  .scatter-card--linux { border-top: .4rem solid var(--color-knowledge); }
+  @media (max-width: 66rem) { .not-found { grid-template-columns: 1fr; } .knowledge-scatter { min-height: 32rem; } }
+  @media (max-width: 36rem) { .knowledge-scatter { display: grid; min-height: auto; gap: var(--space-3); border: 0; background: transparent; } .knowledge-scatter::before { display: none; } .scatter-card { position: relative; left: auto; top: auto; width: 100%; min-height: 8rem; transform: translate(var(--drag-x), var(--drag-y)); } }
+</style>

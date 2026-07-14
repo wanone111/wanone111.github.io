@@ -11,6 +11,7 @@ const expected = [
   'links/index.html',
   'tags/index.html',
   'archive/index.html',
+  'uses/index.html',
   '404.html',
 ];
 

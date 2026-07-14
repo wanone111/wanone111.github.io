@@ -1,0 +1,208 @@
+<section class="pid-lab" aria-labelledby="pid-lab-title" data-pid-lab>
+  <header class="pid-lab__header">
+    <div>
+      <p class="pid-lab__eyebrow">Interactive field note</p>
+      <h2 id="pid-lab-title">亲手调一次 PID</h2>
+    </div>
+    <p>目标水位固定为 1.0。改变三个参数，观察响应速度、超调和稳态误差如何互相牵制。</p>
+  </header>
+
+  <div class="pid-lab__workspace">
+    <div class="pid-lab__controls" aria-label="PID 参数">
+      <label>
+        <span><strong>Kp</strong><small>比例 · 响应速度</small></span>
+        <output data-pid-output="kp">1.4</output>
+        <input type="range" min="0" max="4" value="1.4" step="0.1" data-pid-input="kp" aria-label="Kp 比例参数" aria-describedby="pid-kp-help" />
+        <small id="pid-kp-help">越大响应越快，也更容易超调。</small>
+      </label>
+      <label>
+        <span><strong>Ki</strong><small>积分 · 消除余差</small></span>
+        <output data-pid-output="ki">0.35</output>
+        <input type="range" min="0" max="1.5" value="0.35" step="0.05" data-pid-input="ki" aria-label="Ki 积分参数" aria-describedby="pid-ki-help" />
+        <small id="pid-ki-help">积累历史误差，过大时会持续推高输出。</small>
+      </label>
+      <label>
+        <span><strong>Kd</strong><small>微分 · 提前刹车</small></span>
+        <output data-pid-output="kd">0.2</output>
+        <input type="range" min="0" max="1.5" value="0.2" step="0.05" data-pid-input="kd" aria-label="Kd 微分参数" aria-describedby="pid-kd-help" />
+        <small id="pid-kd-help">抑制快速变化，过大时会放大噪声。</small>
+      </label>
+      <button type="button" data-pid-reset>恢复建议值</button>
+    </div>
+
+    <div class="pid-lab__result">
+      <div class="pid-chart">
+        <canvas data-pid-chart role="img" aria-label="目标水位与 PID 响应曲线"></canvas>
+        <div class="pid-chart__legend" aria-hidden="true"><span>目标 1.0</span><span>实际响应</span></div>
+      </div>
+      <dl class="pid-metrics">
+        <div><dt>最终误差</dt><dd data-pid-metric="error">—</dd></div>
+        <div><dt>最大超调</dt><dd data-pid-metric="overshoot">—</dd></div>
+        <div><dt>稳定时间</dt><dd data-pid-metric="settling">—</dd></div>
+      </dl>
+      <p class="pid-summary" data-pid-summary aria-live="polite"></p>
+    </div>
+  </div>
+  <noscript><p class="pid-lab__fallback">实验需要 JavaScript；文章正文和全部公式仍可正常阅读。</p></noscript>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-pid-lab]').forEach((lab) => {
+    const defaults = { kp: 1.4, ki: 0.35, kd: 0.2 };
+    const inputs = Object.fromEntries(
+      [...lab.querySelectorAll<HTMLInputElement>('[data-pid-input]')].map((input) => [input.dataset.pidInput, input]),
+    ) as Record<keyof typeof defaults, HTMLInputElement>;
+    const outputs = Object.fromEntries(
+      [...lab.querySelectorAll<HTMLOutputElement>('[data-pid-output]')].map((output) => [output.dataset.pidOutput, output]),
+    ) as Record<keyof typeof defaults, HTMLOutputElement>;
+    const canvas = lab.querySelector<HTMLCanvasElement>('[data-pid-chart]');
+    const summary = lab.querySelector<HTMLElement>('[data-pid-summary]');
+    if (!canvas || !summary || !inputs.kp || !inputs.ki || !inputs.kd) return;
+
+    const simulate = (kp: number, ki: number, kd: number) => {
+      const dt = 0.08;
+      const samples = 151;
+      const values: number[] = [0];
+      let actual = 0;
+      let integral = 0;
+      let previousError = 1;
+      for (let index = 1; index < samples; index += 1) {
+        const error = 1 - actual;
+        integral = Math.max(-3, Math.min(3, integral + error * dt));
+        const derivative = (error - previousError) / dt;
+        const output = Math.max(0, Math.min(2.2, kp * error + ki * integral + kd * derivative));
+        actual += dt * (output - 0.18 * actual) / 1.1;
+        previousError = error;
+        values.push(actual);
+      }
+      const maximum = Math.max(...values);
+      const finalError = Math.abs(1 - values.at(-1)!);
+      const settlingIndex = values.findIndex((_, index) => index > 5 && values.slice(index).every((value) => Math.abs(value - 1) <= 0.05));
+      return { dt, values, maximum, finalError, settlingTime: settlingIndex < 0 ? null : settlingIndex * dt };
+    };
+
+    const draw = () => {
+      const kp = Number(inputs.kp.value);
+      const ki = Number(inputs.ki.value);
+      const kd = Number(inputs.kd.value);
+      outputs.kp.value = kp.toFixed(1);
+      outputs.ki.value = ki.toFixed(2);
+      outputs.kd.value = kd.toFixed(2);
+      const result = simulate(kp, ki, kd);
+
+      const rect = canvas.getBoundingClientRect();
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.max(1, Math.round(rect.width * ratio));
+      canvas.height = Math.max(1, Math.round(rect.height * ratio));
+      const context = canvas.getContext('2d');
+      if (!context) return;
+      context.scale(ratio, ratio);
+      const width = rect.width;
+      const height = rect.height;
+      const pad = { left: 42, right: 16, top: 20, bottom: 30 };
+      const plotWidth = width - pad.left - pad.right;
+      const plotHeight = height - pad.top - pad.bottom;
+      const styles = getComputedStyle(document.documentElement);
+      const border = styles.getPropertyValue('--color-border-strong').trim() || '#c9bba9';
+      const text = styles.getPropertyValue('--color-text-muted').trim() || '#6f6259';
+      const target = styles.getPropertyValue('--color-status').trim() || '#f3bd4d';
+      const response = styles.getPropertyValue('--color-blog').trim() || '#67a7b3';
+      const maxY = Math.max(1.4, result.maximum * 1.08);
+      const x = (index: number) => pad.left + (index / (result.values.length - 1)) * plotWidth;
+      const y = (value: number) => pad.top + plotHeight - (value / maxY) * plotHeight;
+
+      context.clearRect(0, 0, width, height);
+      context.strokeStyle = border;
+      context.fillStyle = text;
+      context.lineWidth = 1;
+      context.font = '11px ui-monospace, monospace';
+      context.textAlign = 'right';
+      for (const level of [0, 0.5, 1]) {
+        context.beginPath();
+        context.moveTo(pad.left, y(level));
+        context.lineTo(width - pad.right, y(level));
+        context.stroke();
+        context.fillText(level.toFixed(1), pad.left - 8, y(level) + 4);
+      }
+      context.textAlign = 'center';
+      for (const seconds of [0, 4, 8, 12]) context.fillText(`${seconds}s`, x(seconds / result.dt), height - 8);
+
+      context.strokeStyle = target;
+      context.setLineDash([6, 5]);
+      context.lineWidth = 2;
+      context.beginPath();
+      context.moveTo(pad.left, y(1));
+      context.lineTo(width - pad.right, y(1));
+      context.stroke();
+
+      context.strokeStyle = response;
+      context.setLineDash([]);
+      context.lineWidth = 3;
+      context.lineJoin = 'round';
+      context.beginPath();
+      result.values.forEach((value, index) => index === 0 ? context.moveTo(x(index), y(value)) : context.lineTo(x(index), y(value)));
+      context.stroke();
+
+      const finalError = lab.querySelector<HTMLElement>('[data-pid-metric="error"]');
+      const overshoot = lab.querySelector<HTMLElement>('[data-pid-metric="overshoot"]');
+      const settling = lab.querySelector<HTMLElement>('[data-pid-metric="settling"]');
+      if (finalError) finalError.textContent = result.finalError.toFixed(3);
+      if (overshoot) overshoot.textContent = `${Math.max(0, (result.maximum - 1) * 100).toFixed(1)}%`;
+      if (settling) settling.textContent = result.settlingTime === null ? '未稳定' : `${result.settlingTime.toFixed(1)}s`;
+
+      const descriptor = result.finalError > 0.08
+        ? '最终仍有明显误差，试着增加 Ki。'
+        : result.maximum > 1.15
+          ? '已经接近目标，但超调偏大；增加 Kd 或降低 Kp。'
+          : result.settlingTime !== null && result.settlingTime > 7
+            ? '响应稳定但偏慢，可以小幅增加 Kp。'
+            : '响应速度、超调和最终误差较为平衡。';
+      summary.textContent = descriptor;
+      canvas.setAttribute('aria-label', `PID 响应曲线。最终误差 ${result.finalError.toFixed(3)}，最大超调 ${Math.max(0, (result.maximum - 1) * 100).toFixed(1)}%，${result.settlingTime === null ? '十二秒内未稳定' : `稳定时间 ${result.settlingTime.toFixed(1)} 秒`}。`);
+    };
+
+    Object.values(inputs).forEach((input) => input.addEventListener('input', draw));
+    lab.querySelector<HTMLButtonElement>('[data-pid-reset]')?.addEventListener('click', () => {
+      Object.entries(defaults).forEach(([key, value]) => { inputs[key as keyof typeof defaults].value = String(value); });
+      draw();
+      inputs.kp.focus();
+    });
+    new ResizeObserver(draw).observe(canvas);
+    new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    draw();
+  });
+</script>
+
+<style>
+  .pid-lab { margin-block: 0 var(--space-8); border: 1px solid var(--color-border-strong); border-radius: var(--radius-xl); padding: clamp(1.1rem, 4vw, 2rem); background: color-mix(in srgb, var(--color-experiment) 8%, var(--color-surface)); box-shadow: var(--shadow-soft); }
+  .pid-lab__header { display: grid; grid-template-columns: minmax(0, 1fr) minmax(15rem, .8fr); gap: var(--space-6); align-items: end; border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-5); }
+  .pid-lab__eyebrow { margin: 0 0 .45rem; color: var(--color-experiment-ink); font: 750 .65rem/1 var(--font-mono); letter-spacing: .11em; text-transform: uppercase; }
+  .pid-lab h2 { margin: 0; border: 0; padding: 0; font-size: clamp(1.8rem, 4vw, 3rem); }
+  .pid-lab__header > p { margin: 0; color: var(--color-text-muted); font-size: .85rem; }
+  .pid-lab__workspace { display: grid; grid-template-columns: minmax(12rem, .72fr) minmax(0, 1.4fr); gap: clamp(1.5rem, 4vw, 3rem); padding-top: var(--space-6); }
+  .pid-lab__controls { display: grid; align-content: start; gap: 1.2rem; }
+  .pid-lab__controls label { display: grid; grid-template-columns: 1fr auto; gap: .45rem .75rem; }
+  .pid-lab__controls label > span { display: flex; gap: .55rem; align-items: baseline; }
+  .pid-lab__controls strong { font: 800 .82rem/1 var(--font-mono); }
+  .pid-lab__controls small { color: var(--color-text-muted); font-size: .68rem; line-height: 1.4; }
+  .pid-lab__controls output { color: var(--color-experiment-ink); font: 750 .76rem/1 var(--font-mono); }
+  .pid-lab__controls input { grid-column: 1 / -1; width: 100%; accent-color: var(--color-experiment); cursor: pointer; }
+  .pid-lab__controls label > small { grid-column: 1 / -1; }
+  .pid-lab__controls button { min-height: 2.75rem; border: 1px solid var(--color-border-strong); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); font-weight: 750; cursor: pointer; }
+  .pid-chart { position: relative; }
+  .pid-chart canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-bg); }
+  .pid-chart__legend { display: flex; gap: 1rem; margin-top: .6rem; color: var(--color-text-muted); font: 650 .62rem/1 var(--font-mono); }
+  .pid-chart__legend span::before { content: ''; display: inline-block; width: 1.4rem; height: 2px; margin-right: .35rem; background: var(--color-status); vertical-align: middle; }
+  .pid-chart__legend span:last-child::before { background: var(--color-blog); }
+  .pid-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; margin: 1rem 0 0; }
+  .pid-metrics div { border-top: 1px solid var(--color-border); padding-top: .75rem; }
+  .pid-metrics dt { color: var(--color-text-muted); font-size: .66rem; }
+  .pid-metrics dd { margin: .25rem 0 0; color: var(--color-text); font: 750 .84rem/1 var(--font-mono); }
+  .pid-summary, .pid-lab__fallback { margin: 1rem 0 0; color: var(--color-text-muted); font-size: .78rem; }
+  @media (max-width: 52rem) {
+    .pid-lab__header, .pid-lab__workspace { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 30rem) {
+    .pid-metrics { grid-template-columns: 1fr; }
+  }
+</style>

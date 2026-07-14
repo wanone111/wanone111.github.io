@@ -1,0 +1,120 @@
+---
+interface Props {
+  index: number;
+  title: string;
+  description: string;
+  category?: string;
+  updated: string;
+  tags: string[];
+  href: string;
+  cover?: string;
+}
+
+const { index, title, description, category = 'system', updated, tags, href, cover } = Astro.props;
+const normalizedCategory = category.toLowerCase();
+const kind = normalizedCategory.includes('embedded') || normalizedCategory.includes('robot')
+  ? 'embedded'
+  : normalizedCategory.includes('web')
+    ? 'web'
+    : normalizedCategory.includes('experiment') || normalizedCategory.includes('creative')
+      ? 'experiment'
+      : 'tool';
+const kindLabels = {
+  embedded: '嵌入式系统',
+  web: 'Web 产品',
+  tool: '工程工具',
+  experiment: '交互实验',
+};
+---
+
+<article class={`project-showcase project-showcase--${kind}`}>
+  <div class="project-showcase__visual" aria-hidden="true">
+    {kind === 'tool' && (
+      <div class="tool-demo">
+        <div class="tool-demo__bar"><i></i><i></i><i></i><span>publish-check</span></div>
+        <pre><code><span class="tool-demo__command">$ npm run content:publish</span>
+<span class="tool-demo__line">✓ public allowlist</span>
+<span class="tool-demo__line">✓ links · routes · secrets</span>
+<span class="tool-demo__line tool-demo__ready">ready to deploy</span></code></pre>
+      </div>
+    )}
+    {kind === 'web' && (
+      <div class="web-demo">
+        <div class="web-demo__bar"><i></i><span>wanone.local</span></div>
+        <div class="web-demo__layout"><b></b><span></span><span></span><span></span></div>
+      </div>
+    )}
+    {kind === 'embedded' && (
+      <div class="embedded-demo">
+        <span>INPUT</span><i></i><i></i><i></i><b>VERIFY</b>
+      </div>
+    )}
+    {kind === 'experiment' && cover && <img src={cover} alt="" loading="lazy" />}
+    {kind === 'experiment' && !cover && (
+      <div class="experiment-demo"><span>EXP</span><b>交互预览</b><i></i></div>
+    )}
+  </div>
+
+  <div class="project-showcase__index">{String(index + 1).padStart(2, '0')}</div>
+  <div class="project-showcase__body stack">
+    <p class="eyebrow">{kindLabels[kind]} · {updated}</p>
+    <h2>{title}</h2>
+    <p class="lede">{description}</p>
+    <div class="tag-list">{tags.map((tag) => <span class="tag">{tag}</span>)}</div>
+  </div>
+  <a class="button secondary project-showcase__link" href={href}>查看项目</a>
+</article>
+
+<style>
+  .project-showcase { position: relative; display: grid; grid-template-columns: minmax(16rem, 5fr) auto minmax(20rem, 6fr); grid-template-rows: 1fr auto; gap: var(--space-6) var(--space-7); overflow: hidden; border: 1px solid var(--color-border-strong); border-radius: var(--radius-xl); padding: clamp(1.25rem, 3vw, 2.25rem); background: var(--color-surface); }
+  .project-showcase__visual { grid-column: 1; grid-row: 1 / span 2; min-height: 22rem; border-radius: var(--radius-lg); }
+  .project-showcase__index { grid-column: 2; grid-row: 1; color: var(--color-project); font: 850 clamp(2rem, 4vw, 4rem)/1 var(--font-mono); }
+  .project-showcase__body { grid-column: 3; grid-row: 1; align-self: center; }
+  .project-showcase__body h2 { max-width: 18ch; }
+  .project-showcase__body .lede { max-width: 48rem; }
+  .project-showcase__link { grid-column: 3; grid-row: 2; width: fit-content; }
+
+  .project-showcase--tool { background: linear-gradient(135deg, color-mix(in srgb, var(--color-blog) 9%, var(--color-surface)), var(--color-surface) 58%); }
+  .project-showcase--tool .project-showcase__visual { display: grid; place-items: center; padding: clamp(1rem, 3vw, 2rem); background: #241d1a; }
+  .tool-demo { width: min(100%, 30rem); overflow: hidden; border: 1px solid rgb(255 247 232 / .28); border-radius: var(--radius-md); background: #171311; color: #fff7e8; box-shadow: 0 1.25rem 3rem rgb(0 0 0 / .24); }
+  .tool-demo__bar { display: flex; height: 2.4rem; align-items: center; gap: .38rem; border-bottom: 1px solid rgb(255 247 232 / .15); padding-inline: .75rem; color: #c8baad; font: 650 .64rem/1 var(--font-mono); }
+  .tool-demo__bar i { width: .55rem; height: .55rem; border-radius: 50%; background: var(--color-project); }
+  .tool-demo__bar i:nth-child(2) { background: var(--color-status); }
+  .tool-demo__bar i:nth-child(3) { background: var(--color-knowledge); }
+  .tool-demo__bar span { margin-left: auto; }
+  .tool-demo pre { margin: 0; padding: 1.25rem; white-space: pre-wrap; font: 650 clamp(.72rem, 1.25vw, .9rem)/1.9 var(--font-mono); }
+  .tool-demo__command { display: inline-block; overflow: hidden; width: 1ch; max-width: 100%; border-right: 2px solid var(--color-status); white-space: nowrap; }
+  .tool-demo__line { display: block; color: #b9cdb6; opacity: 1; transform: translateY(.25rem); transition: transform var(--transition-smooth); }
+  .tool-demo__ready { color: #8fc3ce; }
+  .project-showcase--tool:hover .tool-demo__command, .project-showcase--tool:focus-within .tool-demo__command { width: 28ch; animation: terminal-type 1.15s steps(27, end) both; }
+  .project-showcase--tool:hover .tool-demo__line, .project-showcase--tool:focus-within .tool-demo__line { opacity: 1; transform: none; }
+
+  .project-showcase--web .project-showcase__visual { padding: var(--space-5); background: var(--color-blog); }
+  .web-demo { height: 100%; overflow: hidden; border-radius: var(--radius-md); background: var(--color-bg); }
+  .web-demo__bar { display: flex; align-items: center; gap: .6rem; height: 2.5rem; padding: 0 .8rem; background: var(--color-surface-strong); color: var(--color-text-muted); font: 650 .64rem/1 var(--font-mono); }
+  .web-demo__bar i { width: .65rem; height: .65rem; border-radius: 50%; background: var(--color-project); }
+  .web-demo__layout { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); padding: var(--space-5); }
+  .web-demo__layout b { grid-column: 1 / -1; height: 6rem; border-radius: var(--radius-sm); background: color-mix(in srgb, var(--color-blog) 22%, transparent); }
+  .web-demo__layout span { height: 4rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); transition: transform var(--transition-smooth); }
+  .project-showcase--web:hover .web-demo__layout span:nth-child(3), .project-showcase--web:focus-within .web-demo__layout span:nth-child(3) { transform: translateX(.4rem); }
+
+  .project-showcase--embedded .project-showcase__visual { display: grid; place-items: center; background: color-mix(in srgb, var(--color-knowledge) 18%, var(--color-surface)); }
+  .embedded-demo { display: flex; align-items: center; gap: .7rem; color: var(--color-text); font: 750 .7rem/1 var(--font-mono); }
+  .embedded-demo i { width: 2.5rem; height: 2px; background: var(--color-knowledge); transform-origin: left; transition: transform var(--transition-smooth); }
+  .embedded-demo b { border: 1px solid var(--color-knowledge); border-radius: var(--radius-sm); padding: .65rem; }
+  .project-showcase--embedded:hover .embedded-demo i, .project-showcase--embedded:focus-within .embedded-demo i { transform: scaleX(.72); }
+
+  .project-showcase--experiment .project-showcase__visual { overflow: hidden; background: color-mix(in srgb, var(--color-experiment) 20%, var(--color-surface)); }
+  .project-showcase--experiment img { width: 100%; height: 100%; object-fit: cover; }
+  .experiment-demo { display: grid; height: 100%; place-content: center; gap: var(--space-4); text-align: center; }
+  .experiment-demo span { color: var(--color-experiment-ink); font: 800 3rem/1 var(--font-mono); }
+  .experiment-demo b { font-size: 1.2rem; }
+  .experiment-demo i { width: 7rem; height: .65rem; border-radius: var(--radius-pill); background: var(--color-experiment); transform-origin: left; transition: transform var(--transition-smooth); }
+  .project-showcase--experiment:hover .experiment-demo i, .project-showcase--experiment:focus-within .experiment-demo i { transform: scaleX(.55); }
+
+  @keyframes terminal-type { from { width: 1ch; } to { width: 28ch; } }
+  @media (hover: none) { .tool-demo__command { width: 28ch; border-right: 0; } .tool-demo__line { opacity: 1; transform: none; } }
+  @media (max-width: 62rem) { .project-showcase { grid-template-columns: auto 1fr; } .project-showcase__visual { grid-column: 1 / -1; grid-row: 1; min-height: 18rem; } .project-showcase__index { grid-column: 1; grid-row: 2; } .project-showcase__body { grid-column: 2; grid-row: 2; } .project-showcase__link { grid-column: 2; grid-row: 3; } }
+  @media (max-width: 42rem) { .project-showcase { grid-template-columns: 1fr; } .project-showcase__visual, .project-showcase__index, .project-showcase__body, .project-showcase__link { grid-column: 1; } .project-showcase__visual { min-height: 15rem; } .project-showcase__index { grid-row: 2; } .project-showcase__body { grid-row: 3; } .project-showcase__link { grid-row: 4; } }
+  @media (prefers-reduced-motion: reduce) { .tool-demo__command { width: 28ch; border-right: 0; animation: none !important; } .tool-demo__line { opacity: 1; transform: none; } }
+</style>

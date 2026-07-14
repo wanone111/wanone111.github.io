@@ -1,6 +1,8 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PIDTuningLab from '../../components/PIDTuningLab.astro';
+import ReadingProgressPlant from '../../components/ReadingProgressPlant.astro';
 import { formatDate, isPublic } from '../../lib/content';
 
 export async function getStaticPaths() {
@@ -29,18 +31,55 @@ const { Content } = await render(post);
     </header>
     <div class="article-layout">
       <aside class="article-aside"><p class="eyebrow">Field notes</p><p>保留问题背景、关键过程和可复用结论。</p></aside>
-      <div class="article-shell prose"><Content /></div>
+      <div class="article-shell prose">
+        {post.data.slug === 'algorithms/pid' && <PIDTuningLab />}
+        <Content />
+        <ReadingProgressPlant slug={post.data.slug} />
+      </div>
     </div>
   </article>
 </BaseLayout>
 
+<script>
+  const copyMessages = ['已复制，继续构建。', '代码已到剪贴板。', '复制成功，去试一遍。'];
+  document.querySelectorAll<HTMLElement>('.article-shell pre').forEach((codeBlock, index) => {
+    if (codeBlock.dataset.copyReady === 'true') return;
+    codeBlock.dataset.copyReady = 'true';
+    codeBlock.tabIndex = 0;
+    const shell = document.createElement('div');
+    shell.className = 'code-copy-shell';
+    codeBlock.before(shell);
+    shell.append(codeBlock);
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'code-copy-button';
+    button.textContent = '复制';
+    button.setAttribute('aria-label', `复制第 ${index + 1} 个代码块`);
+    shell.append(button);
+    button.addEventListener('click', async () => {
+      const code = codeBlock.querySelector('code')?.textContent ?? codeBlock.textContent ?? '';
+      try {
+        await navigator.clipboard.writeText(code);
+        button.textContent = copyMessages[index % copyMessages.length] ?? '已复制';
+      } catch {
+        button.textContent = '复制失败，请手动选择';
+      }
+      window.setTimeout(() => { button.textContent = '复制'; }, 1800);
+    });
+  });
+</script>
+
 <style>
   .article-header { border-bottom: 1px solid var(--color-border-strong); padding-block: clamp(3.5rem, 8vw, 7rem) var(--space-7); }
   .article-header__meta { grid-column: 1 / span 3; color: var(--color-text-muted); font: 600 .74rem/1.6 var(--font-mono); }
-  .article-header__meta a { color: var(--color-accent); }
+  .article-header__meta a { color: var(--color-accent-strong); }
   .article-header__body { grid-column: 4 / -1; }
   .article-header__body h1 { max-width: 16ch; font-size: clamp(2.8rem, 7vw, 6.5rem); }
   .article-aside { grid-column: 1 / span 2; position: sticky; top: 2rem; color: var(--color-text-muted); font-size: .86rem; }
   .article-shell { grid-column: 4 / span 7; }
+  :global(.code-copy-shell) { position: relative; margin-block: 1.5rem; }
+  :global(.code-copy-shell pre) { margin-block: 0; padding-top: 3.2rem; }
+  :global(.code-copy-button) { position: absolute; z-index: 2; top: .65rem; right: .65rem; max-width: calc(100% - 1.3rem); overflow: hidden; border: 1px solid color-mix(in srgb, var(--color-blog) 45%, var(--color-border)); border-radius: var(--radius-pill); padding: .42rem .7rem; background: color-mix(in srgb, var(--color-surface) 92%, transparent); color: var(--color-text); font: 700 .68rem/1 var(--font-mono); text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+  :global(.code-copy-button:hover) { border-color: var(--color-blog); background: var(--color-blue-soft); }
   @media (max-width: 48rem) { .article-header__meta, .article-header__body, .article-aside, .article-shell { grid-column: 1 / -1; } .article-aside { display: none; } }
 </style>

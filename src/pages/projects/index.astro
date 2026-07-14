@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
+import ProjectShowcaseCard from '../../components/ProjectShowcaseCard.astro';
 import { byNewest, formatDate, isPublic } from '../../lib/content';
 
 const projects = (await getCollection('projects')).filter(isPublic).sort(byNewest);
@@ -13,16 +14,16 @@ const projects = (await getCollection('projects')).filter(isPublic).sort(byNewes
     {projects.length > 0 ? (
       <div class="project-list">
         {projects.map((project, index) => (
-          <article class="project-feature">
-            <div class="project-feature__index">{String(index + 1).padStart(2, '0')}</div>
-            <div class="project-feature__body stack">
-              <p class="eyebrow">{project.data.category ?? 'Engineering system'} · {formatDate(project.data.updated)}</p>
-              <h2>{project.data.title}</h2>
-              <p class="lede">{project.data.description}</p>
-              <div class="tag-list">{project.data.tags.map((tag) => <span class="tag">{tag}</span>)}</div>
-            </div>
-            <a class="button secondary" href={`/projects/${project.data.slug}/`}>查看项目</a>
-          </article>
+          <ProjectShowcaseCard
+            index={index}
+            title={project.data.title}
+            description={project.data.description}
+            category={project.data.category}
+            updated={formatDate(project.data.updated)}
+            tags={project.data.tags}
+            href={`/projects/${project.data.slug}/`}
+            cover={project.data.cover}
+          />
         ))}
       </div>
     ) : <div class="empty-state">暂无公开项目。</div>}
@@ -30,9 +31,5 @@ const projects = (await getCollection('projects')).filter(isPublic).sort(byNewes
 </BaseLayout>
 
 <style>
-  .project-feature { display: grid; grid-template-columns: 1fr 7fr auto; gap: var(--space-7); align-items: start; border: 1px solid var(--color-border-strong); border-radius: var(--radius-xl); padding: clamp(1.5rem, 5vw, 4rem); background: linear-gradient(145deg, var(--color-accent-soft), var(--color-surface) 48%); box-shadow: var(--shadow-card); }
-  .project-feature__index { color: var(--color-accent); font: 850 clamp(2rem, 5vw, 4.5rem)/1 var(--font-mono); }
-  .project-feature__body h2 { max-width: 18ch; }
-  .project-feature__body .lede { max-width: 48rem; }
-  @media (max-width: 48rem) { .project-feature { grid-template-columns: 1fr; gap: var(--space-5); } }
+  .project-list { display: grid; gap: var(--space-6); }
 </style>

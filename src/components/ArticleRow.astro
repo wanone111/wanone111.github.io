@@ -1,13 +1,14 @@
 ---
-interface Props { href: string; title: string; description: string; meta: string; category?: string; }
-const { href, title, description, meta, category = '工程笔记' } = Astro.props;
+interface Props { href: string; title: string; description: string; meta: string; category?: string; headingLevel?: 'h2' | 'h3'; }
+const { href, title, description, meta, category = '工程笔记', headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
 ---
 
 <article class="article-row">
   <p class="article-row__meta">{meta}</p>
   <a class="article-row__body" href={href}>
     <span class="eyebrow">{category}</span>
-    <h3>{title}</h3>
+    <Heading>{title}</Heading>
     <p>{description}</p>
   </a>
   <a class="article-row__action" href={href} aria-label={`阅读：${title}`}>打开</a>
@@ -17,9 +18,9 @@ const { href, title, description, meta, category = '工程笔记' } = Astro.prop
   .article-row { display: grid; grid-template-columns: minmax(7rem, 1.4fr) minmax(0, 7fr) auto; gap: var(--space-5); align-items: start; border-top: 1px solid var(--color-border); padding-block: var(--space-5); }
   .article-row__meta { color: var(--color-text-muted); font: 550 .74rem/1.5 var(--font-mono); }
   .article-row__body { display: grid; gap: .55rem; color: inherit; text-decoration: none; }
-  .article-row h3 { font-size: clamp(1.35rem, 2.6vw, 2.15rem); }
+  .article-row :is(h2, h3) { font-size: clamp(1.35rem, 2.6vw, 2.15rem); }
   .article-row__body > p { max-width: 50rem; color: var(--color-text-muted); }
-  .article-row__body:hover h3 { color: var(--color-accent); }
+  .article-row__body:hover :is(h2, h3) { color: var(--color-accent); }
   .article-row__action { border-bottom: 1px solid currentColor; color: var(--color-text); font: 700 .75rem/1.5 var(--font-mono); text-decoration: none; }
   @media (max-width: 42rem) { .article-row { grid-template-columns: 1fr auto; } .article-row__meta { grid-column: 1 / -1; } }
 </style>

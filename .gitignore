@@ -2,6 +2,9 @@ node_modules/
 dist/
 .astro/
 .npm-cache/
+playwright-report/
+test-results/
+qa-artifacts/
 .DS_Store
 *.log
 .env

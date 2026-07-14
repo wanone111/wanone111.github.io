@@ -8,7 +8,14 @@
 *::after { box-sizing: border-box; }
 
 html { background: var(--color-bg); scroll-behavior: smooth; }
-body { margin: 0; overflow-x: hidden; background: var(--color-bg); }
+body { margin: 0; overflow-x: hidden; background: var(--color-bg); transition: background var(--transition-smooth), color var(--transition-smooth); }
+
+:root[data-experiment-theme='true'] body {
+  background-image:
+    radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--color-personal) 22%, transparent), transparent 24rem),
+    radial-gradient(circle at 88% 12%, color-mix(in srgb, var(--color-blog) 20%, transparent), transparent 26rem);
+  background-attachment: fixed;
+}
 img { display: block; max-width: 100%; }
 
 button,
@@ -33,5 +40,7 @@ button { color: inherit; }
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

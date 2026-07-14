@@ -1,0 +1,142 @@
+---
+import { getCollection } from 'astro:content';
+import { isPublic } from '../lib/content';
+
+const posts = (await getCollection('blog')).filter(isPublic);
+const pathDefinitions = [
+  {
+    title: '嵌入式与通信',
+    href: '/knowledge/embedded/',
+    description: 'STM32 · 总线协议 · 调试',
+    matches: (slug: string) => slug.startsWith('embedded/') || slug.startsWith('networking/'),
+  },
+  {
+    title: '机器人系统',
+    href: '/knowledge/robotics/',
+    description: 'ROS 2 · Gazebo · SLAM',
+    matches: (slug: string) => slug.startsWith('robotics/') || slug === 'algorithms/pid',
+  },
+  {
+    title: 'FPGA 与边缘 AI',
+    href: '/knowledge/fpga-edge-ai/',
+    description: 'RTL · HLS · 验证',
+    matches: (slug: string) => slug.startsWith('fpga/'),
+  },
+  {
+    title: 'Linux 与工程工具',
+    href: '/knowledge/linux-tools/',
+    description: 'Linux · C++ · 工程流程',
+    matches: (slug: string) => slug.startsWith('tools/') || slug.startsWith('programming/'),
+  },
+];
+
+const paths = pathDefinitions.map((path) => ({
+  ...path,
+  notes: posts.filter((post) => path.matches(post.data.slug)).length,
+}));
+
+const stages = [
+  { name: 'Seed', label: '已收集主题，等待整理', image: '/images/brand/knowledge-seed-v1.webp' },
+  { name: 'Growing', label: '已有公开笔记，持续扩展', image: '/images/brand/knowledge-growing-v1.webp' },
+  { name: 'Evergreen', label: '形成稳定、定期复核的路径', image: '/images/brand/knowledge-evergreen-v1.webp' },
+];
+---
+
+<section class="knowledge-garden" aria-labelledby="knowledge-garden-title" data-knowledge-garden>
+  <div class="knowledge-garden__intro">
+    <div>
+      <p class="garden-eyebrow">Knowledge garden</p>
+      <h2 id="knowledge-garden-title">沿着关系，而不是文件夹浏览。</h2>
+    </div>
+    <p>四条路径都已经长出公开笔记，目前处于 Growing。它们形成稳定指南后，才会进入 Evergreen。</p>
+  </div>
+
+  <nav class="garden-map" aria-label="知识路径关系">
+    <div class="garden-map__center" aria-hidden="true">
+      <span>PUBLIC</span>
+      <strong>公开知识</strong>
+    </div>
+    {paths.map((path, index) => (
+      <a class="garden-path" href={path.href} style={`--path-order: ${index}`}>
+        <img src="/images/brand/knowledge-growing-v1.webp" width="320" height="320" alt="" loading="lazy" />
+        <span class="garden-path__body">
+          <small>Growing · {path.notes} 篇相关笔记</small>
+          <strong>{path.title}</strong>
+          <span>{path.description}</span>
+        </span>
+        <span class="garden-path__arrow" aria-hidden="true">↗</span>
+      </a>
+    ))}
+  </nav>
+
+  <div class="garden-legend" aria-label="知识成熟度说明">
+    {stages.map((stage) => (
+      <div class="garden-stage">
+        <img src={stage.image} width="320" height="320" alt="" loading="lazy" />
+        <span><strong>{stage.name}</strong><small>{stage.label}</small></span>
+      </div>
+    ))}
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-knowledge-garden]').forEach((garden) => {
+    if (!('IntersectionObserver' in window)) {
+      garden.dataset.visible = 'true';
+      return;
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return;
+      garden.dataset.visible = 'true';
+      observer.disconnect();
+    }, { threshold: 0.18 });
+    observer.observe(garden);
+  });
+</script>
+
+<style>
+  .knowledge-garden { margin-block: 2.5rem 3rem; border-block: 1px solid var(--color-border-strong); padding-block: clamp(2rem, 5vw, 4rem); }
+  .knowledge-garden__intro { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(16rem, .75fr); gap: clamp(1.5rem, 5vw, 4rem); align-items: end; }
+  .knowledge-garden__intro h2 { max-width: 13ch; margin: .45rem 0 0; border: 0; padding: 0; font-size: clamp(1.9rem, 4vw, 3.5rem); }
+  .knowledge-garden__intro > p { margin: 0; color: var(--color-text-muted); }
+  .garden-eyebrow { margin: 0; color: var(--color-knowledge-ink); font: 750 .68rem/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+
+  .garden-map { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 5rem; margin-block: 3rem; padding-block: 1rem; }
+  .garden-map__center { position: absolute; z-index: 2; left: 50%; top: 50%; display: grid; width: 6.8rem; aspect-ratio: 1; place-content: center; transform: translate(-50%, -50%); border: 1px solid var(--color-knowledge); border-radius: 50%; background: var(--color-bg); text-align: center; box-shadow: 0 0 0 .75rem var(--color-bg); }
+  .garden-map__center span { color: var(--color-knowledge-ink); font: 750 .58rem/1 var(--font-mono); letter-spacing: .1em; }
+  .garden-map__center strong { margin-top: .35rem; font-size: .85rem; }
+  .garden-path { --line-origin: right; position: relative; z-index: 1; display: grid; grid-template-columns: 4.8rem minmax(0, 1fr) auto; gap: 1rem; align-items: center; min-height: 7rem; border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: .9rem 1rem; background: var(--color-surface); color: var(--color-text) !important; text-decoration: none; }
+  .garden-path:nth-of-type(even) { --line-origin: left; }
+  .garden-path::before { content: ''; position: absolute; z-index: -1; top: 50%; right: -5rem; width: 5rem; height: 1px; transform: scaleX(0); transform-origin: var(--line-origin); background: var(--color-knowledge); opacity: 0; transition: transform var(--transition-smooth), opacity var(--transition-smooth); transition-delay: calc(var(--path-order) * 90ms); }
+  .garden-path:nth-of-type(even)::before { right: auto; left: -5rem; }
+  [data-visible='true'] .garden-path::before { transform: scaleX(1); opacity: .72; }
+  .garden-path img { width: 4.8rem; height: 4.8rem; border: 0; object-fit: contain; box-shadow: none; }
+  .garden-path__body { display: grid; gap: .28rem; min-width: 0; }
+  .garden-path__body small { color: var(--color-knowledge-ink); font: 700 .62rem/1.3 var(--font-mono); }
+  .garden-path__body strong { font-size: 1rem; }
+  .garden-path__body > span { color: var(--color-text-muted); font-size: .76rem; }
+  .garden-path__arrow { align-self: start; color: var(--color-knowledge); font-size: 1.1rem; }
+  .garden-path:hover strong { text-decoration: underline; text-decoration-color: var(--color-knowledge); text-underline-offset: .25rem; }
+
+  .garden-legend { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; border-top: 1px solid var(--color-border); padding-top: 1.4rem; }
+  .garden-stage { display: grid; grid-template-columns: 3.5rem 1fr; gap: .85rem; align-items: center; }
+  .garden-stage img { width: 3.5rem; height: 3.5rem; border: 0; object-fit: contain; box-shadow: none; }
+  .garden-stage span { display: grid; gap: .2rem; }
+  .garden-stage strong { font: 750 .7rem/1 var(--font-mono); }
+  .garden-stage small { color: var(--color-text-muted); font-size: .7rem; line-height: 1.35; }
+
+  @media (max-width: 52rem) {
+    .knowledge-garden__intro { grid-template-columns: 1fr; }
+    .garden-map { grid-template-columns: 1fr; gap: .8rem; margin-block: 2rem; padding: 0; }
+    .garden-map__center, .garden-path::before { display: none; }
+    .garden-legend { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 28rem) {
+    .garden-path { grid-template-columns: 4rem minmax(0, 1fr); }
+    .garden-path img { width: 4rem; height: 4rem; }
+    .garden-path__arrow { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .garden-path::before { transform: scaleX(1); opacity: .72; transition: none; }
+  }
+</style>

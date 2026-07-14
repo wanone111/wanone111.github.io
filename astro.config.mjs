@@ -18,6 +18,9 @@ export default defineConfig({
       description: '嵌入式、机器人、FPGA 与边缘 AI 的公开技术知识库。',
       favicon: '/favicon.svg',
       customCss: ['./src/styles/starlight.css'],
+      components: {
+        PageTitle: './src/components/starlight/KnowledgePageTitle.astro',
+      },
       disable404Route: true,
       social: [
         { icon: 'github', label: 'GitHub', href: 'https://github.com/wanone111' },

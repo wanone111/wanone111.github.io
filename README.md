@@ -9,6 +9,14 @@
 - Node.js 22（GitHub Actions）
 - GitHub Pages（`.github/workflows/deploy.yml`）
 
+## 当前状态
+
+截至 2026-07-14，公开网站已完成“工程实验编辑部”视觉重设计并部署到生产环境。当前公开内容包括 18 篇博客、一个项目、About/Resume/Links 三个固定页面，以及知识库首页和四个技术分类入口。
+
+当前发布基线为 `411d58a feat(site): redesign public website`，对应的 GitHub Pages 工作流已成功完成。最终 `npm.cmd run health:check` 验证了 22 个可发布源文件、九个生成资源、11 项内容工具测试、33 个静态页面、658 个站内链接与资源、十个必要路由和 18 个旧 URL 重定向。
+
+视觉层使用暖白纸面、编辑网格、珊瑚红强调色和四类知识颜色。Astro 页面与 Starlight 共享设计 Token；移动导航、主题切换、博客分类筛选和发布流程说明使用原生 JavaScript，不依赖额外前端框架或动画库。
+
 ## 项目结构
 
 | 路径 | 作用 |
@@ -18,7 +26,7 @@
 | `src/content/docs/knowledge/` | 手写 Starlight 知识库内容 |
 | `src/content/generated/` | 从私有知识库同步的博客、项目和固定页面；禁止手动编辑 |
 | `public/images/generated/` | 从私有附件源同步的公开图片；禁止手动编辑 |
-| `tools/` | 内容校验、同步、生成内容完整性、链接、路由、重定向与健康检查工具 |
+| `tools/` | 内容校验、同步、生成内容完整性、链接、路由、重定向、浏览器 QA、Lighthouse 与健康检查工具 |
 | `generated-content-manifest.json` | 生成内容与资源的所有权和哈希清单 |
 | `legacy-url-map.json` | 旧 Hexo URL 到当前页面的重定向映射 |
 
@@ -51,10 +59,15 @@ npm.cmd run build                  # 构建 dist/
 npm.cmd run test:links             # 校验站内链接与资源
 npm.cmd run test:routes            # 校验公开路由
 npm.cmd run test:redirects         # 校验旧链接重定向
+npm.cmd run test:browser           # 主要路由与关键交互 smoke test
+npm.cmd run test:a11y              # axe WCAG A/AA 自动检查
+npm.cmd run test:lighthouse        # 三条代表路由的 Lighthouse 基线与预算
+npm.cmd run test:visual            # 生成本地响应式与互动状态截图
+npm.cmd run test:qa                # 浏览器、无障碍与 Lighthouse 发布门禁
 npm.cmd run preview                # 本地预览构建结果
 ```
 
-`npm.cmd run content:publish` 会按上述顺序完成发布前内容检查（不推送、不部署）。
+`npm.cmd run content:publish` 会按上述顺序完成发布前内容检查，并运行 `test:qa`（不推送、不部署）。截图和详细 QA 报告写入已忽略的 `qa-artifacts/`；CI 会保留 14 天工件。
 
 `npm.cmd run health:check` 在此基础上补充两个仓库的边界、远程、分支和恢复前提检查；`npm.cmd run health:status` 只做后者的只读检查。
 
@@ -72,3 +85,17 @@ npm.cmd run preview                # 本地预览构建结果
 ## 部署
 
 网站部署地址为 [wanone111.github.io](https://wanone111.github.io/)。`.github/workflows/deploy.yml` 在 `main` 分支推送或手动触发时使用 Node.js 22 执行公开仓库检查、构建 `dist/`，然后发布到 GitHub Pages。不使用 Jekyll 或分支目录发布。
+
+## 已知不足与优化顺序
+
+当前没有已知发布阻塞。后续工作优先级如下：
+
+1. **知识内容**：五个 Starlight 页面目前主要承担分类入口作用，详细内容应从私有知识库的公开白名单逐步发布，不能直接在生成目录补写。
+2. **浏览器级质量保证**：CI 已覆盖主要路由、关键交互、自动无障碍和 Lighthouse 预算；当前截图用于人工证据复核，尚未启用像素差异型视觉回归。
+3. **内容发现**：标签页仅提供标签索引，尚未展示标签对应文章，也没有 RSS/Atom。任何信息架构变化需先获得用户确认。
+4. **分享元数据**：当前有描述、Canonical、Sitemap 和 Pagefind，但没有 Open Graph、Twitter Card、JSON-LD 或稳定的社交分享图。
+5. **图片性能**：首页使用约 208 KB 的单一 WebP 工作台图；尚无 `srcset`、AVIF 和移动端独立裁切。应先建立生产性能基线，再决定是否增加图片变体。
+6. **维护自动化**：依赖更新仍为人工处理，没有 Dependabot/Renovate，也没有定时外链与生产路由巡检。
+7. **监控取舍**：当前未接入统计、错误上报或在线监控，以保持隐私和低维护成本；如需增加，必须先明确数据边界。
+
+更完整的视觉检查和取舍见 [`design-qa.md`](design-qa.md)。私有源、恢复流程和跨仓库状态以知识库中的 `50_Procedures/Website-and-Knowledge-Base-Status.md` 为准。

@@ -13,10 +13,10 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
 
 <header class="site-header" data-site-header>
   <div class="page-shell site-header__inner">
-    <a class="brand" href="/" aria-label="Wanone 首页">
-      <span class="brand__mark" aria-hidden="true">W.</span>
-      <span class="brand__text">Wanone <small>engineering notes</small></span>
-    </a>
+    <div class="brand">
+      <button class="brand__mark" type="button" aria-label="Wanone 标志，连续点击四次开启短暂实验主题" data-logo-egg>W.</button>
+      <a class="brand__text" href="/" aria-label="Wanone 首页">Wanone <small>engineering notes</small></a>
+    </div>
     <div class="site-header__actions">
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">菜单</button>
       <nav id="site-navigation" aria-label="主导航">
@@ -26,9 +26,10 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
           ))}
         </ul>
       </nav>
-      <button class="theme-toggle" type="button" aria-label="切换明暗主题" data-theme-toggle>明暗</button>
+      <button class="theme-toggle" type="button" aria-label="切换明暗主题" data-theme-toggle data-theme-control>明暗</button>
     </div>
   </div>
+  <p class="logo-toast" role="status" aria-live="polite" hidden data-logo-toast></p>
 </header>
 
 <script>
@@ -42,20 +43,54 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
       nav?.toggleAttribute('data-open', !open);
     });
   }
-  document.querySelector<HTMLButtonElement>('[data-theme-toggle]')?.addEventListener('click', () => {
+  const themeToggles = document.querySelectorAll<HTMLButtonElement>('[data-theme-control]');
+  const syncThemeControls = (theme: string) => {
+    themeToggles.forEach((control) => {
+      control.setAttribute('aria-pressed', String(theme === 'dark'));
+      control.dataset.themeState = theme;
+    });
+  };
+  syncThemeControls(document.documentElement.dataset.theme ?? 'light');
+  themeToggles.forEach((control) => control.addEventListener('click', () => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
     localStorage.setItem('wanone-theme', next);
+    localStorage.setItem('starlight-theme', next);
+    syncThemeControls(next);
+    window.dispatchEvent(new CustomEvent('wanone:themechange', { detail: { theme: next } }));
+  }));
+
+  const logo = document.querySelector<HTMLButtonElement>('[data-logo-egg]');
+  const logoToast = document.querySelector<HTMLElement>('[data-logo-toast]');
+  let logoClicks = 0;
+  let clickReset: number | undefined;
+  let themeReset: number | undefined;
+  logo?.addEventListener('click', () => {
+    logoClicks += 1;
+    window.clearTimeout(clickReset);
+    clickReset = window.setTimeout(() => { logoClicks = 0; }, 1400);
+    if (logoClicks < 4) return;
+    logoClicks = 0;
+    window.clearTimeout(themeReset);
+    document.documentElement.dataset.experimentTheme = 'true';
+    if (logoToast) {
+      logoToast.hidden = false;
+      logoToast.textContent = '实验主题已开启，8 秒后恢复。';
+    }
+    themeReset = window.setTimeout(() => {
+      delete document.documentElement.dataset.experimentTheme;
+      if (logoToast) logoToast.hidden = true;
+    }, 8000);
   });
 </script>
 
 <style>
   .site-header { position: relative; z-index: 30; border-bottom: 1px solid var(--color-border); background: color-mix(in srgb, var(--color-bg) 92%, transparent); backdrop-filter: blur(16px); }
   .site-header__inner { display: flex; min-height: var(--header-height); align-items: center; justify-content: space-between; gap: var(--space-5); }
-  .brand { display: inline-flex; flex: 0 0 auto; align-items: center; gap: .7rem; color: var(--color-text); text-decoration: none; }
-  .brand__mark { display: grid; width: 2.4rem; height: 2.4rem; place-items: center; border-radius: 50%; background: var(--color-accent); color: #fffaf1; font: 800 .9rem/1 var(--font-mono); transform: rotate(-5deg); transition: transform var(--transition-medium); }
-  .brand:hover .brand__mark { transform: rotate(5deg) scale(1.05); }
-  .brand__text { display: grid; font-weight: 850; letter-spacing: -.03em; line-height: 1; }
+  .brand { display: inline-flex; flex: 0 0 auto; align-items: center; gap: .7rem; color: var(--color-text); }
+  .brand__mark { display: grid; width: 2.4rem; height: 2.4rem; place-items: center; border: 0; border-radius: 50%; background: var(--color-accent-strong); color: #fffaf1; font: 800 .9rem/1 var(--font-mono); transform: rotate(-5deg); cursor: pointer; transition: transform var(--transition-medium), background var(--transition-medium); }
+  .brand__mark:hover, .brand__mark:focus-visible { transform: rotate(5deg) scale(1.05); }
+  .brand__text { display: grid; color: var(--color-text); font-weight: 850; letter-spacing: -.03em; line-height: 1; text-decoration: none; }
   .brand small { margin-top: .25rem; color: var(--color-text-muted); font: 500 .6rem/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
   .site-header__actions { display: flex; align-items: center; gap: var(--space-2); }
   nav { border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: .22rem; background: var(--color-surface); box-shadow: var(--shadow-soft); }
@@ -64,6 +99,7 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
   nav a:hover { color: var(--color-text); transform: translateY(-1px); }
   nav a[aria-current='page'] { background: var(--color-text); color: var(--color-bg); }
   .theme-toggle, .menu-toggle { min-width: 2.7rem; min-height: 2.7rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); font: 700 .72rem/1 var(--font-mono); cursor: pointer; }
+  .logo-toast { position: fixed; z-index: 50; top: calc(var(--header-height) + var(--space-3)); left: 50%; transform: translateX(-50%); margin: 0; border: 1px solid var(--color-experiment); border-radius: var(--radius-pill); padding: .65rem 1rem; background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-float); font: 750 .75rem/1.2 var(--font-mono); }
   .menu-toggle { display: none; padding-inline: 1rem; }
   @media (max-width: 64rem) {
     .menu-toggle { display: block; }

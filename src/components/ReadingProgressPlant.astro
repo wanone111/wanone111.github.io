@@ -1,0 +1,53 @@
+---
+interface Props { slug: string; }
+const { slug } = Astro.props;
+---
+
+<aside class="reading-plant" data-reading-plant data-reading-key={slug} aria-labelledby="reading-plant-title">
+  <div class="reading-plant__image" aria-hidden="true">
+    <img src="/images/brand/knowledge-growing-v1.webp" width="512" height="512" alt="" loading="lazy" decoding="async" data-reading-plant-image />
+  </div>
+  <div class="stack">
+    <p class="eyebrow">Reading complete</p>
+    <h2 id="reading-plant-title">读到这里，给植物添一片叶子。</h2>
+    <p data-reading-plant-status aria-live="polite">这份小小的阅读记录只保存在你的浏览器里。</p>
+  </div>
+</aside>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-reading-plant]').forEach((root) => {
+    if (root.dataset.ready === 'true') return;
+    root.dataset.ready = 'true';
+    const key = `wanone-read:${root.dataset.readingKey ?? location.pathname}`;
+    const image = root.querySelector<HTMLImageElement>('[data-reading-plant-image]');
+    const status = root.querySelector<HTMLElement>('[data-reading-plant-status]');
+
+    const complete = () => {
+      root.dataset.complete = 'true';
+      if (image) image.src = '/images/brand/knowledge-evergreen-v1.webp';
+      if (status) status.textContent = '阅读完成，叶片 +1。下次回来，它还会记得。';
+      try { localStorage.setItem(key, 'complete'); } catch {}
+    };
+
+    try {
+      if (localStorage.getItem(key) === 'complete') complete();
+    } catch {}
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        complete();
+        observer.disconnect();
+      }
+    }, { threshold: .55 });
+    observer.observe(root);
+  });
+</script>
+
+<style>
+  .reading-plant { display: grid; grid-template-columns: 7rem 1fr; align-items: center; gap: var(--space-5); margin-top: var(--space-8); border: 1px solid color-mix(in srgb, var(--color-knowledge) 45%, var(--color-border)); border-radius: var(--radius-xl); padding: var(--space-5); background: color-mix(in srgb, var(--color-knowledge) 10%, var(--color-surface)); }
+  .reading-plant__image { overflow: hidden; aspect-ratio: 1; border-radius: 50%; background: var(--color-green-soft); }
+  .reading-plant__image img { width: 100%; height: 100%; object-fit: cover; transition: opacity var(--transition-smooth), transform var(--transition-smooth); }
+  .reading-plant[data-complete='true'] .reading-plant__image img { transform: scale(1.04); }
+  .reading-plant h2 { margin: 0; font-size: clamp(1.25rem, 3vw, 1.7rem); }
+  .reading-plant p:last-child { color: var(--color-text-muted); font-size: .86rem; }
+  @media (max-width: 32rem) { .reading-plant { grid-template-columns: 5.5rem 1fr; padding: var(--space-4); } }
+</style>
