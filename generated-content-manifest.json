@@ -108,6 +108,30 @@
       "output": "src/content/generated/blog/vision/opencv-notes.md",
       "route": "/blog/vision/opencv-notes/",
       "sha256": "5a5e3602309fd8f68413c178af0c4d3960151fd9e4b306f0a85c743b976eca58"
+    },
+    {
+      "source": "knowledge-base/80_Publish/pages/about.md",
+      "output": "src/content/generated/pages/about.md",
+      "route": "/about/",
+      "sha256": "8615de0b316677f739973be35aaf74a690dc3a1a75ecadb4a45973b9625f6660"
+    },
+    {
+      "source": "knowledge-base/80_Publish/pages/links.md",
+      "output": "src/content/generated/pages/links.md",
+      "route": "/links/",
+      "sha256": "73d5ccbbac203795c3fd9b38a65ab0f27d69814151055f8c43c0274ef98f676e"
+    },
+    {
+      "source": "knowledge-base/80_Publish/pages/resume.md",
+      "output": "src/content/generated/pages/resume.md",
+      "route": "/resume/",
+      "sha256": "f814b1f06a90ee04987af93e75ed5d7ff3ce4c0cad1a136f5cfec54e2cda59d8"
+    },
+    {
+      "source": "knowledge-base/80_Publish/projects/obsidian-astro-publishing.md",
+      "output": "src/content/generated/projects/obsidian-astro-publishing.md",
+      "route": "/projects/obsidian-astro-publishing/",
+      "sha256": "763c5eb4bb67a3da89ce0941c50d495bed0afffe7dd38d48e1bc9cb136325bd6"
     }
   ],
   "assets": [

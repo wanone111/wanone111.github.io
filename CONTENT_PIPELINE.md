@@ -18,7 +18,7 @@
 | `80_Publish/blog` | `blog` | `/blog/<slug>/` |
 | `80_Publish/docs` | `docs` | `/knowledge/<slug>/` |
 | `80_Publish/projects` | `project` | `/projects/<slug>/` |
-| `80_Publish/pages` | `page` | `/about/` 或 `/resume/` |
+| `80_Publish/pages` | `page` | `/about/`、`/resume/` 或 `/links/` |
 
 Slug 只能使用小写 ASCII 字母、数字、连字符和 `/`。例如：`embedded/stm32/crc`。
 
@@ -69,6 +69,32 @@ npm.cmd run content:publish
 ```
 
 该命令只同步和验证本地网站，不修改源笔记状态，不提交 Git，也不部署生产环境。
+
+发布前的完整工作区健康检查可运行：
+
+```powershell
+npm.cmd run health:check
+```
+
+它会先执行 `content:publish`，再报告两个仓库的分支、最近提交、远程地址、工作区状态、内容数量和恢复前提。仅查看仓库与恢复状态时运行：
+
+```powershell
+npm.cmd run health:status
+```
+
+`health:status` 不同步内容；`health:check` 会按清单更新网站的生成内容与构建输出。
+
+## 提交与部署顺序
+
+1. 在 Obsidian 中完成源笔记，将候选稿设置为 `visibility: public` 与 `status: ready`。
+2. 运行 `npm.cmd run health:check`，处理所有阻断项。
+3. 获得发布确认后，将源笔记更新为 `status: published` 并填写 `published` 日期，再次运行健康检查。
+4. 分别核对和提交私有知识库源文件、公开网站生成文件；不得交叉提交。
+5. 推送网站仓库 `main` 后由 GitHub Actions 检查并部署。CI 不读取私有知识库，也不在 CI 中重新生成私有源内容。
+
+## 生成内容完整性
+
+`npm.cmd run test:generated` 会验证清单路径边界、生成标记、页面与资源哈希、重复源文件、重复输出和重复路由。该检查既在本地发布链中运行，也在 GitHub Actions 中运行，防止公开仓库中已提交的生成内容与清单不一致。
 
 ## 旧链接重定向
 

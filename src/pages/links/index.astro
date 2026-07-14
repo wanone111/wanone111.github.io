@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import { getCollection, render } from 'astro:content';
+import { isPublic } from '../../lib/content';
+
+const page = (await getCollection('pages')).find((entry) => isPublic(entry) && entry.data.slug === 'links');
+const rendered = page ? await render(page) : undefined;
+const Content = rendered?.Content;
+---
+
+<BaseLayout title="友链" description="经确认后公开的朋友站点与独立网站链接。">
+  <div class="stack-lg">
+    <PageIntro eyebrow="Links" title="友链" description="收录经确认可公开的朋友站点与长期关注的独立网站。" />
+    {Content ? <section class="article-shell prose"><Content /></section> : (
+      <div class="empty-state">当前没有已确认可公开的友链。内容确认后将从 Obsidian 的 `80_Publish/pages/links.md` 生成。</div>
+    )}
+  </div>
+</BaseLayout>

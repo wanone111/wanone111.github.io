@@ -2,7 +2,7 @@
 
 此目录是 Astro + Starlight 单一网站工程。
 
-Astro 负责主页、博客、项目、简历和关于页面；Starlight 仅负责 `/knowledge/`。当前只有基础结构和占位内容，尚未迁移旧 Hexo 文章。
+Astro 负责主页、博客、项目、简历、友链和关于页面；Starlight 仅负责 `/knowledge/`。旧 Hexo 文章已经迁移，固定页面和项目内容继续从私有知识库的公开白名单同步。
 
 生成内容必须来自相邻的 `../knowledge-base/80_Publish`，且不得反向覆盖源文件。
 
@@ -15,11 +15,13 @@ npm.cmd run dev
 npm.cmd run content:validate
 npm.cmd run content:check-secrets
 npm.cmd run content:sync
+npm.cmd run test:generated
 npm.cmd run test:content
 npm.cmd run check
 npm.cmd run build
 npm.cmd run test:links
 npm.cmd run test:routes
+npm.cmd run test:redirects
 npm.cmd run preview
 ```
 
@@ -37,6 +39,18 @@ npm.cmd run content:publish
 
 该命令不会更改 Obsidian 源文件的状态，也不会推送或部署网站。
 
+每次发布前推荐运行覆盖发布链与双仓库恢复前提的命令：
+
+```powershell
+npm.cmd run health:check
+```
+
+每周只读检查仓库边界、远程、分支和关键文件：
+
+```powershell
+npm.cmd run health:status
+```
+
 ## Current deployment status (2026-07-13)
 
 - The 18 legacy Hexo articles have been migrated into the private allowlisted source directory and synchronized into this site's generated content.
@@ -49,4 +63,4 @@ npm.cmd run content:publish
 
 ## CI verification boundary
 
-Run `npm.cmd run content:publish` locally before a content release because it validates and synchronizes the private source notes. In GitHub Actions, run only the public-repository checks already listed in `deploy.yml`; CI must not try to synchronize private source content.
+Run `npm.cmd run health:check` locally before a content release because it validates and synchronizes the private source notes, verifies generated hashes, runs the public build checks, and reports both repository boundaries. In GitHub Actions, run only the public-repository checks already listed in `deploy.yml`; CI must not try to synchronize private source content.

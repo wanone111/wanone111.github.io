@@ -1,5 +1,5 @@
 {
-  "allowedPageSlugs": ["about", "resume"],
+  "allowedPageSlugs": ["about", "resume", "links"],
   "reservedRoutes": [
     "/",
     "/projects/",

@@ -8,6 +8,7 @@ const expected = [
   'knowledge/index.html',
   'resume/index.html',
   'about/index.html',
+  'links/index.html',
   'tags/index.html',
   'archive/index.html',
   '404.html',
