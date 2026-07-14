@@ -18,12 +18,25 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title} · Wanone</title>
+    <script is:inline>
+      (() => {
+        const saved = localStorage.getItem('wanone-theme');
+        const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      })();
+    </script>
   </head>
   <body>
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
     <SiteHeader />
-    <main class="page-shell page-main">
+    <main id="main-content" class="page-shell page-main">
       <slot />
     </main>
     <SiteFooter />
   </body>
 </html>
+
+<style>
+  .skip-link { position: fixed; z-index: 100; top: var(--space-3); left: var(--space-3); transform: translateY(-180%); border-radius: var(--radius-pill); padding: .65rem 1rem; background: var(--color-text); color: var(--color-bg); font-weight: 750; }
+  .skip-link:focus { transform: translateY(0); }
+</style>

@@ -1,12 +1,24 @@
 <footer class="site-footer">
   <div class="page-shell site-footer__inner">
-    <p>© {new Date().getFullYear()} Wanone</p>
-    <p>Astro + Starlight · 内容由 Obsidian 管理</p>
+    <div class="stack">
+      <p class="footer-title">把工程问题写清楚，留给下一次构建。</p>
+      <p>© {new Date().getFullYear()} Wanone · Astro + Starlight · 内容由 Obsidian 管理</p>
+    </div>
+    <nav aria-label="页脚导航">
+      <a href="/blog/">博客</a>
+      <a href="/knowledge/">知识库</a>
+      <a href="/links/">友链</a>
+      <a href="https://github.com/wanone111">GitHub</a>
+    </nav>
   </div>
 </footer>
 
 <style>
-  .site-footer { border-top: 1px solid var(--color-border); color: var(--color-text-muted); }
-  .site-footer__inner { display: flex; min-height: 8rem; align-items: center; justify-content: space-between; gap: var(--space-4); font-size: 0.88rem; }
-  @media (max-width: 36rem) { .site-footer__inner { align-items: flex-start; flex-direction: column; justify-content: center; } }
+  .site-footer { margin-top: var(--space-section); border-top: 1px solid var(--color-border); background: var(--color-surface-strong); color: var(--color-text-muted); }
+  .site-footer__inner { display: flex; min-height: 13rem; align-items: center; justify-content: space-between; gap: var(--space-7); padding-block: var(--space-7); font-size: .86rem; }
+  .footer-title { max-width: 32rem; color: var(--color-text); font-size: clamp(1.4rem, 3vw, 2.4rem); font-weight: 800; letter-spacing: -.04em; }
+  nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-4); }
+  nav a { color: var(--color-text); font-weight: 750; text-decoration: none; }
+  nav a:hover { color: var(--color-accent); }
+  @media (max-width: 42rem) { .site-footer__inner { align-items: flex-start; flex-direction: column; justify-content: center; } nav { justify-content: flex-start; } }
 </style>

@@ -1,87 +1,115 @@
 .eyebrow {
   color: var(--color-accent-strong);
-  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   font-weight: 750;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
 .lede {
-  max-width: 44rem;
+  max-width: 46rem;
   color: var(--color-text-muted);
-  font-size: clamp(1.05rem, 2vw, 1.22rem);
+  font-size: clamp(1.04rem, 1.8vw, 1.28rem);
 }
 
 .button-row { display: flex; flex-wrap: wrap; gap: var(--space-3); }
 
 .button {
   display: inline-flex;
-  min-height: 2.75rem;
+  min-height: 3rem;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--color-accent);
-  border-radius: var(--radius-sm);
-  padding: 0.55rem 1rem;
-  background: var(--color-accent);
+  border: 1px solid var(--color-accent-strong);
+  border-radius: var(--radius-pill);
+  padding: 0.65rem 1.25rem;
+  background: var(--color-accent-strong);
   color: #fff;
-  font-weight: 700;
+  font-weight: 720;
   text-decoration: none;
-  transition: background var(--transition-fast), transform var(--transition-fast);
+  transition: background var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 
-.button:hover { background: var(--color-accent-strong); transform: translateY(-1px); }
-.button.secondary { background: transparent; color: var(--color-accent-strong); }
+.button:hover { background: var(--color-accent); box-shadow: var(--shadow-soft); transform: translateY(-2px); }
+.button:active { transform: translateY(0) scale(0.98); }
+.button.secondary { border-color: var(--color-border-strong); background: transparent; color: var(--color-text); }
+.button.secondary:hover { border-color: var(--color-text); background: var(--color-surface); }
+
+.text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--color-text);
+  font-weight: 700;
+  text-decoration-color: var(--color-accent);
+}
 
 .content-card {
   display: grid;
-  min-height: 12rem;
+  min-height: 13rem;
   align-content: space-between;
-  gap: var(--space-5);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-5);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+  gap: var(--space-6);
+  border-top: 1px solid var(--color-border-strong);
+  padding: var(--space-5) var(--space-2) var(--space-4);
   text-decoration: none;
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+  transition: color var(--transition-fast), transform var(--transition-fast);
 }
 
-.content-card:hover {
-  border-color: var(--color-accent);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
-
-.content-card p { color: var(--color-text-muted); }
-.content-card__meta { color: var(--color-accent-strong); font-size: 0.86rem; font-weight: 700; }
+.content-card:hover { color: var(--color-accent-strong); transform: translateY(-3px); }
+.content-card p { max-width: 38rem; color: var(--color-text-muted); }
+.content-card__meta { color: var(--color-text-muted); font-family: var(--font-mono); font-size: 0.78rem; }
+.content-card__action { font-weight: 700; }
+.content-card--yellow { border-top-color: var(--color-yellow); }
+.content-card--blue { border-top-color: var(--color-blue); }
+.content-card--purple { border-top-color: var(--color-purple); }
+.content-card--green { border-top-color: var(--color-green); }
+.content-card--yellow:hover { color: #9b6900; }
+.content-card--blue:hover { color: var(--color-blue); }
+.content-card--purple:hover { color: var(--color-purple); }
+.content-card--green:hover { color: var(--color-green); }
 
 .empty-state {
-  border: 1px dashed var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-6);
-  background: var(--color-surface-muted);
+  border-block: 1px solid var(--color-border);
+  padding: var(--space-6) 0;
   color: var(--color-text-muted);
 }
 
 .tag-list { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .tag {
-  border-radius: 999px;
-  padding: 0.3rem 0.65rem;
-  background: var(--color-accent-soft);
-  color: var(--color-accent-strong);
-  font-size: 0.82rem;
-  font-weight: 700;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  padding: 0.32rem 0.7rem;
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.77rem;
+  font-weight: 650;
   text-decoration: none;
 }
 
 .prose {
   display: grid;
-  gap: var(--space-4);
+  gap: 1.2rem;
+  font-size: 1.02rem;
 }
 
-.prose :where(h2, h3) { margin-top: var(--space-5); }
+.prose > * { min-width: 0; }
+.prose :where(h2, h3, h4) { margin-top: 1.8em; overflow-wrap: anywhere; scroll-margin-top: 7rem; }
+.prose :where(h2) { font-size: clamp(1.8rem, 3.2vw, 2.8rem); }
+.prose :where(h3) { font-size: clamp(1.35rem, 2.3vw, 1.8rem); }
 .prose :where(p, li) { color: var(--color-text-muted); }
-.prose :where(pre) { overflow-x: auto; border-radius: var(--radius-md); padding: var(--space-4); }
-.prose :where(blockquote) { margin: 0; border-left: 3px solid var(--color-accent); padding-left: var(--space-4); }
-.prose :where(table) { width: 100%; border-collapse: collapse; }
-.prose :where(th, td) { border: 1px solid var(--color-border); padding: var(--space-2) var(--space-3); text-align: left; }
+.prose :where(a) { color: var(--color-accent-strong); }
+.prose :where(img) { border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
+.prose :where(pre) { max-width: 100%; overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-4); }
+.prose :where(blockquote) { margin: var(--space-3) 0; border-left: 4px solid var(--color-yellow); padding: var(--space-3) var(--space-5); background: color-mix(in srgb, var(--color-yellow) 12%, transparent); }
+.prose :where(table) { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; }
+.prose :where(th, td) { min-width: 8rem; border-bottom: 1px solid var(--color-border); padding: var(--space-2) var(--space-3); text-align: left; }
+.prose :where(hr) { width: 100%; border: 0; border-top: 1px solid var(--color-border); }
+
+.category-dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--category-color, var(--color-accent));
+}

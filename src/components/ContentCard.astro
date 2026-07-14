@@ -1,13 +1,13 @@
 ---
-interface Props { href: string; title: string; description: string; meta?: string; }
-const { href, title, description, meta } = Astro.props;
+interface Props { href: string; title: string; description: string; meta?: string; tone?: 'coral' | 'yellow' | 'blue' | 'purple' | 'green'; }
+const { href, title, description, meta, tone = 'coral' } = Astro.props;
 ---
 
-<a class="content-card" href={href}>
+<a class={`content-card content-card--${tone}`} href={href}>
   <div class="stack">
     {meta && <span class="content-card__meta">{meta}</span>}
     <h3>{title}</h3>
     <p>{description}</p>
   </div>
-  <span aria-hidden="true">查看 →</span>
+  <span class="content-card__action" aria-hidden="true">阅读</span>
 </a>

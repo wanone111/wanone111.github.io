@@ -14,12 +14,28 @@ const { Content } = await render(project);
 ---
 
 <BaseLayout title={project.data.title} description={project.data.description}>
-  <article class="article-shell stack-lg">
-    <header class="stack">
-      <p class="eyebrow">Project · 更新于 {formatDate(project.data.updated)}</p>
-      <h1>{project.data.title}</h1>
-      <p class="lede">{project.data.description}</p>
+  <article class="project-detail stack-xl">
+    <header class="project-header">
+      <div class="stack-lg">
+        <p class="eyebrow">Project system · 更新于 {formatDate(project.data.updated)}</p>
+        <h1>{project.data.title}</h1>
+        <p class="lede">{project.data.description}</p>
+        <div class="tag-list">{project.data.tags.map((tag) => <span class="tag">{tag}</span>)}</div>
+      </div>
+      <a class="button secondary" href="/projects/">返回项目</a>
     </header>
-    <div class="prose"><Content /></div>
+    <div class="article-layout">
+      <aside class="project-aside"><p class="eyebrow">System record</p><p>目标、边界、实现与验证。</p></aside>
+      <div class="article-shell prose"><Content /></div>
+    </div>
   </article>
 </BaseLayout>
+
+<style>
+  .project-header { display: flex; align-items: end; justify-content: space-between; gap: var(--space-7); border: 1px solid var(--color-border-strong); border-radius: var(--radius-xl); padding: clamp(1.5rem, 6vw, 5rem); background: linear-gradient(135deg, var(--color-accent-soft), var(--color-surface) 58%); box-shadow: var(--shadow-card); }
+  .project-header h1 { max-width: 15ch; font-size: clamp(2.8rem, 7vw, 6.5rem); }
+  .project-header .lede { max-width: 52rem; }
+  .project-aside { grid-column: 1 / span 2; position: sticky; top: 2rem; color: var(--color-text-muted); }
+  .article-shell { grid-column: 4 / span 7; }
+  @media (max-width: 48rem) { .project-header { align-items: flex-start; flex-direction: column; } .project-aside { display: none; } .article-shell { grid-column: 1 / -1; } }
+</style>

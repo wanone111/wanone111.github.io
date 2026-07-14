@@ -1,0 +1,73 @@
+<section class="publishing-lab" aria-labelledby="publishing-lab-title" data-publishing-lab>
+  <div class="publishing-lab__intro stack">
+    <p class="eyebrow">Publishing lab</p>
+    <h2 id="publishing-lab-title">从私人笔记，到公开知识。</h2>
+    <p>点击两个状态，查看同一份 Markdown 如何经过白名单检查，进入 Astro 与 Starlight。</p>
+  </div>
+  <div class="publishing-lab__panel">
+    <div class="publishing-lab__tabs" role="tablist" aria-label="发布流程状态">
+      <button role="tab" aria-selected="true" aria-controls="stage-private" id="tab-private">私有编辑</button>
+      <button role="tab" aria-selected="false" aria-controls="stage-public" id="tab-public" tabindex="-1">公开构建</button>
+    </div>
+    <div id="stage-private" class="publishing-lab__stage" role="tabpanel" aria-labelledby="tab-private">
+      <span class="stage-number">01</span>
+      <div class="stack">
+        <h3>Obsidian 中持续整理</h3>
+        <p>内容先留在私有知识库；只有进入 80_Publish、标记为 public 且状态就绪的 Markdown 才能继续。</p>
+        <code>visibility: public · status: ready</code>
+      </div>
+    </div>
+    <div id="stage-public" class="publishing-lab__stage" role="tabpanel" aria-labelledby="tab-public" hidden>
+      <span class="stage-number">02</span>
+      <div class="stack">
+        <h3>验证后生成公开站点</h3>
+        <p>确定性脚本检查元数据、资源、链接和敏感信息，再由 Astro 与 Starlight 构建到 GitHub Pages。</p>
+        <code>validate → generate → build</code>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-publishing-lab]').forEach((lab) => {
+    const tabs = [...lab.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const activate = (tab: HTMLButtonElement) => {
+      tabs.forEach((candidate) => {
+        const selected = candidate === tab;
+        candidate.setAttribute('aria-selected', String(selected));
+        candidate.tabIndex = selected ? 0 : -1;
+        const panel = lab.querySelector<HTMLElement>(`#${candidate.getAttribute('aria-controls')}`);
+        panel?.toggleAttribute('hidden', !selected);
+      });
+    };
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => activate(tab));
+      tab.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        event.preventDefault();
+        const step = event.key === 'ArrowRight' ? 1 : -1;
+        const next = tabs[(index + step + tabs.length) % tabs.length];
+        activate(next); next.focus();
+      });
+    });
+  });
+</script>
+
+<style>
+  .publishing-lab { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: clamp(2rem, 7vw, 8rem); align-items: center; border-block: 1px solid var(--color-border-strong); padding-block: var(--space-8); }
+  .publishing-lab__intro h2 { max-width: 10ch; }
+  .publishing-lab__intro > p:last-child { max-width: 32rem; color: var(--color-text-muted); }
+  .publishing-lab__panel { overflow: hidden; border: 1px solid var(--color-border-strong); border-radius: var(--radius-xl); background: var(--color-surface); box-shadow: var(--shadow-card); }
+  .publishing-lab__tabs { display: flex; border-bottom: 1px solid var(--color-border); padding: var(--space-2); }
+  .publishing-lab__tabs button { flex: 1; min-height: 2.8rem; border: 0; border-radius: var(--radius-pill); background: transparent; color: var(--color-text-muted); font-weight: 750; cursor: pointer; }
+  .publishing-lab__tabs button[aria-selected='true'] { background: var(--color-text); color: var(--color-bg); }
+  .publishing-lab__stage { min-height: 20rem; padding: clamp(1.5rem, 5vw, 4rem); background: linear-gradient(135deg, var(--color-accent-soft), var(--color-surface) 56%); }
+  .publishing-lab__stage:not([hidden]) { display: grid; grid-template-columns: auto 1fr; gap: var(--space-6); align-items: start; animation: stage-in var(--transition-medium) both; }
+  .publishing-lab__stage h3 { font-size: clamp(1.6rem, 3vw, 2.7rem); }
+  .publishing-lab__stage p { max-width: 38rem; color: var(--color-text-muted); }
+  .publishing-lab__stage code { width: fit-content; border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: .55rem .8rem; background: var(--color-surface); font-size: .72rem; }
+  .stage-number { color: var(--color-accent); font: 800 2rem/1 var(--font-mono); }
+  @keyframes stage-in { from { opacity: 0; transform: translateY(8px); } }
+  @media (max-width: 48rem) { .publishing-lab { grid-template-columns: 1fr; } .publishing-lab__intro h2 { max-width: none; } }
+  @media (prefers-reduced-motion: reduce) { .publishing-lab__stage:not([hidden]) { animation: none; } }
+</style>

@@ -1,22 +1,56 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ContentCard from '../../components/ContentCard.astro';
+import ArticleRow from '../../components/ArticleRow.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import { byNewest, formatDate, isPublic } from '../../lib/content';
 
 const posts = (await getCollection('blog')).filter(isPublic).sort(byNewest);
+const categories = [...new Set(posts.map((post) => post.data.category).filter(Boolean))] as string[];
 ---
 
 <BaseLayout title="博客" description="开发记录、完整教程、项目复盘和技术思考。">
-  <div class="stack-lg">
-    <PageIntro eyebrow="Blog" title="博客" description="以时间为线索记录工程实践、调试过程和项目复盘。" />
+  <div class="stack-xl">
+    <PageIntro eyebrow={`Blog · ${posts.length} dispatches`} title="工程博客" description="按时间记录调试现场、完整教程与项目复盘。短笔记保留速度，长文章保留上下文。" />
     {posts.length > 0 ? (
-      <div class="card-grid">
-        {posts.map((post) => <ContentCard href={`/blog/${post.data.slug}/`} title={post.data.title} description={post.data.description} meta={`${post.data.category ?? '未分类'} · ${formatDate(post.data.updated)}`} />)}
-      </div>
-    ) : (
-      <div class="empty-state">旧 Hexo 文章尚未迁移，因此博客列表暂时为空。</div>
-    )}
+      <section data-blog-filter>
+        <div class="blog-toolbar">
+          <div class="filter-list" aria-label="按分类筛选">
+            <button type="button" aria-pressed="true" data-category="all">全部 · {posts.length}</button>
+            {categories.map((category) => <button type="button" aria-pressed="false" data-category={category}>{category}</button>)}
+          </div>
+          <div class="blog-toolbar__links"><a href="/archive/">时间归档</a><a href="/tags/">技术标签</a></div>
+        </div>
+        <div class="article-list" aria-live="polite">
+          {posts.map((post) => (
+            <div data-post-category={post.data.category ?? ''}>
+              <ArticleRow href={`/blog/${post.data.slug}/`} title={post.data.title} description={post.data.description} category={post.data.category} meta={formatDate(post.data.updated)} />
+            </div>
+          ))}
+        </div>
+      </section>
+    ) : <div class="empty-state">暂无公开文章。</div>}
   </div>
 </BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-blog-filter]').forEach((root) => {
+    const buttons = root.querySelectorAll<HTMLButtonElement>('[data-category]');
+    const posts = root.querySelectorAll<HTMLElement>('[data-post-category]');
+    buttons.forEach((button) => button.addEventListener('click', () => {
+      const selected = button.dataset.category;
+      buttons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+      posts.forEach((post) => post.toggleAttribute('hidden', selected !== 'all' && post.dataset.postCategory !== selected));
+    }));
+  });
+</script>
+
+<style>
+  .blog-toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); margin-bottom: var(--space-6); }
+  .filter-list { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .filter-list button { min-height: 2.7rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: .5rem .85rem; background: var(--color-surface); color: var(--color-text-muted); font-weight: 700; cursor: pointer; }
+  .filter-list button[aria-pressed='true'] { border-color: var(--color-text); background: var(--color-text); color: var(--color-bg); }
+  .blog-toolbar__links { display: flex; gap: var(--space-4); flex: 0 0 auto; }
+  .blog-toolbar__links a { color: var(--color-text); font: 700 .76rem/1 var(--font-mono); }
+  @media (max-width: 48rem) { .blog-toolbar { align-items: flex-start; flex-direction: column; } }
+</style>

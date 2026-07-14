@@ -8,8 +8,17 @@
 *::after { box-sizing: border-box; }
 
 html { background: var(--color-bg); scroll-behavior: smooth; }
-body { margin: 0; background: var(--color-bg); }
+body { margin: 0; overflow-x: hidden; background: var(--color-bg); }
 img { display: block; max-width: 100%; }
+
+button,
+input,
+select,
+textarea { font: inherit; }
+
+button { color: inherit; }
+
+[hidden] { display: none !important; }
 
 :focus-visible {
   outline: 3px solid var(--color-focus);

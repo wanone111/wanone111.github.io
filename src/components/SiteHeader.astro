@@ -8,37 +8,72 @@ const items = [
   { href: '/resume/', label: '简历' },
   { href: '/about/', label: '关于' },
 ];
-
 const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
 ---
 
-<header class="site-header">
+<header class="site-header" data-site-header>
   <div class="page-shell site-header__inner">
     <a class="brand" href="/" aria-label="Wanone 首页">
-      <span class="brand__mark" aria-hidden="true">W</span>
-      <span>Wanone</span>
+      <span class="brand__mark" aria-hidden="true">W.</span>
+      <span class="brand__text">Wanone <small>engineering notes</small></span>
     </a>
-    <nav aria-label="主导航">
-      <ul>
-        {items.map((item) => (
-          <li><a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
-        ))}
-      </ul>
-    </nav>
+    <div class="site-header__actions">
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">菜单</button>
+      <nav id="site-navigation" aria-label="主导航">
+        <ul>
+          {items.map((item) => (
+            <li><a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="切换明暗主题" data-theme-toggle>明暗</button>
+    </div>
   </div>
 </header>
 
+<script>
+  const header = document.querySelector('[data-site-header]');
+  if (header) {
+    const menu = header.querySelector<HTMLButtonElement>('.menu-toggle');
+    const nav = header.querySelector<HTMLElement>('#site-navigation');
+    menu?.addEventListener('click', () => {
+      const open = menu.getAttribute('aria-expanded') === 'true';
+      menu.setAttribute('aria-expanded', String(!open));
+      nav?.toggleAttribute('data-open', !open);
+    });
+  }
+  document.querySelector<HTMLButtonElement>('[data-theme-toggle]')?.addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem('wanone-theme', next);
+  });
+</script>
+
 <style>
-  .site-header { min-height: var(--header-height); border-bottom: 1px solid var(--color-border); background: color-mix(in srgb, var(--color-surface) 92%, transparent); }
+  .site-header { position: relative; z-index: 30; border-bottom: 1px solid var(--color-border); background: color-mix(in srgb, var(--color-bg) 92%, transparent); backdrop-filter: blur(16px); }
   .site-header__inner { display: flex; min-height: var(--header-height); align-items: center; justify-content: space-between; gap: var(--space-5); }
-  .brand { display: inline-flex; align-items: center; gap: var(--space-2); font-weight: 800; letter-spacing: -0.02em; text-decoration: none; }
-  .brand__mark { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: var(--radius-sm); background: var(--color-text); color: var(--color-accent-soft); font-size: 0.9rem; }
-  ul { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0 var(--space-1); margin: 0; padding: 0; list-style: none; }
-  nav a { display: block; border-radius: var(--radius-sm); padding: 0.45rem 0.7rem; color: var(--color-text-muted); font-size: 0.9rem; font-weight: 650; text-decoration: none; }
-  nav a:hover, nav a[aria-current='page'] { background: var(--color-surface-muted); color: var(--color-text); }
-  @media (max-width: 50rem) {
-    .site-header__inner { align-items: flex-start; flex-direction: column; padding-block: var(--space-3); }
-    nav { width: 100%; overflow-x: auto; }
-    ul { width: max-content; flex-wrap: nowrap; justify-content: flex-start; }
+  .brand { display: inline-flex; flex: 0 0 auto; align-items: center; gap: .7rem; color: var(--color-text); text-decoration: none; }
+  .brand__mark { display: grid; width: 2.4rem; height: 2.4rem; place-items: center; border-radius: 50%; background: var(--color-accent); color: #fffaf1; font: 800 .9rem/1 var(--font-mono); transform: rotate(-5deg); transition: transform var(--transition-medium); }
+  .brand:hover .brand__mark { transform: rotate(5deg) scale(1.05); }
+  .brand__text { display: grid; font-weight: 850; letter-spacing: -.03em; line-height: 1; }
+  .brand small { margin-top: .25rem; color: var(--color-text-muted); font: 500 .6rem/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+  .site-header__actions { display: flex; align-items: center; gap: var(--space-2); }
+  nav { border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: .22rem; background: var(--color-surface); box-shadow: var(--shadow-soft); }
+  ul { display: flex; margin: 0; padding: 0; list-style: none; }
+  nav a { display: block; border-radius: var(--radius-pill); padding: .55rem .78rem; color: var(--color-text-muted); font-size: .85rem; font-weight: 700; text-decoration: none; transition: color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast); }
+  nav a:hover { color: var(--color-text); transform: translateY(-1px); }
+  nav a[aria-current='page'] { background: var(--color-text); color: var(--color-bg); }
+  .theme-toggle, .menu-toggle { min-width: 2.7rem; min-height: 2.7rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); font: 700 .72rem/1 var(--font-mono); cursor: pointer; }
+  .menu-toggle { display: none; padding-inline: 1rem; }
+  @media (max-width: 64rem) {
+    .menu-toggle { display: block; }
+    nav { position: absolute; top: calc(100% + .5rem); right: var(--space-page); left: var(--space-page); display: none; border-radius: var(--radius-lg); padding: var(--space-3); }
+    nav[data-open] { display: block; }
+    nav ul { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+    nav a { text-align: center; }
+  }
+  @media (max-width: 34rem) {
+    .brand small { display: none; }
+    nav ul { grid-template-columns: repeat(2, 1fr); }
   }
 </style>

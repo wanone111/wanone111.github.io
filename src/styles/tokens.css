@@ -1,19 +1,28 @@
 :root {
   color-scheme: light;
-  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+  --font-display: "Segoe UI Variable Display", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-sans: "Segoe UI Variable Text", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
 
-  /* Neutral baseline tokens. The user will define the final brand palette later. */
-  --color-bg: #f8fafc;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f1f5f9;
-  --color-text: #0f172a;
-  --color-text-muted: #526071;
-  --color-border: #dbe3ec;
-  --color-accent: #0e7490;
-  --color-accent-strong: #155e75;
-  --color-accent-soft: #cffafe;
-  --color-focus: #0891b2;
+  --color-bg: #fffaf1;
+  --color-surface: #fffdf8;
+  --color-surface-strong: #f6ecdd;
+  --color-text: #201b17;
+  --color-text-muted: #645c55;
+  --color-border: #dfd4c7;
+  --color-border-strong: #b9aa99;
+  --color-accent: #ca3f29;
+  --color-accent-strong: #b63822;
+  --color-accent-soft: #ffe0d5;
+  --color-yellow: #f3bb2f;
+  --color-blue: #337a8f;
+  --color-blue-soft: #dceff1;
+  --color-purple: #7654a6;
+  --color-purple-soft: #ebe3f5;
+  --color-green: #557a5a;
+  --color-green-soft: #e0ebdf;
+  --color-pink: #d66f87;
+  --color-focus: #337a8f;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -23,33 +32,46 @@
   --space-6: 2rem;
   --space-7: 3rem;
   --space-8: 4.5rem;
+  --space-9: 6rem;
+  --space-section: clamp(4rem, 9vw, 8rem);
+  --space-page: clamp(1rem, 4vw, 4rem);
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.75rem;
-  --radius-lg: 1.25rem;
-  --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06);
-  --shadow-md: 0 16px 40px rgb(15 23 42 / 0.08);
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2.25rem;
+  --radius-pill: 999px;
+  --shadow-soft: 0 8px 24px rgb(58 39 24 / 0.07);
+  --shadow-float: 0 18px 44px rgb(58 39 24 / 0.12);
 
-  --page-width: 74rem;
-  --article-width: 48rem;
-  --header-height: 4.5rem;
-  --transition-fast: 160ms ease;
+  --page-width: 88rem;
+  --article-width: 46rem;
+  --header-height: 5.5rem;
+  --transition-fast: 150ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --transition-smooth: 280ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-    --color-bg: #08111f;
-    --color-surface: #0f1b2d;
-    --color-surface-muted: #142238;
-    --color-text: #e6edf6;
-    --color-text-muted: #9fb0c5;
-    --color-border: #26374d;
-    --color-accent: #67e8f9;
-    --color-accent-strong: #a5f3fc;
-    --color-accent-soft: #164e63;
-    --color-focus: #67e8f9;
-    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.2);
-    --shadow-md: 0 18px 42px rgb(0 0 0 / 0.28);
-  }
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #211a16;
+  --color-surface: #2b221d;
+  --color-surface-strong: #392b24;
+  --color-text: #fff7eb;
+  --color-text-muted: #c8baad;
+  --color-border: #4c3b31;
+  --color-border-strong: #756052;
+  --color-accent: #ff765d;
+  --color-accent-strong: #ff9b86;
+  --color-accent-soft: #5a2a22;
+  --color-yellow: #f6c950;
+  --color-blue: #6bb1c1;
+  --color-blue-soft: #233f46;
+  --color-purple: #b69ad8;
+  --color-purple-soft: #3d304c;
+  --color-green: #8fb596;
+  --color-green-soft: #2d4432;
+  --color-pink: #ef9caf;
+  --color-focus: #78c1d0;
+  --shadow-soft: 0 8px 24px rgb(0 0 0 / 0.18);
+  --shadow-float: 0 18px 44px rgb(0 0 0 / 0.28);
 }

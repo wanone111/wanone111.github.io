@@ -3,13 +3,19 @@ interface Props { eyebrow: string; title: string; description: string; }
 const { eyebrow, title, description } = Astro.props;
 ---
 
-<header class="page-intro stack">
+<header class="page-intro editorial-grid">
   <p class="eyebrow">{eyebrow}</p>
-  <h1>{title}</h1>
-  <p class="lede">{description}</p>
+  <div class="page-intro__body stack">
+    <h1>{title}</h1>
+    <p class="lede">{description}</p>
+  </div>
 </header>
 
 <style>
-  .page-intro { max-width: 52rem; padding-block: var(--space-5); }
-  .page-intro h1 { font-size: clamp(2.2rem, 6vw, 4rem); }
+  .page-intro { align-items: start; border-bottom: 1px solid var(--color-border-strong); padding-block: clamp(3.5rem, 9vw, 7rem) var(--space-7); }
+  .page-intro > .eyebrow { grid-column: 1 / span 2; padding-top: .8rem; }
+  .page-intro__body { grid-column: 3 / -1; max-width: 64rem; }
+  .page-intro h1 { font-size: clamp(3.5rem, 9vw, 7.2rem); }
+  .page-intro .lede { max-width: 50rem; }
+  @media (max-width: 42rem) { .page-intro > .eyebrow, .page-intro__body { grid-column: 1 / -1; } }
 </style>
