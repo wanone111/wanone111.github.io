@@ -1,66 +1,74 @@
-# Website
+# Wanone Website
 
-此目录是 Astro + Starlight 单一网站工程。
+个人网站，使用 Astro 构建主页、博客、项目、关于、简历和友链页面；Starlight 仅提供 `/knowledge/` 技术知识库。公开内容由相邻私有知识库的白名单生成，网站仓库不保存私有笔记或附件原件。
 
-Astro 负责主页、博客、项目、简历、友链和关于页面；Starlight 仅负责 `/knowledge/`。旧 Hexo 文章已经迁移，固定页面和项目内容继续从私有知识库的公开白名单同步。
+## 技术栈
 
-生成内容必须来自相邻的 `../knowledge-base/80_Publish`，且不得反向覆盖源文件。
+- Astro 7 与 TypeScript
+- Starlight（`/knowledge/`）
+- Node.js 22（GitHub Actions）
+- GitHub Pages（`.github/workflows/deploy.yml`）
 
-## 本地命令
+## 项目结构
 
-Windows PowerShell 中使用 `npm.cmd`，避免系统执行策略拦截 `npm.ps1`：
+| 路径 | 作用 |
+| --- | --- |
+| `src/pages/` | Astro 页面和路由 |
+| `src/components/`、`src/layouts/`、`src/styles/` | 站点界面组件、布局与样式 |
+| `src/content/docs/knowledge/` | 手写 Starlight 知识库内容 |
+| `src/content/generated/` | 从私有知识库同步的博客、项目和固定页面；禁止手动编辑 |
+| `public/images/generated/` | 从私有附件源同步的公开图片；禁止手动编辑 |
+| `tools/` | 内容校验、同步、生成内容完整性、链接、路由、重定向与健康检查工具 |
+| `generated-content-manifest.json` | 生成内容与资源的所有权和哈希清单 |
+| `legacy-url-map.json` | 旧 Hexo URL 到当前页面的重定向映射 |
+
+## 本地开发
+
+在 Windows PowerShell 中使用 `npm.cmd`，避免执行策略拦截 `npm.ps1`：
 
 ```powershell
+cd website
+npm.cmd ci
 npm.cmd run dev
-npm.cmd run content:validate
-npm.cmd run content:check-secrets
-npm.cmd run content:sync
-npm.cmd run test:generated
-npm.cmd run test:content
-npm.cmd run check
-npm.cmd run build
-npm.cmd run test:links
-npm.cmd run test:routes
-npm.cmd run test:redirects
-npm.cmd run preview
 ```
 
-当前运行环境若禁止 Astro 写入用户配置目录，可在命令前临时设置：
+若当前环境禁止 Astro 写入用户配置目录，可在命令前设置：
 
 ```powershell
 $env:ASTRO_TELEMETRY_DISABLED='1'
 ```
 
-完整内容发布检查可运行：
+常用命令：
 
 ```powershell
-npm.cmd run content:publish
+npm.cmd run content:validate       # 校验私有公开源的元数据、链接和附件
+npm.cmd run content:check-secrets  # 扫描公开源中的敏感信息
+npm.cmd run content:sync           # 同步白名单内容和附件到本仓库
+npm.cmd run test:generated         # 校验生成清单、标记和哈希
+npm.cmd run test:content           # 运行内容工具测试
+npm.cmd run check                  # Astro 类型与内容检查
+npm.cmd run build                  # 构建 dist/
+npm.cmd run test:links             # 校验站内链接与资源
+npm.cmd run test:routes            # 校验公开路由
+npm.cmd run test:redirects         # 校验旧链接重定向
+npm.cmd run preview                # 本地预览构建结果
 ```
 
-该命令不会更改 Obsidian 源文件的状态，也不会推送或部署网站。
+`npm.cmd run content:publish` 会按上述顺序完成发布前内容检查（不推送、不部署）。
 
-每次发布前推荐运行覆盖发布链与双仓库恢复前提的命令：
+`npm.cmd run health:check` 在此基础上补充两个仓库的边界、远程、分支和恢复前提检查；`npm.cmd run health:status` 只做后者的只读检查。
 
-```powershell
-npm.cmd run health:check
-```
+## 内容流程与边界
 
-每周只读检查仓库边界、远程、分支和关键文件：
+1. 在 `../knowledge-base/80_Publish/` 写作；只有 `visibility: public` 且 `status: ready` 或 `published` 的文件可发布。
+2. 在本仓库运行 `npm.cmd run health:check`，处理全部失败项。
+3. 经人工确认后，分别提交私有知识库源文件和本仓库生成文件；两个仓库不得交叉提交。
+4. 推送本仓库 `main` 后，GitHub Actions 仅在公开仓库中执行测试、构建与 GitHub Pages 部署。CI 不读取私有知识库，也不重新同步私有源内容。
 
-```powershell
-npm.cmd run health:status
-```
+生成目录由 `generated-content-manifest.json` 管理。同步工具只会改动带有生成标记且记录在清单中的输出；如需预览或删除全部生成输出，可使用 `npm.cmd run content:clean` 或经确认后使用 `npm.cmd run content:clean:apply`。
 
-## Current deployment status (2026-07-13)
+详细格式、支持的 Obsidian 语法、安全规则和发布顺序见 [`CONTENT_PIPELINE.md`](CONTENT_PIPELINE.md)。
 
-- The 18 legacy Hexo articles have been migrated into the private allowlisted source directory and synchronized into this site's generated content.
-- Nine public image assets are generated under `public/images/generated/`; the originals remain private in the sibling knowledge base.
-- `legacy-url-map.json` preserves 18 old public URLs with static redirects.
-- This repository is connected to `https://github.com/wanone111/wanone111.github.io.git`; GitHub Pages continues to use `https://wanone111.github.io/`.
-- Pages publishes via `.github/workflows/deploy.yml`. The workflow installs dependencies, tests, builds `dist/`, uploads a Pages artifact, and deploys it. It does not use Jekyll or a branch-folder publishing workflow.
-- Commit `38761db` makes public link and redirect checks work when GitHub Actions has checked out this repository without `../workspace.config.json` or the private `../knowledge-base` sibling.
-- The corresponding GitHub Actions deployment completed successfully, and the new homepage was manually confirmed at `https://wanone111.github.io/`.
+## 部署
 
-## CI verification boundary
-
-Run `npm.cmd run health:check` locally before a content release because it validates and synchronizes the private source notes, verifies generated hashes, runs the public build checks, and reports both repository boundaries. In GitHub Actions, run only the public-repository checks already listed in `deploy.yml`; CI must not try to synchronize private source content.
+网站部署地址为 [wanone111.github.io](https://wanone111.github.io/)。`.github/workflows/deploy.yml` 在 `main` 分支推送或手动触发时使用 Node.js 22 执行公开仓库检查、构建 `dist/`，然后发布到 GitHub Pages。不使用 Jekyll 或分支目录发布。
