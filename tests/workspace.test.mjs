@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { resolve } from 'node:path';
-import { validateWorkspacePaths } from '../tools/lib/workspace.mjs';
+import { isInside, standaloneWorkspaceConfig, validateWorkspacePaths } from '../tools/lib/workspace.mjs';
 
 function validPaths() {
   const workspaceRoot = resolve('tests', 'fixtures', 'workspace-boundaries');
@@ -28,6 +28,17 @@ function validPaths() {
 test('accepts separate private and public roots with nested generated outputs', () => {
   const paths = validPaths();
   assert.doesNotThrow(() => validateWorkspacePaths(paths, paths.websiteRoot));
+});
+
+test('keeps the standalone CI placeholder outside the public repository', () => {
+  const websiteRoot = resolve('tests', 'fixtures', 'standalone-website');
+  const paths = Object.fromEntries(
+    Object.entries(standaloneWorkspaceConfig).map(([key, value]) => [key, resolve(websiteRoot, value)]),
+  );
+
+  assert.equal(isInside(paths.knowledgeRoot, websiteRoot), false);
+  assert.equal(isInside(websiteRoot, paths.knowledgeRoot), false);
+  assert.doesNotThrow(() => validateWorkspacePaths(paths, websiteRoot));
 });
 
 test('rejects a configured website root that is not the current repository', () => {

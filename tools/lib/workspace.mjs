@@ -5,6 +5,20 @@ import { fileURLToPath } from 'node:url';
 const libraryDir = dirname(fileURLToPath(import.meta.url));
 export const websiteRoot = resolve(libraryDir, '..', '..');
 export const workspaceRoot = resolve(websiteRoot, '..');
+export const standaloneWorkspaceConfig = Object.freeze({
+  knowledgeRoot: '../.private-source-unavailable',
+  publishRoot: '../.private-source-unavailable/80_Publish',
+  assetsRoot: '../.private-source-unavailable/_assets',
+  websiteRoot: '.',
+  generatedContentRoot: './src/content/generated',
+  generatedBlogRoot: './src/content/generated/blog',
+  generatedDocsRoot: './src/content/docs/knowledge',
+  generatedProjectsRoot: './src/content/generated/projects',
+  generatedPagesRoot: './src/content/generated/pages',
+  generatedAssetsRoot: './public/images/generated',
+  generatedManifest: './generated-content-manifest.json',
+  contentPolicy: './tools/content-policy.json',
+});
 
 function resolveConfiguredPath(value, baseRoot) {
   if (typeof value !== 'string' || value.length === 0) {
@@ -31,20 +45,7 @@ export async function loadWorkspace() {
     // private sibling knowledge-base or the local workspace configuration.
     configPath = null;
     configBaseRoot = websiteRoot;
-    config = {
-      knowledgeRoot: './.private-source-unavailable',
-      publishRoot: './.private-source-unavailable/80_Publish',
-      assetsRoot: './.private-source-unavailable/_assets',
-      websiteRoot: '.',
-      generatedContentRoot: './src/content/generated',
-      generatedBlogRoot: './src/content/generated/blog',
-      generatedDocsRoot: './src/content/docs/knowledge',
-      generatedProjectsRoot: './src/content/generated/projects',
-      generatedPagesRoot: './src/content/generated/pages',
-      generatedAssetsRoot: './public/images/generated',
-      generatedManifest: './generated-content-manifest.json',
-      contentPolicy: './tools/content-policy.json',
-    };
+    config = standaloneWorkspaceConfig;
   }
 
   const paths = Object.fromEntries(
