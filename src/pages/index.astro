@@ -3,7 +3,6 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleRow from '../components/ArticleRow.astro';
 import ContentCard from '../components/ContentCard.astro';
-import DynamicIntro from '../components/DynamicIntro.astro';
 import PublishingLab from '../components/PublishingLab.astro';
 import TechEcosystem from '../components/TechEcosystem.astro';
 import WorkbenchExplorer from '../components/WorkbenchExplorer.astro';
@@ -18,13 +17,20 @@ const featuredProject = projects.find((entry) => entry.data.featured) ?? project
 <BaseLayout title="首页" description="Wanone 的个人主页、技术博客、项目展示和公开知识库。">
   <div class="stack-xl">
     <section class="home-hero editorial-grid">
-      <div class="home-hero__copy stack-lg">
+      <div class="home-hero__copy">
         <p class="display-kicker">Embedded · Robotics · FPGA · Edge AI</p>
-        <h1>把工程实践，编辑成可复用的知识。</h1>
-        <DynamicIntro />
-        <div class="button-row">
-          <a class="button" href="/blog/">阅读技术博客</a>
-          <a class="button secondary" href="/knowledge/">进入知识库</a>
+        <h1>
+          你好，我是<strong>万志成</strong>。我在集美大学学习微电子科学与技术，主要关注
+          <span class="home-hero__topic home-hero__topic--software">嵌入式软件</span>、
+          <span class="home-hero__topic home-hero__topic--robotics">机器人系统</span>与
+          <span class="home-hero__topic home-hero__topic--compute">FPGA / 边缘 AI</span>。
+        </h1>
+        <p class="home-hero__summary">我也把项目中的调试过程、工程判断和学习路径，整理成可以继续生长的公开知识。</p>
+        <div class="home-hero__actions" aria-label="自我介绍相关链接">
+          <a class="button" href="/projects/">查看项目</a>
+          <a class="button secondary" href="/resume/">查看简历</a>
+          <a class="home-hero__compact-link" href="https://github.com/wanone111" rel="me">GitHub</a>
+          <a class="home-hero__compact-link" href="/about/">关于我</a>
         </div>
       </div>
       <div class="home-hero__visual"><WorkbenchExplorer /></div>
@@ -77,15 +83,34 @@ const featuredProject = projects.find((entry) => entry.data.featured) ?? project
 </BaseLayout>
 
 <style>
-  .home-hero { position: relative; min-height: min(48rem, calc(100vh - var(--header-height))); align-items: center; padding-block: clamp(3rem, 7vw, 7rem); }
-  .home-hero__copy { grid-column: 1 / span 6; grid-row: 1; position: relative; z-index: 2; gap: clamp(1.5rem, 4vw, 3rem); }
-  .home-hero h1 { max-width: 10ch; }
-  .home-hero__copy .lede { max-width: 43rem; }
+  .home-hero { position: relative; align-items: center; min-height: min(38rem, calc(100vh - var(--header-height))); padding-block: clamp(3rem, 5vw, 5rem); }
+  .home-hero__copy { grid-column: 1 / span 6; grid-row: 1; position: relative; z-index: 2; display: grid; gap: clamp(1.25rem, 2.6vw, 2rem); }
+  .home-hero h1 { max-width: 28ch; font-size: clamp(1.85rem, 3.25vw, 3.2rem); font-weight: 520; line-height: 1.42; letter-spacing: -.035em; }
+  .home-hero h1 strong { font-weight: 850; }
+  .home-hero__topic { font-weight: 800; white-space: nowrap; }
+  .home-hero__topic--software { color: var(--color-blog-ink); }
+  .home-hero__topic--robotics { color: var(--color-knowledge-ink); }
+  .home-hero__topic--compute { color: var(--color-experiment-ink); }
+  .home-hero__summary { max-width: 42rem; color: var(--color-text-muted); font-size: clamp(1rem, 1.4vw, 1.16rem); line-height: 1.75; }
+  .home-hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; }
+  .home-hero__compact-link { display: inline-grid; place-items: center; min-width: 3.25rem; min-height: 3.25rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding-inline: var(--space-4); color: var(--color-text); background: var(--color-surface); font-size: .82rem; font-weight: 800; text-decoration: none; transition: border-color var(--transition-fast), background var(--transition-fast); }
+  .home-hero__compact-link:hover { border-color: var(--color-border-strong); background: var(--color-accent-soft); }
   .home-hero__visual { grid-column: 7 / -1; grid-row: 1; align-self: center; min-width: 0; }
   .featured-project { display: grid; grid-template-columns: 2fr 7fr auto; gap: var(--space-7); align-items: start; border-block: 1px solid var(--color-border-strong); padding-block: var(--space-7); }
   .featured-project__label > span { display: inline-block; margin-top: var(--space-5); border-radius: var(--radius-pill); padding: .45rem .7rem; background: var(--color-yellow); color: #201b17; font: 750 .68rem/1 var(--font-mono); }
   .featured-project__body h2 { max-width: 16ch; }
   .featured-project__link { color: var(--color-text); font-weight: 800; text-underline-offset: .35rem; }
-  @media (max-width: 64rem) { .home-hero__copy { grid-column: 1 / span 6; } .home-hero__visual { grid-column: 7 / -1; } }
-  @media (max-width: 48rem) { .home-hero { min-height: auto; } .home-hero__copy { grid-column: 1 / -1; } .home-hero__visual { grid-column: 1 / -1; grid-row: auto; } .featured-project { grid-template-columns: 1fr; gap: var(--space-5); } }
+  @media (max-width: 64rem) {
+    .home-hero { min-height: auto; }
+    .home-hero__copy { grid-column: 1 / -1; }
+    .home-hero__visual { grid-column: 1 / -1; grid-row: auto; margin-top: var(--space-5); }
+  }
+  @media (max-width: 48rem) {
+    .home-hero { min-height: auto; padding-block: clamp(2.5rem, 9vw, 4rem); }
+    .home-hero__copy { grid-column: 1 / -1; }
+    .home-hero h1 { max-width: 30ch; font-size: clamp(1.7rem, 7.3vw, 2.35rem); line-height: 1.45; }
+    .home-hero__topic { white-space: normal; }
+    .home-hero__actions { align-items: stretch; }
+    .featured-project { grid-template-columns: 1fr; gap: var(--space-5); }
+  }
 </style>

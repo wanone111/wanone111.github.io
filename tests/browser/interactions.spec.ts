@@ -83,6 +83,29 @@ test('technology ecosystem filters real content without hiding it from no-JS mar
   await expect(page.locator('[data-tech-tags]:visible')).toHaveCount(6);
 });
 
+test('workbench hotspots stay visually hidden while interactions remain available', async ({ page }) => {
+  await page.goto('/');
+
+  const hotspots = page.locator('[data-workbench] .workbench__hotspot');
+  await expect(hotspots).toHaveCount(6);
+  const visualStates = await hotspots.evaluateAll((items) =>
+    items.map((item) => {
+      const style = getComputedStyle(item);
+      return { background: style.backgroundColor, border: style.borderStyle, shadow: style.boxShadow };
+    }),
+  );
+  expect(visualStates.every((state) => state.background === 'rgba(0, 0, 0, 0)' && state.border === 'none' && state.shadow === 'none')).toBe(true);
+
+  const note = page.locator('[data-desk-note]');
+  await note.focus();
+  await note.press('Enter');
+  await expect(note).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('#current-research')).toBeVisible();
+
+  await expect(page.locator('.hotspot--laptop')).toHaveAttribute('href', '/projects/');
+  await expect(page.locator('.hotspot--books')).toHaveAttribute('href', '/knowledge/');
+});
+
 test('knowledge garden exposes real paths and maturity definitions', async ({ page }) => {
   await page.goto('/knowledge/');
 
