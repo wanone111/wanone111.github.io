@@ -83,6 +83,58 @@ test('accepts optional engineering report metadata', async () => {
   assert.deepEqual(result.errors, []);
 });
 
+test('requires complete evidence metadata for publishable featured projects', async () => {
+  const note = validNote({
+    content_type: 'project',
+    slug: 'featured-system',
+    featured: true,
+  });
+  note.file = 'C:/kb/80_Publish/projects/featured-system.md';
+  note.relativePath = 'projects/featured-system.md';
+  note.folder = 'projects';
+
+  const result = await validateNotes([note], [], paths, policy);
+  for (const field of ['featured_order', 'role', 'result', 'validation']) {
+    assert.ok(result.errors.some((error) => error.field === field));
+  }
+});
+
+test('accepts complete featured project metadata and rejects order collisions', async () => {
+  const featuredProject = (slug, order) => {
+    const note = validNote({
+      content_type: 'project',
+      slug,
+      featured: true,
+      featured_order: order,
+      role: 'System integration',
+      result: 'Verified result.',
+      validation: 'Repeatable test.',
+    });
+    note.file = `C:/kb/80_Publish/projects/${slug}.md`;
+    note.relativePath = `projects/${slug}.md`;
+    note.folder = 'projects';
+    return note;
+  };
+
+  const accepted = await validateNotes([featuredProject('first-system', 1)], [], paths, policy);
+  assert.deepEqual(accepted.errors, []);
+
+  const collided = await validateNotes([
+    featuredProject('first-system', 1),
+    featuredProject('second-system', 1),
+  ], [], paths, policy);
+  assert.ok(collided.errors.some((error) => error.field === 'featured_order' && error.message.includes('collides')));
+});
+
+test('rejects malformed featured project order metadata', async () => {
+  const note = validNote({ content_type: 'project', slug: 'bad-order', featured_order: 0 });
+  note.file = 'C:/kb/80_Publish/projects/bad-order.md';
+  note.relativePath = 'projects/bad-order.md';
+  note.folder = 'projects';
+  const result = await validateNotes([note], [], paths, policy);
+  assert.ok(result.errors.some((error) => error.field === 'featured_order'));
+});
+
 test('rejects malformed optional engineering metadata', async () => {
   const result = await validateNotes([validNote({ problem: ['not', 'text'], verified: 'not-a-date' })], [], paths, policy);
   assert.ok(result.errors.some((error) => error.field === 'problem'));

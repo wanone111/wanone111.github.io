@@ -36,6 +36,7 @@ const projects = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/generated/projects' }),
   schema: sharedSchema.extend({
     content_type: z.literal('project'),
+    featured_order: z.number().int().positive().optional(),
     time_range: z.string().optional(),
     role: z.string().optional(),
     hardware: z.string().optional(),

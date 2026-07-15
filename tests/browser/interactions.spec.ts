@@ -94,35 +94,23 @@ test('blog category filter updates pressed state and visible posts', async ({ pa
   await expect(allButton).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('homepage follows the 01–05 editorial sequence without duplicate systems', async ({ page }) => {
+test('homepage follows the portfolio-first 01–05 editorial sequence', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.section-marker')).toHaveText([
-    '01 / INTRO', '02 / CURRENT', '03 / SELECTED SYSTEMS', '04 / FIELD NOTES', '05 / KNOWLEDGE',
+    '01 / INTRO', '02 / SELECTED WORK', '03 / FIELD NOTES', '04 / KNOWLEDGE', '05 / ABOUT',
   ]);
   await expect(page.locator('.home-hero__actions a')).toHaveCount(2);
+  await expect(page.getByRole('link', { name: '联系我' })).toHaveAttribute('href', 'https://github.com/wanone111');
+  const projects = page.locator('.project-list .project-showcase');
+  await expect(projects).toHaveCount(3);
+  await expect(projects.locator('h2')).toHaveText([
+    '异构硬件视频图像处理方案',
+    '室内无人机自主飞行控制系统',
+    'Obsidian 与 Astro 内容发布系统',
+  ]);
+  await expect(page.locator('.featured-note')).toHaveAttribute('href', '/blog/robotics/ros2-notes/');
+  await expect(page.locator('[data-workbench]')).toHaveCount(0);
   await expect(page.locator('[data-tech-tags]')).toHaveCount(0);
-});
-
-test('workbench hotspots stay visually hidden while interactions remain available', async ({ page }) => {
-  await page.goto('/');
-
-  const hotspots = page.locator('[data-workbench] .workbench__hotspot');
-  await expect(hotspots).toHaveCount(2);
-  const visualStates = await hotspots.evaluateAll((items) =>
-    items.map((item) => {
-      const style = getComputedStyle(item);
-      return { background: style.backgroundColor, border: style.borderStyle, shadow: style.boxShadow };
-    }),
-  );
-  expect(visualStates.every((state) => state.background === 'rgba(0, 0, 0, 0)' && state.border === 'none' && state.shadow === 'none')).toBe(true);
-
-  const note = page.locator('[data-desk-note]');
-  await note.focus();
-  await note.press('Enter');
-  await expect(note).toHaveAttribute('aria-expanded', 'true');
-  await expect(page.locator('#current-research')).toBeVisible();
-
-  await expect(page.locator('#current-research a')).toHaveAttribute('href', '/projects/obsidian-astro-publishing/');
 });
 
 test('knowledge garden exposes real paths and maturity definitions', async ({ page }) => {

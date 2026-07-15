@@ -9,15 +9,15 @@ const rendered = page ? await render(page) : undefined;
 const Content = rendered?.Content;
 ---
 
-<BaseLayout title="关于" description="关于 Wanone 和这个知识网站。">
+<BaseLayout title="关于" description="关于万志成的学习背景、工程方向、项目实践与工作方法。">
   <div class="stack-lg">
-    <PageIntro eyebrow="About" title="关于" description="这个网站用于连接项目实践、技术文章和可复用的公开知识。" />
+    <PageIntro eyebrow="About" title="关于" description="嵌入式、机器人、FPGA 与边缘 AI 方向的项目实践和工程方法。" />
     {Content ? <section class="article-shell prose"><Content /></section> : (
       <section class="article-shell stack">
-        <h2>内容结构</h2>
-        <p class="lede">博客保留开发过程与复盘，知识库将经过验证的结论整理成主题化文档，项目页面展示系统架构和成果。</p>
-        <h2>维护方式</h2>
-        <p class="lede">内容主要在 Obsidian 中编写，网站由 Astro 与 Starlight 生成。私有知识与公开内容采用白名单隔离。</p>
+        <h2>关于我</h2>
+        <p class="lede">我是万志成，主要实践方向包括嵌入式软件、机器人系统、FPGA 视频链路和边缘 AI 部署。</p>
+        <h2>工程方法</h2>
+        <p class="lede">我重视可复现测试、日志记录和文档沉淀，并通过构建状态、通信记录和对照实验逐步定位问题。</p>
       </section>
     )}
   </div>

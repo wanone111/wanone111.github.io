@@ -5,7 +5,10 @@ import PageIntro from '../../components/PageIntro.astro';
 import ProjectShowcaseCard from '../../components/ProjectShowcaseCard.astro';
 import { byNewest, formatDate, isPublic } from '../../lib/content';
 
-const projects = (await getCollection('projects')).filter(isPublic).sort(byNewest);
+const projects = (await getCollection('projects')).filter(isPublic).sort((a, b) => {
+  const order = (a.data.featured_order ?? Number.MAX_SAFE_INTEGER) - (b.data.featured_order ?? Number.MAX_SAFE_INTEGER);
+  return order || byNewest(a, b);
+});
 ---
 
 <BaseLayout title="项目" description="Wanone 的嵌入式、机器人、FPGA 与边缘 AI 项目。">
@@ -24,6 +27,8 @@ const projects = (await getCollection('projects')).filter(isPublic).sort(byNewes
             href={`/projects/${project.data.slug}/`}
             cover={project.data.cover}
             status={project.data.status}
+            role={project.data.role}
+            result={project.data.result}
             validation={project.data.validation}
           />
         ))}
@@ -33,5 +38,5 @@ const projects = (await getCollection('projects')).filter(isPublic).sort(byNewes
 </BaseLayout>
 
 <style>
-  .project-list { display: grid; gap: var(--space-6); }
+  .project-list { display: grid; }
 </style>

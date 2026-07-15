@@ -107,7 +107,7 @@
       "source": "knowledge-base/80_Publish/blog/ros2-learning-notes.md",
       "output": "src/content/generated/blog/robotics/ros2-notes.md",
       "route": "/blog/robotics/ros2-notes/",
-      "sha256": "dcee8add41a62162156b7477582f9591cddf9b53231cb2f7f8cf79f2cfb0b385"
+      "sha256": "7314b55e3c1da9de3af2ae1644c3626f49151303b9baaac1afb908d8458e21aa"
     },
     {
       "source": "knowledge-base/80_Publish/blog/slam-learning-notes.md",
@@ -137,7 +137,7 @@
       "source": "knowledge-base/80_Publish/pages/about.md",
       "output": "src/content/generated/pages/about.md",
       "route": "/about/",
-      "sha256": "8615de0b316677f739973be35aaf74a690dc3a1a75ecadb4a45973b9625f6660"
+      "sha256": "1f96b3eb96928478e37cc517e1d8272939e2d17ba3603eadab163ae68730e55a"
     },
     {
       "source": "knowledge-base/80_Publish/pages/links.md",
@@ -152,10 +152,22 @@
       "sha256": "f814b1f06a90ee04987af93e75ed5d7ff3ce4c0cad1a136f5cfec54e2cda59d8"
     },
     {
+      "source": "knowledge-base/80_Publish/projects/异构硬件视频图像.md",
+      "output": "src/content/generated/projects/heterogeneous-video-pipeline.md",
+      "route": "/projects/heterogeneous-video-pipeline/",
+      "sha256": "aee94baf5c2d777442816bfb9107812312307caafd4d256c538b111ab4356db9"
+    },
+    {
+      "source": "knowledge-base/80_Publish/projects/室内无人机自主飞行控制系统.md",
+      "output": "src/content/generated/projects/indoor-autonomous-drone.md",
+      "route": "/projects/indoor-autonomous-drone/",
+      "sha256": "a05f4b551ba9023c7076b8e25a34565714cedb0e894a68c47779dba2c97d230a"
+    },
+    {
       "source": "knowledge-base/80_Publish/projects/obsidian-astro-publishing.md",
       "output": "src/content/generated/projects/obsidian-astro-publishing.md",
       "route": "/projects/obsidian-astro-publishing/",
-      "sha256": "763c5eb4bb67a3da89ce0941c50d495bed0afffe7dd38d48e1bc9cb136325bd6"
+      "sha256": "3d4d246cf44847aea68aaace2c40c005d5cf82f672298921e7fb7a440257964f"
     }
   ],
   "assets": [

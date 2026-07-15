@@ -3,6 +3,8 @@ import { expect, test, type Page } from '@playwright/test';
 const routes = [
   '/',
   '/projects/',
+  '/projects/heterogeneous-video-pipeline/',
+  '/projects/indoor-autonomous-drone/',
   '/projects/obsidian-astro-publishing/',
   '/blog/',
   '/blog/robotics/ros2-notes/',
@@ -85,6 +87,8 @@ for (const route of routes) {
 for (const schemaCase of [
   { route: '/', types: ['Person', 'WebSite'] },
   { route: '/blog/robotics/ros2-notes/', types: ['TechArticle'] },
+  { route: '/projects/heterogeneous-video-pipeline/', types: ['CreativeWork'] },
+  { route: '/projects/indoor-autonomous-drone/', types: ['CreativeWork'] },
   { route: '/projects/obsidian-astro-publishing/', types: ['CreativeWork'] },
 ]) {
   test(`${schemaCase.route} exposes the expected public JSON-LD`, async ({ page }) => {

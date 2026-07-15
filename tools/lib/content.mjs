@@ -82,6 +82,7 @@ export async function discoverNotes(paths) {
 export async function validateNotes(notes, initialErrors, paths, policy) {
   const errors = [...initialErrors];
   const routes = new Map();
+  const featuredProjectOrders = new Map();
 
   for (const note of notes) {
     const { data } = note;
@@ -114,6 +115,21 @@ export async function validateNotes(notes, initialErrors, paths, policy) {
       }
       if (data.stack !== undefined && (!Array.isArray(data.stack) || data.stack.some((item) => !isNonEmptyString(item)))) {
         addError(errors, note, 'Must be an array of non-empty strings when provided.', 'stack');
+      }
+      if (data.featured_order !== undefined && (!Number.isInteger(data.featured_order) || data.featured_order <= 0)) {
+        addError(errors, note, 'Must be a positive integer when provided.', 'featured_order');
+      }
+      if (isPublishable(note) && data.featured === true) {
+        for (const field of ['featured_order', 'role', 'result', 'validation']) {
+          if (data[field] === undefined || data[field] === null || data[field] === '') {
+            addError(errors, note, 'Featured publishable projects require this field.', field);
+          }
+        }
+        if (Number.isInteger(data.featured_order) && data.featured_order > 0) {
+          const existing = featuredProjectOrders.get(data.featured_order);
+          if (existing) addError(errors, note, `Featured order collides with ${existing}.`, 'featured_order');
+          else featuredProjectOrders.set(data.featured_order, note.relativePath);
+        }
       }
     }
     if (['ready', 'published'].includes(data.status) && data.visibility !== 'public') addError(errors, note, `${data.status} content must use visibility: public.`, 'visibility');
