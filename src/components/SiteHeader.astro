@@ -5,7 +5,6 @@ const items = [
   { href: '/projects/', label: '项目' },
   { href: '/blog/', label: '博客' },
   { href: '/knowledge/', label: '知识库' },
-  { href: '/resume/', label: '简历' },
   { href: '/about/', label: '关于' },
 ];
 const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
@@ -26,9 +25,9 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
           ))}
         </ul>
       </nav>
-      <button class="theme-toggle" type="button" aria-label="切换明暗主题" data-theme-toggle data-theme-control>明暗</button>
     </div>
   </div>
+  <button class="theme-toggle" type="button" aria-label="切换明暗主题" title="切换明暗主题" data-theme-toggle data-theme-control>明暗</button>
   <p class="logo-toast" role="status" aria-live="polite" hidden data-logo-toast></p>
 </header>
 
@@ -98,10 +97,14 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
   nav a { display: block; border-radius: var(--radius-pill); padding: .55rem .78rem; color: var(--color-text-muted); font-size: .85rem; font-weight: 700; text-decoration: none; transition: color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast); }
   nav a:hover { color: var(--color-text); transform: translateY(-1px); }
   nav a[aria-current='page'] { background: var(--color-text); color: var(--color-bg); }
-  .theme-toggle, .menu-toggle { min-width: 2.7rem; min-height: 2.7rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); font: 700 .72rem/1 var(--font-mono); cursor: pointer; }
+  .menu-toggle { min-width: 2.7rem; min-height: 2.7rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); font: 700 .72rem/1 var(--font-mono); cursor: pointer; }
+  .theme-toggle { position: fixed; z-index: 45; top: 50%; right: 0; display: grid; width: 3rem; min-height: 5rem; place-items: center; transform: translateY(-50%); border: 1px solid var(--color-border); border-right: 0; border-radius: var(--radius-lg) 0 0 var(--radius-lg); padding: .75rem .6rem; background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-soft); font: 750 .72rem/1.2 var(--font-mono); letter-spacing: .12em; writing-mode: vertical-rl; cursor: pointer; transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast); }
+  .theme-toggle:hover { transform: translate(-.25rem, -50%); border-color: var(--color-border-strong); background: var(--color-accent-soft); }
+  .theme-toggle[aria-pressed='true'] { background: color-mix(in srgb, var(--color-experiment) 18%, var(--color-surface)); }
   .logo-toast { position: fixed; z-index: 50; top: calc(var(--header-height) + var(--space-3)); left: 50%; transform: translateX(-50%); margin: 0; border: 1px solid var(--color-experiment); border-radius: var(--radius-pill); padding: .65rem 1rem; background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-float); font: 750 .75rem/1.2 var(--font-mono); }
   .menu-toggle { display: none; padding-inline: 1rem; }
   @media (max-width: 64rem) {
+    .site-header__inner { padding-right: calc(var(--space-page) + 3.5rem); }
     .menu-toggle { display: block; }
     nav { position: absolute; top: calc(100% + .5rem); right: var(--space-page); left: var(--space-page); display: none; border-radius: var(--radius-lg); padding: var(--space-3); }
     nav[data-open] { display: block; }

@@ -19,7 +19,10 @@ test('theme preference stays consistent across Astro and Starlight', async ({ pa
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 
-  await page.locator('[data-site-header] [data-theme-toggle]').click();
+  const themeToggle = page.locator('[data-site-header] [data-theme-toggle]');
+  await expect(themeToggle).toHaveCSS('position', 'fixed');
+  await expect(page.locator('#site-navigation a[href="/resume/"]')).toHaveCount(0);
+  await themeToggle.click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('starlight-theme'))).toBe('dark');
 
