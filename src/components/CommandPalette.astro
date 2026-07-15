@@ -1,50 +1,138 @@
 <dialog class="command-palette" data-command-palette aria-labelledby="command-palette-title">
   <div class="command-palette__topbar">
     <div>
-      <p class="eyebrow">Quick jump</p>
-      <h2 id="command-palette-title">去哪里看看？</h2>
+      <p class="eyebrow">SEARCH / QUICK JUMP</p>
+      <h2 id="command-palette-title">搜索工程档案</h2>
     </div>
-    <form method="dialog"><button type="submit" aria-label="关闭命令面板">Esc</button></form>
+    <form method="dialog"><button type="submit" aria-label="关闭搜索面板">Esc</button></form>
   </div>
   <label class="command-palette__search">
-    <span>筛选入口</span>
-    <input type="search" placeholder="输入项目、博客、知识……" autocomplete="off" data-command-search />
+    <span>搜索文章、项目和知识库</span>
+    <input type="search" placeholder="例如：ROS 2、STM32、PYNQ……" autocomplete="off" data-command-search aria-controls="command-search-results" />
   </label>
-  <nav aria-label="命令面板入口" data-command-list>
-    <a href="/projects/" data-command="项目 project software"><strong>项目</strong><span>查看正在构建的软件与系统</span></a>
-    <a href="/blog/" data-command="博客 blog writing"><strong>博客</strong><span>阅读工程笔记与实验文章</span></a>
-    <a href="/knowledge/" data-command="知识 knowledge garden"><strong>知识花园</strong><span>沿公开知识路径继续探索</span></a>
-    <a href="/uses/" data-command="工具 uses setup device"><strong>/uses</strong><span>打开工作区与工具说明</span></a>
-    <a href="/about/" data-command="关于 about wanone"><strong>关于</strong><span>了解这个站点与它的作者</span></a>
-  </nav>
-  <p class="command-palette__empty" hidden data-command-empty>没有匹配入口，换一个词试试。</p>
+
+  <section class="command-palette__quick" data-command-quick>
+    <p class="command-palette__section-label">快速导航</p>
+    <nav aria-label="快速导航入口">
+      <a href="/projects/" data-command-item data-command="项目 project software"><strong>项目</strong><span>查看公开工程档案</span></a>
+      <a href="/blog/" data-command-item data-command="博客 blog writing"><strong>博客</strong><span>阅读工程笔记与实验文章</span></a>
+      <a href="/knowledge/" data-command-item data-command="知识 knowledge garden"><strong>知识库</strong><span>沿公开知识路径继续探索</span></a>
+      <a href="/uses/" data-command-item data-command="工具 uses setup device"><strong>/uses</strong><span>打开工作区与工具说明</span></a>
+      <a href="/about/" data-command-item data-command="关于 about wanone"><strong>关于</strong><span>了解这个站点与作者</span></a>
+    </nav>
+  </section>
+
+  <section class="command-palette__results" id="command-search-results" hidden data-pagefind-section>
+    <div class="command-palette__results-heading">
+      <p class="command-palette__section-label">站内索引</p>
+      <p role="status" aria-live="polite" data-search-status></p>
+    </div>
+    <div class="command-palette__result-list" data-pagefind-results></div>
+  </section>
+  <p class="command-palette__empty" hidden data-command-empty>没有匹配内容，换一个工程术语试试。</p>
   <p class="command-palette__hint"><kbd>↑</kbd><kbd>↓</kbd> 选择 · <kbd>Enter</kbd> 打开 · <kbd>Esc</kbd> 关闭</p>
 </dialog>
 
 <script>
+  interface PagefindData { url: string; excerpt?: string; meta?: Record<string, string>; }
+  interface PagefindResult { data: () => Promise<PagefindData>; }
+  interface PagefindModule { init?: () => Promise<void>; search: (query: string) => Promise<{ results: PagefindResult[] }>; }
+
   document.querySelectorAll<HTMLDialogElement>('[data-command-palette]').forEach((dialog) => {
     if (dialog.dataset.ready === 'true') return;
     dialog.dataset.ready = 'true';
     const search = dialog.querySelector<HTMLInputElement>('[data-command-search]');
-    const commands = [...dialog.querySelectorAll<HTMLAnchorElement>('[data-command]')];
+    const quick = dialog.querySelector<HTMLElement>('[data-command-quick]');
+    const quickItems = [...dialog.querySelectorAll<HTMLAnchorElement>('[data-command]')];
+    const resultSection = dialog.querySelector<HTMLElement>('[data-pagefind-section]');
+    const resultList = dialog.querySelector<HTMLElement>('[data-pagefind-results]');
+    const status = dialog.querySelector<HTMLElement>('[data-search-status]');
     const empty = dialog.querySelector<HTMLElement>('[data-command-empty]');
+    let pagefind: PagefindModule | null = null;
+    let debounce = 0;
+    let searchVersion = 0;
+    let restoreTarget: HTMLElement | null = null;
 
-    const visibleCommands = () => commands.filter((command) => !command.hidden);
-    const open = () => {
+    const visibleItems = () => [...dialog.querySelectorAll<HTMLElement>('[data-command-item]')]
+      .filter((item) => !item.hidden && item.offsetParent !== null);
+    const open = (trigger?: HTMLElement | null) => {
+      restoreTarget = trigger ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
       if (!dialog.open) dialog.showModal();
       search?.focus();
     };
+    const inferType = (url: string, declared?: string) => {
+      if (declared && declared !== '页面') return declared;
+      if (url.startsWith('/projects/')) return '项目';
+      if (url.startsWith('/blog/')) return '文章';
+      if (url.startsWith('/knowledge/')) return '知识库';
+      return '页面';
+    };
+    const loadPagefind = async () => {
+      if (pagefind) return pagefind;
+      const pagefindPath = '/pagefind/pagefind.js';
+      pagefind = await import(/* @vite-ignore */ pagefindPath) as PagefindModule;
+      await pagefind.init?.();
+      return pagefind;
+    };
+    const renderResults = (items: PagefindData[]) => {
+      if (!resultList) return;
+      resultList.replaceChildren();
+      items.forEach((item) => {
+        const link = document.createElement('a');
+        link.href = item.url;
+        link.dataset.commandItem = '';
+        const type = document.createElement('span');
+        type.className = 'command-result__type';
+        type.textContent = inferType(new URL(item.url, window.location.origin).pathname, item.meta?.type);
+        const title = document.createElement('strong');
+        title.textContent = item.meta?.title ?? item.url;
+        const excerpt = document.createElement('small');
+        excerpt.textContent = (item.excerpt ?? '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        link.append(type, title, excerpt);
+        resultList.append(link);
+      });
+    };
+    const updateEmpty = () => empty?.toggleAttribute('hidden', visibleItems().length > 0 || Boolean(status?.textContent?.includes('搜索中')));
+    const runSearch = async (query: string, version: number) => {
+      if (status) status.textContent = '搜索中…';
+      resultSection?.removeAttribute('hidden');
+      try {
+        const index = await loadPagefind();
+        const response = await index.search(query);
+        const items = await Promise.all(response.results.slice(0, 8).map((result) => result.data()));
+        if (version !== searchVersion) return;
+        renderResults(items);
+        if (status) status.textContent = `${items.length} 条结果`;
+      } catch {
+        if (version !== searchVersion) return;
+        renderResults([]);
+        if (status) status.textContent = '搜索索引暂不可用';
+      }
+      updateEmpty();
+    };
     const filter = () => {
       const query = search?.value.trim().toLocaleLowerCase('zh-CN') ?? '';
-      commands.forEach((command) => {
-        const haystack = `${command.dataset.command} ${command.textContent}`.toLocaleLowerCase('zh-CN');
-        command.hidden = query.length > 0 && !haystack.includes(query);
+      quickItems.forEach((item) => {
+        const haystack = `${item.dataset.command} ${item.textContent}`.toLocaleLowerCase('zh-CN');
+        item.hidden = query.length > 0 && !haystack.includes(query);
       });
-      empty?.toggleAttribute('hidden', visibleCommands().length > 0);
+      quick?.toggleAttribute('data-querying', query.length > 0);
+      window.clearTimeout(debounce);
+      searchVersion += 1;
+      if (query.length < 2) {
+        resultSection?.setAttribute('hidden', '');
+        renderResults([]);
+        if (status) status.textContent = '';
+        updateEmpty();
+        return;
+      }
+      const version = searchVersion;
+      debounce = window.setTimeout(() => runSearch(query, version), 160);
+      updateEmpty();
     };
 
     document.querySelectorAll<HTMLButtonElement>('[data-command-trigger]').forEach((trigger) => {
-      trigger.addEventListener('click', open);
+      trigger.addEventListener('click', () => open(trigger));
     });
     document.addEventListener('keydown', (event) => {
       if (dialog.open && event.key === 'Escape') {
@@ -54,13 +142,11 @@
         event.preventDefault();
         dialog.open ? dialog.close() : open();
       } else if (dialog.open && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) {
-        const available = visibleCommands();
+        const available = visibleItems();
         if (!available.length) return;
         event.preventDefault();
-        const index = available.indexOf(document.activeElement as HTMLAnchorElement);
-        const next = event.key === 'ArrowDown'
-          ? (index + 1) % available.length
-          : (index <= 0 ? available.length - 1 : index - 1);
+        const index = available.indexOf(document.activeElement as HTMLElement);
+        const next = event.key === 'ArrowDown' ? (index + 1) % available.length : (index <= 0 ? available.length - 1 : index - 1);
         available[next]?.focus();
       }
     });
@@ -68,6 +154,8 @@
     dialog.addEventListener('close', () => {
       if (search) search.value = '';
       filter();
+      restoreTarget?.focus();
+      restoreTarget = null;
     });
     dialog.addEventListener('click', (event) => {
       if (event.target === dialog) dialog.close();
@@ -76,19 +164,26 @@
 </script>
 
 <style>
-  .command-palette { width: min(42rem, calc(100% - 2rem)); max-height: min(42rem, calc(100dvh - 2rem)); overflow: auto; border: 1px solid var(--color-border-strong); border-radius: var(--radius-xl); padding: var(--space-5); background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-float); }
+  .command-palette { width: min(48rem, calc(100% - 2rem)); max-height: min(46rem, calc(100dvh - 2rem)); overflow: auto; border: 1px solid var(--color-border-strong); border-radius: var(--radius-xl); padding: var(--space-5); background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-float); }
   .command-palette::backdrop { background: rgb(48 37 31 / .48); backdrop-filter: blur(5px); }
   .command-palette__topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
-  .command-palette h2 { margin-top: .2rem; font-size: clamp(1.55rem, 4vw, 2.25rem); }
+  .command-palette h2 { margin-top: .2rem; font-size: clamp(1.55rem, 4vw, 2.5rem); }
   .command-palette form button { min-width: 3rem; min-height: 2.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-bg); color: var(--color-text-muted); font: 700 .72rem/1 var(--font-mono); cursor: pointer; }
-  .command-palette__search { display: grid; gap: var(--space-2); margin-top: var(--space-5); color: var(--color-text-muted); font: 700 .7rem/1 var(--font-mono); text-transform: uppercase; }
+  .command-palette__search { display: grid; gap: var(--space-2); margin-top: var(--space-5); color: var(--color-text-muted); font: 700 .68rem/1 var(--font-mono); text-transform: uppercase; }
   .command-palette__search input { width: 100%; border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); padding: .9rem 1rem; background: var(--color-bg); color: var(--color-text); font: 650 1rem/1.3 var(--font-sans); }
-  .command-palette nav { display: grid; gap: var(--space-2); margin-top: var(--space-4); }
-  .command-palette nav a { display: grid; grid-template-columns: minmax(6rem, .35fr) 1fr; gap: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: .9rem 1rem; color: var(--color-text); text-decoration: none; }
-  .command-palette nav a:hover, .command-palette nav a:focus-visible { border-color: var(--color-blog); background: color-mix(in srgb, var(--color-blog) 10%, var(--color-surface)); }
-  .command-palette nav span { color: var(--color-text-muted); font-size: .88rem; }
+  .command-palette__section-label { color: var(--color-accent-strong); font: 750 .65rem/1.3 var(--font-mono); letter-spacing: .08em; }
+  .command-palette__quick, .command-palette__results { margin-top: var(--space-4); }
+  .command-palette__quick[data-querying] nav a[hidden] { display: none; }
+  .command-palette nav, .command-palette__result-list { display: grid; gap: var(--space-2); margin-top: var(--space-2); }
+  .command-palette nav a, .command-palette__result-list a { display: grid; grid-template-columns: minmax(6rem, .3fr) minmax(0, 1fr); gap: .2rem var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: .8rem 1rem; color: var(--color-text); text-decoration: none; }
+  .command-palette nav a:hover, .command-palette nav a:focus-visible, .command-palette__result-list a:hover, .command-palette__result-list a:focus-visible { border-color: var(--color-blog); background: color-mix(in srgb, var(--color-blog) 9%, var(--color-surface)); }
+  .command-palette nav span, .command-palette__result-list small { color: var(--color-text-muted); font-size: .84rem; }
+  .command-palette__result-list small { grid-column: 2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .command-palette__results-heading { display: flex; justify-content: space-between; gap: var(--space-4); }
+  .command-palette__results-heading [role='status'] { color: var(--color-text-muted); font: 650 .66rem/1.3 var(--font-mono); }
+  .command-result__type { color: var(--color-blog-ink); font: 750 .66rem/1.3 var(--font-mono); }
   .command-palette__empty { margin-block: var(--space-6); color: var(--color-text-muted); text-align: center; }
   .command-palette__hint { margin: var(--space-4) 0 0; color: var(--color-text-muted); font: 650 .7rem/1.4 var(--font-mono); text-align: center; }
   .command-palette kbd { border: 1px solid var(--color-border); border-radius: .3rem; padding: .12rem .3rem; background: var(--color-bg); }
-  @media (max-width: 32rem) { .command-palette nav a { grid-template-columns: 1fr; gap: .15rem; } }
+  @media (max-width: 32rem) { .command-palette nav a, .command-palette__result-list a { grid-template-columns: 1fr; } .command-palette__result-list small { grid-column: 1; } }
 </style>

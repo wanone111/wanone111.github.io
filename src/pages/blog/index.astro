@@ -7,6 +7,20 @@ import { byNewest, formatDate, isPublic } from '../../lib/content';
 
 const posts = (await getCollection('blog')).filter(isPublic).sort(byNewest);
 const categories = [...new Set(posts.map((post) => post.data.category).filter(Boolean))] as string[];
+const categoryKey = (category: string) => {
+  if (category.includes('机器人')) return 'robotics';
+  if (category.includes('嵌入式')) return 'embedded';
+  if (category.includes('FPGA')) return 'fpga';
+  if (category.includes('视觉')) return 'vision';
+  if (category.includes('编程')) return 'programming';
+  if (category.includes('开发')) return 'tooling';
+  return encodeURIComponent(category.toLocaleLowerCase('zh-CN'));
+};
+const categoryOptions = categories.map((category) => ({
+  label: category,
+  key: categoryKey(category),
+  count: posts.filter((post) => post.data.category === category).length,
+}));
 ---
 
 <BaseLayout title="博客" description="开发记录、完整教程、项目复盘和技术思考。">
@@ -15,15 +29,18 @@ const categories = [...new Set(posts.map((post) => post.data.category).filter(Bo
     {posts.length > 0 ? (
       <section data-blog-filter>
         <div class="blog-toolbar">
-          <div class="filter-list" aria-label="按分类筛选">
+          <div class="filter-list" aria-label="按分类筛选" data-filter-list>
             <button type="button" aria-pressed="true" data-category="all">全部 · {posts.length}</button>
-            {categories.map((category) => <button type="button" aria-pressed="false" data-category={category}>{category}</button>)}
+            {categoryOptions.map((category) => <button type="button" aria-pressed="false" data-category={category.key}>{category.label} · {category.count}</button>)}
           </div>
-          <div class="blog-toolbar__links"><a href="/archive/">时间归档</a><a href="/tags/">技术标签</a></div>
+          <div class="blog-toolbar__meta">
+            <p aria-live="polite"><strong data-visible-count>{posts.length}</strong> 篇可见</p>
+            <div class="blog-toolbar__links"><a href="/archive/">时间归档</a><a href="/tags/">技术标签</a></div>
+          </div>
         </div>
         <div class="article-list" aria-live="polite">
           {posts.map((post) => (
-            <div data-post-category={post.data.category ?? ''}>
+            <div data-post-category={post.data.category ? categoryKey(post.data.category) : ''}>
               <ArticleRow href={`/blog/${post.data.slug}/`} title={post.data.title} description={post.data.description} category={post.data.category} meta={formatDate(post.data.updated)} headingLevel="h2" />
             </div>
           ))}
@@ -35,13 +52,31 @@ const categories = [...new Set(posts.map((post) => post.data.category).filter(Bo
 
 <script>
   document.querySelectorAll<HTMLElement>('[data-blog-filter]').forEach((root) => {
-    const buttons = root.querySelectorAll<HTMLButtonElement>('[data-category]');
-    const posts = root.querySelectorAll<HTMLElement>('[data-post-category]');
-    buttons.forEach((button) => button.addEventListener('click', () => {
-      const selected = button.dataset.category;
-      buttons.forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
-      posts.forEach((post) => post.toggleAttribute('hidden', selected !== 'all' && post.dataset.postCategory !== selected));
-    }));
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-category]')];
+    const posts = [...root.querySelectorAll<HTMLElement>('[data-post-category]')];
+    const count = root.querySelector<HTMLElement>('[data-visible-count]');
+    const available = new Set(buttons.map((button) => button.dataset.category ?? 'all'));
+
+    const applyCategory = (requested: string | null, updateHistory = false) => {
+      const selected = requested && available.has(requested) ? requested : 'all';
+      buttons.forEach((item) => item.setAttribute('aria-pressed', String(item.dataset.category === selected)));
+      let visible = 0;
+      posts.forEach((post) => {
+        const matches = selected === 'all' || post.dataset.postCategory === selected;
+        post.toggleAttribute('hidden', !matches);
+        if (matches) visible += 1;
+      });
+      if (count) count.textContent = String(visible);
+      if (updateHistory) {
+        const url = new URL(window.location.href);
+        selected === 'all' ? url.searchParams.delete('category') : url.searchParams.set('category', selected);
+        window.history.pushState({ category: selected }, '', `${url.pathname}${url.search}${url.hash}`);
+      }
+    };
+
+    buttons.forEach((button) => button.addEventListener('click', () => applyCategory(button.dataset.category ?? 'all', true)));
+    window.addEventListener('popstate', () => applyCategory(new URL(window.location.href).searchParams.get('category')));
+    applyCategory(new URL(window.location.href).searchParams.get('category'));
   });
 </script>
 
@@ -50,7 +85,10 @@ const categories = [...new Set(posts.map((post) => post.data.category).filter(Bo
   .filter-list { display: flex; flex-wrap: wrap; gap: var(--space-2); }
   .filter-list button { min-height: 2.7rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: .5rem .85rem; background: var(--color-surface); color: var(--color-text-muted); font-weight: 700; cursor: pointer; }
   .filter-list button[aria-pressed='true'] { border-color: var(--color-text); background: var(--color-text); color: var(--color-bg); }
-  .blog-toolbar__links { display: flex; gap: var(--space-4); flex: 0 0 auto; }
+  .blog-toolbar__meta { display: grid; flex: 0 0 auto; gap: var(--space-3); justify-items: end; color: var(--color-text-muted); font: 650 .72rem/1.4 var(--font-mono); }
+  .blog-toolbar__meta p { margin: 0; }
+  .blog-toolbar__meta strong { color: var(--color-accent-strong); }
+  .blog-toolbar__links { display: flex; gap: var(--space-4); }
   .blog-toolbar__links a { color: var(--color-text); font: 700 .76rem/1 var(--font-mono); }
-  @media (max-width: 48rem) { .blog-toolbar { align-items: flex-start; flex-direction: column; } }
+  @media (max-width: 48rem) { .blog-toolbar { align-items: flex-start; flex-direction: column; } .blog-toolbar__meta { justify-items: start; } }
 </style>

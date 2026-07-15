@@ -2,112 +2,136 @@
   "version": 1,
   "content": [
     {
+      "source": "knowledge-base/80_Publish/docs/embedded-communication-path.md",
+      "output": "src/content/docs/knowledge/embedded/communication-path.md",
+      "route": "/knowledge/embedded/communication-path/",
+      "sha256": "64ff75fd81c254626c8fab2ec4dfbc7430cdb22cf13ec5b0eb7367478039165c"
+    },
+    {
+      "source": "knowledge-base/80_Publish/docs/fpga-development-path.md",
+      "output": "src/content/docs/knowledge/fpga-edge-ai/fpga-development.md",
+      "route": "/knowledge/fpga-edge-ai/fpga-development/",
+      "sha256": "8157f31acf66f387f6e66603c738b63a852f23771282c5835e14e0f0584b9bd3"
+    },
+    {
+      "source": "knowledge-base/80_Publish/docs/linux-engineering-path.md",
+      "output": "src/content/docs/knowledge/linux-tools/linux-and-networking.md",
+      "route": "/knowledge/linux-tools/linux-and-networking/",
+      "sha256": "2c8c97e4044cd4b9678415b59526cb15d89644009fe252c6799e823b3923ef97"
+    },
+    {
+      "source": "knowledge-base/80_Publish/docs/robotics-ros2-path.md",
+      "output": "src/content/docs/knowledge/robotics/ros2-and-simulation.md",
+      "route": "/knowledge/robotics/ros2-and-simulation/",
+      "sha256": "024231cce3d7a3a032aca03c552859dd5882871e896a28bdd60ee3990cf6cf90"
+    },
+    {
       "source": "knowledge-base/80_Publish/blog/filtering-algorithms.md",
       "output": "src/content/generated/blog/algorithms/filtering.md",
       "route": "/blog/algorithms/filtering/",
-      "sha256": "e530f7ba874bb29ad7d79f5ec9ed4472cd75917ccdb8bd6a3af628c8cebfa8f1"
+      "sha256": "331b33d46872bfd307d12acda8a89ca1bdb687f0be130b52a54a3ade55a7c749"
     },
     {
       "source": "knowledge-base/80_Publish/blog/pid-control-notes.md",
       "output": "src/content/generated/blog/algorithms/pid.md",
       "route": "/blog/algorithms/pid/",
-      "sha256": "a6e3f8c6e12603c1a84e66a355cceedb1533c7e21bdce3e8b2dd7d87b5d11517"
+      "sha256": "637b88739cee118eee0338b77ab77efc925681431e0be0b180432817b4d62c83"
     },
     {
       "source": "knowledge-base/80_Publish/blog/embedded-communication.md",
       "output": "src/content/generated/blog/embedded/communication-protocols.md",
       "route": "/blog/embedded/communication-protocols/",
-      "sha256": "493a1d87ff7ca129492407415c2e91bfba4f4f78a552c1169189d8948f0a74ce"
+      "sha256": "3eac4e4fec8790d129cad3574a2e9566598dc7abedae4f6a0719cce8d224430f"
     },
     {
       "source": "knowledge-base/80_Publish/blog/electronic-design-contest.md",
       "output": "src/content/generated/blog/embedded/electronic-design-contest.md",
       "route": "/blog/embedded/electronic-design-contest/",
-      "sha256": "f1733671ed18d5df6937e5e818457e7fc8da32bb88332b6085c98c1c709bea99"
+      "sha256": "986501fe987922d5626db72c404fd2d52168961eb330c20c3d9dc6bfcf3504eb"
     },
     {
       "source": "knowledge-base/80_Publish/blog/stm32-communication.md",
       "output": "src/content/generated/blog/embedded/stm32-communication.md",
       "route": "/blog/embedded/stm32-communication/",
-      "sha256": "c39d08726d741f1e5fd9da1f3e0065d5e5ce94dd32a576b7a60c02d3cf2ccbe1"
+      "sha256": "3c78244c314d244a8dd847269c076d7844a9b156f7b52e4f573e71381c365bd2"
     },
     {
       "source": "knowledge-base/80_Publish/blog/stm32-learning-notes.md",
       "output": "src/content/generated/blog/embedded/stm32-notes.md",
       "route": "/blog/embedded/stm32-notes/",
-      "sha256": "b6e816a1e9980dc9482584f2b77866a1a69b497a7752e63f96048ea26264c7ef"
+      "sha256": "b5fe9203c3b823ea325cb2ab1f4e03a6b3147bfe6eee77ea65dec644b38252d2"
     },
     {
       "source": "knowledge-base/80_Publish/blog/fpga-overview.md",
       "output": "src/content/generated/blog/fpga/fpga-overview.md",
       "route": "/blog/fpga/fpga-overview/",
-      "sha256": "6eb53e43c806d13b1b9df40131d37fcc135964f6f1fa2d86b4d5d1b7588e743a"
+      "sha256": "2f1104c827dfcb34c6ad32c8364ae8493c665713c148281a9114a9d56b226d04"
     },
     {
       "source": "knowledge-base/80_Publish/blog/fpga-rtl-learning-notes.md",
       "output": "src/content/generated/blog/fpga/rtl-notes.md",
       "route": "/blog/fpga/rtl-notes/",
-      "sha256": "c587156d5b55e85820af6684f5127b6ef54ed4e668725646d5b6f5ceabb97e51"
+      "sha256": "e0ab3ba132a04e5d1b6317b81c521d1bd291a143dcca626bc95ec4e2382a3dcb"
     },
     {
       "source": "knowledge-base/80_Publish/blog/verilog-learning-notes.md",
       "output": "src/content/generated/blog/fpga/verilog-notes.md",
       "route": "/blog/fpga/verilog-notes/",
-      "sha256": "050039b236b23d9049d1174ff5c6675e0e3e9d23be0f853cbf86ebb191605d8f"
+      "sha256": "a874123a42c050993525800e80f39dc29623db7a3a4c8c34496e7728f0c1138c"
     },
     {
       "source": "knowledge-base/80_Publish/blog/fpga-hls-learning-notes.md",
       "output": "src/content/generated/blog/fpga/vitis-hls-notes.md",
       "route": "/blog/fpga/vitis-hls-notes/",
-      "sha256": "6d8168729937ba6a38bdddd4917d931ea5ce192820c395dc045a9e6d65d26d00"
+      "sha256": "c06eaa1098af518cdc932d84ba367f6a7be20011c9010fbc7fd15ffe6dd4e2dd"
     },
     {
       "source": "knowledge-base/80_Publish/blog/linux-socket.md",
       "output": "src/content/generated/blog/networking/linux-socket.md",
       "route": "/blog/networking/linux-socket/",
-      "sha256": "f7a3c19db8699a7e27f26af88907fbcd9f6bf052b9411f226135475659c90943"
+      "sha256": "92c6b3ae0c4fe33d9a690a89dbb4e07fa418625d67698fc115f90d2c040b8701"
     },
     {
       "source": "knowledge-base/80_Publish/blog/cpp-learning-notes.md",
       "output": "src/content/generated/blog/programming/cpp-notes.md",
       "route": "/blog/programming/cpp-notes/",
-      "sha256": "36ce58dd4668191008500aefae06c37195254bf44712cc34b220ca1cee64b330"
+      "sha256": "a57af7e9f402ff779b342491eea30391e748836116ece12536b62e2b9f44554d"
     },
     {
       "source": "knowledge-base/80_Publish/blog/gazebo-simulation.md",
       "output": "src/content/generated/blog/robotics/gazebo-simulation.md",
       "route": "/blog/robotics/gazebo-simulation/",
-      "sha256": "b0655c76715221045ab5ade67364727a4c30a2d9b8000fcf8f329a893622d8ad"
+      "sha256": "a752100279e1eead975e73f39d5f039bad3c9b70c36ee1eada4b7d9dcd67de39"
     },
     {
       "source": "knowledge-base/80_Publish/blog/ros2-learning-notes.md",
       "output": "src/content/generated/blog/robotics/ros2-notes.md",
       "route": "/blog/robotics/ros2-notes/",
-      "sha256": "112b7a3a59f2358fc08f08ca739a83a0220ac9b4c190d2dae98149ccc14bdaff"
+      "sha256": "dcee8add41a62162156b7477582f9591cddf9b53231cb2f7f8cf79f2cfb0b385"
     },
     {
       "source": "knowledge-base/80_Publish/blog/slam-learning-notes.md",
       "output": "src/content/generated/blog/robotics/slam-notes.md",
       "route": "/blog/robotics/slam-notes/",
-      "sha256": "79ffdd81601c3eefa9b85bb1181a1a991a1d2493d290322280c08ea520275537"
+      "sha256": "7b35b50e4a7d776b620d724e17b13d1c5f0203e956b5a2abc64cfcc4c0b8beca"
     },
     {
       "source": "knowledge-base/80_Publish/blog/linux-learning-notes.md",
       "output": "src/content/generated/blog/tools/linux-notes.md",
       "route": "/blog/tools/linux-notes/",
-      "sha256": "d8ca4b07b785e433fff148e712be6347dd589b5ee73d50a5fbb2eaa2571bec31"
+      "sha256": "cbc83258c9cf0d7f2d3e58fb1779d5408e83127d67fb7d6d3f6def6157891353"
     },
     {
       "source": "knowledge-base/80_Publish/blog/matlab-learning-notes.md",
       "output": "src/content/generated/blog/vision/matlab-notes.md",
       "route": "/blog/vision/matlab-notes/",
-      "sha256": "d89b9051b4ebf762dbcf0e1ad877d555a2ad5fd6350254d0cd27f8ac8d758393"
+      "sha256": "9a5302b210636baabeebb20020ba72329194c5c10325656a8ab88aad10e8d1e4"
     },
     {
       "source": "knowledge-base/80_Publish/blog/opencv-learning-notes.md",
       "output": "src/content/generated/blog/vision/opencv-notes.md",
       "route": "/blog/vision/opencv-notes/",
-      "sha256": "5a5e3602309fd8f68413c178af0c4d3960151fd9e4b306f0a85c743b976eca58"
+      "sha256": "523d8b59a66b2958d4f43da073846bd96cea4a5b85e930912d05ffdab0e87439"
     },
     {
       "source": "knowledge-base/80_Publish/pages/about.md",

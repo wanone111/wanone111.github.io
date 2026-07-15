@@ -4,9 +4,29 @@ import SiteHeader from '../components/SiteHeader.astro';
 import CommandPalette from '../components/CommandPalette.astro';
 import '../styles/global.css';
 
-interface Props { title: string; description: string; }
-const { title, description } = Astro.props;
+interface Props {
+  title: string;
+  description: string;
+  contentType?: string;
+  image?: string;
+  socialType?: 'website' | 'article';
+  published?: Date;
+  updated?: Date;
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+}
+const {
+  title,
+  description,
+  contentType = '页面',
+  image = '/images/brand/engineering-workbench-v2.webp',
+  socialType = 'website',
+  published,
+  updated,
+  jsonLd,
+} = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+const socialImage = new URL(image, Astro.site ?? Astro.url.origin);
+const pageTitle = title === 'Wanone' ? title : `${title} · Wanone`;
 ---
 
 <!doctype html>
@@ -16,9 +36,25 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
+    <meta data-pagefind-meta="type" content={contentType} />
     <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title="Wanone 工程笔记" href="/rss.xml" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{title} · Wanone</title>
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content="Wanone" />
+    <meta property="og:type" content={socialType} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={socialImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={socialImage} />
+    {published && <meta property="article:published_time" content={published.toISOString()} />}
+    {updated && <meta property="article:modified_time" content={updated.toISOString()} />}
+    {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    <title>{pageTitle}</title>
     <script is:inline>
       (() => {
         const saved = localStorage.getItem('starlight-theme') ?? localStorage.getItem('wanone-theme');

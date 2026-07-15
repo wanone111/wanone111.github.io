@@ -88,7 +88,7 @@ export async function validateNotes(notes, initialErrors, paths, policy) {
     const expectedType = TYPE_BY_DIRECTORY[note.folder];
     if (!expectedType) addError(errors, note, `Unsupported top-level publish directory: ${note.folder}`, 'content_type');
 
-    for (const field of ['title', 'description', 'content_type', 'status', 'visibility', 'slug', 'created', 'updated']) {
+    for (const field of ['title', 'description', 'content_type', 'status', 'visibility', 'created', 'updated']) {
       if (data[field] === undefined || data[field] === null || data[field] === '') addError(errors, note, 'Required field is missing.', field);
     }
     if (!isNonEmptyString(data.title)) addError(errors, note, 'Must be a non-empty string.', 'title');
@@ -97,13 +97,27 @@ export async function validateNotes(notes, initialErrors, paths, policy) {
     if (expectedType && data.content_type !== expectedType) addError(errors, note, `Directory ${note.folder} requires content_type: ${expectedType}.`, 'content_type');
     if (!STATUSES.has(data.status)) addError(errors, note, `Must be one of: ${[...STATUSES].join(', ')}.`, 'status');
     if (!VISIBILITIES.has(data.visibility)) addError(errors, note, 'Must be private or public.', 'visibility');
-    if (!isNonEmptyString(data.slug) || !SLUG_PATTERN.test(data.slug)) addError(errors, note, 'Use lowercase ASCII path segments separated by / or -.', 'slug');
+    const hasSlug = isNonEmptyString(data.slug);
+    if (isPublishable(note) && !hasSlug) addError(errors, note, 'Publishable content requires a slug.', 'slug');
+    if (hasSlug && !SLUG_PATTERN.test(data.slug)) addError(errors, note, 'Use lowercase ASCII path segments separated by / or -.', 'slug');
     if (!isValidDate(data.created)) addError(errors, note, 'Must be a valid date.', 'created');
     if (!isValidDate(data.updated)) addError(errors, note, 'Must be a valid date.', 'updated');
     if (data.status === 'published' && !isValidDate(data.published)) addError(errors, note, 'Published content requires a valid published date.', 'published');
     if (!Array.isArray(data.tags) || data.tags.some((tag) => !isNonEmptyString(tag))) addError(errors, note, 'Must be an array of non-empty strings.', 'tags');
+    for (const field of ['problem', 'environment', 'conclusion', 'applicable_version']) {
+      if (data[field] !== undefined && !isNonEmptyString(data[field])) addError(errors, note, 'Must be a non-empty string when provided.', field);
+    }
+    if (data.verified !== undefined && !isValidDate(data.verified)) addError(errors, note, 'Must be a valid date when provided.', 'verified');
+    if (data.content_type === 'project') {
+      for (const field of ['time_range', 'role', 'hardware', 'software', 'result', 'limitations', 'next_step', 'validation']) {
+        if (data[field] !== undefined && !isNonEmptyString(data[field])) addError(errors, note, 'Must be a non-empty string when provided.', field);
+      }
+      if (data.stack !== undefined && (!Array.isArray(data.stack) || data.stack.some((item) => !isNonEmptyString(item)))) {
+        addError(errors, note, 'Must be an array of non-empty strings when provided.', 'stack');
+      }
+    }
     if (['ready', 'published'].includes(data.status) && data.visibility !== 'public') addError(errors, note, `${data.status} content must use visibility: public.`, 'visibility');
-    if (data.content_type === 'page' && !policy.allowedPageSlugs.includes(data.slug)) addError(errors, note, `Page slug must be one of: ${policy.allowedPageSlugs.join(', ')}.`, 'slug');
+    if (data.content_type === 'page' && hasSlug && !policy.allowedPageSlugs.includes(data.slug)) addError(errors, note, `Page slug must be one of: ${policy.allowedPageSlugs.join(', ')}.`, 'slug');
 
     const unsupported = [
       { pattern: /```dataview(?:js)?\b/i, message: 'Dataview blocks cannot be published.' },

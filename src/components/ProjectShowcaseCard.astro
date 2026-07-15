@@ -8,113 +8,61 @@ interface Props {
   tags: string[];
   href: string;
   cover?: string;
+  status?: 'draft' | 'review' | 'ready' | 'published';
+  validation?: string;
 }
-
-const { index, title, description, category = 'system', updated, tags, href, cover } = Astro.props;
-const normalizedCategory = category.toLowerCase();
-const kind = normalizedCategory.includes('embedded') || normalizedCategory.includes('robot')
-  ? 'embedded'
-  : normalizedCategory.includes('web')
-    ? 'web'
-    : normalizedCategory.includes('experiment') || normalizedCategory.includes('creative')
-      ? 'experiment'
-      : 'tool';
-const kindLabels = {
-  embedded: '嵌入式系统',
-  web: 'Web 产品',
-  tool: '工程工具',
-  experiment: '交互实验',
+const { index, title, description, category = 'system', updated, tags, href, cover, status = 'published', validation } = Astro.props;
+const statusLabels = { draft: '草稿', review: '复核中', ready: '待发布', published: '已公开' };
+const categoryLabels: Record<string, string> = {
+  publishing: '内容工程', embedded: '嵌入式系统', robotics: '机器人系统', fpga: 'FPGA 与边缘 AI', system: '工程系统',
 };
+const categoryLabel = categoryLabels[category.toLowerCase()] ?? category;
 ---
 
-<article class={`project-showcase project-showcase--${kind}`}>
-  <div class="project-showcase__visual" aria-hidden="true">
-    {kind === 'tool' && (
-      <div class="tool-demo">
-        <div class="tool-demo__bar"><i></i><i></i><i></i><span>publish-check</span></div>
-        <pre><code><span class="tool-demo__command">$ npm run content:publish</span>
-<span class="tool-demo__line">✓ public allowlist</span>
-<span class="tool-demo__line">✓ links · routes · secrets</span>
-<span class="tool-demo__line tool-demo__ready">ready to deploy</span></code></pre>
+<article class="project-showcase">
+  <div class="project-showcase__evidence">
+    {cover ? (
+      <img src={cover} alt={`${title} 的项目实物或验证素材`} loading="lazy" />
+    ) : (
+      <div class="project-record" aria-label={`${title} 的公开记录摘要`}>
+        <p>PROJECT RECORD <span>{String(index + 1).padStart(2, '0')}</span></p>
+        <dl>
+          <div><dt>STATUS</dt><dd>{statusLabels[status]}</dd></div>
+          <div><dt>UPDATED</dt><dd>{updated}</dd></div>
+          <div><dt>TYPE</dt><dd>{categoryLabel}</dd></div>
+          <div><dt>STACK</dt><dd>{tags.slice(0, 4).join(' · ')}</dd></div>
+          {validation && <div class="project-record__wide"><dt>VALIDATION</dt><dd>{validation}</dd></div>}
+        </dl>
       </div>
-    )}
-    {kind === 'web' && (
-      <div class="web-demo">
-        <div class="web-demo__bar"><i></i><span>wanone.local</span></div>
-        <div class="web-demo__layout"><b></b><span></span><span></span><span></span></div>
-      </div>
-    )}
-    {kind === 'embedded' && (
-      <div class="embedded-demo">
-        <span>INPUT</span><i></i><i></i><i></i><b>VERIFY</b>
-      </div>
-    )}
-    {kind === 'experiment' && cover && <img src={cover} alt="" loading="lazy" />}
-    {kind === 'experiment' && !cover && (
-      <div class="experiment-demo"><span>EXP</span><b>交互预览</b><i></i></div>
     )}
   </div>
 
-  <div class="project-showcase__index">{String(index + 1).padStart(2, '0')}</div>
   <div class="project-showcase__body stack">
-    <p class="eyebrow">{kindLabels[kind]} · {updated}</p>
+    <p class="eyebrow">{String(index + 1).padStart(2, '0')} · {categoryLabel}</p>
     <h2>{title}</h2>
     <p class="lede">{description}</p>
     <div class="tag-list">{tags.map((tag) => <span class="tag">{tag}</span>)}</div>
+    <a class="project-showcase__link" href={href}>打开工程档案 <span aria-hidden="true">→</span></a>
   </div>
-  <a class="button secondary project-showcase__link" href={href}>查看项目</a>
 </article>
 
 <style>
-  .project-showcase { position: relative; display: grid; grid-template-columns: minmax(16rem, 5fr) auto minmax(20rem, 6fr); grid-template-rows: 1fr auto; gap: var(--space-6) var(--space-7); overflow: hidden; border: 1px solid var(--color-border-strong); border-radius: var(--radius-xl); padding: clamp(1.25rem, 3vw, 2.25rem); background: var(--color-surface); }
-  .project-showcase__visual { grid-column: 1; grid-row: 1 / span 2; min-height: 22rem; border-radius: var(--radius-lg); }
-  .project-showcase__index { grid-column: 2; grid-row: 1; color: var(--color-project); font: 850 clamp(2rem, 4vw, 4rem)/1 var(--font-mono); }
-  .project-showcase__body { grid-column: 3; grid-row: 1; align-self: center; }
-  .project-showcase__body h2 { max-width: 18ch; }
-  .project-showcase__body .lede { max-width: 48rem; }
-  .project-showcase__link { grid-column: 3; grid-row: 2; width: fit-content; }
-
-  .project-showcase--tool { background: linear-gradient(135deg, color-mix(in srgb, var(--color-blog) 9%, var(--color-surface)), var(--color-surface) 58%); }
-  .project-showcase--tool .project-showcase__visual { display: grid; place-items: center; padding: clamp(1rem, 3vw, 2rem); background: #241d1a; }
-  .tool-demo { width: min(100%, 30rem); overflow: hidden; border: 1px solid rgb(255 247 232 / .28); border-radius: var(--radius-md); background: #171311; color: #fff7e8; box-shadow: 0 1.25rem 3rem rgb(0 0 0 / .24); }
-  .tool-demo__bar { display: flex; height: 2.4rem; align-items: center; gap: .38rem; border-bottom: 1px solid rgb(255 247 232 / .15); padding-inline: .75rem; color: #c8baad; font: 650 .64rem/1 var(--font-mono); }
-  .tool-demo__bar i { width: .55rem; height: .55rem; border-radius: 50%; background: var(--color-project); }
-  .tool-demo__bar i:nth-child(2) { background: var(--color-status); }
-  .tool-demo__bar i:nth-child(3) { background: var(--color-knowledge); }
-  .tool-demo__bar span { margin-left: auto; }
-  .tool-demo pre { margin: 0; padding: 1.25rem; white-space: pre-wrap; font: 650 clamp(.72rem, 1.25vw, .9rem)/1.9 var(--font-mono); }
-  .tool-demo__command { display: inline-block; overflow: hidden; width: 1ch; max-width: 100%; border-right: 2px solid var(--color-status); white-space: nowrap; }
-  .tool-demo__line { display: block; color: #b9cdb6; opacity: 1; transform: translateY(.25rem); transition: transform var(--transition-smooth); }
-  .tool-demo__ready { color: #8fc3ce; }
-  .project-showcase--tool:hover .tool-demo__command, .project-showcase--tool:focus-within .tool-demo__command { width: 28ch; animation: terminal-type 1.15s steps(27, end) both; }
-  .project-showcase--tool:hover .tool-demo__line, .project-showcase--tool:focus-within .tool-demo__line { opacity: 1; transform: none; }
-
-  .project-showcase--web .project-showcase__visual { padding: var(--space-5); background: var(--color-blog); }
-  .web-demo { height: 100%; overflow: hidden; border-radius: var(--radius-md); background: var(--color-bg); }
-  .web-demo__bar { display: flex; align-items: center; gap: .6rem; height: 2.5rem; padding: 0 .8rem; background: var(--color-surface-strong); color: var(--color-text-muted); font: 650 .64rem/1 var(--font-mono); }
-  .web-demo__bar i { width: .65rem; height: .65rem; border-radius: 50%; background: var(--color-project); }
-  .web-demo__layout { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); padding: var(--space-5); }
-  .web-demo__layout b { grid-column: 1 / -1; height: 6rem; border-radius: var(--radius-sm); background: color-mix(in srgb, var(--color-blog) 22%, transparent); }
-  .web-demo__layout span { height: 4rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm); transition: transform var(--transition-smooth); }
-  .project-showcase--web:hover .web-demo__layout span:nth-child(3), .project-showcase--web:focus-within .web-demo__layout span:nth-child(3) { transform: translateX(.4rem); }
-
-  .project-showcase--embedded .project-showcase__visual { display: grid; place-items: center; background: color-mix(in srgb, var(--color-knowledge) 18%, var(--color-surface)); }
-  .embedded-demo { display: flex; align-items: center; gap: .7rem; color: var(--color-text); font: 750 .7rem/1 var(--font-mono); }
-  .embedded-demo i { width: 2.5rem; height: 2px; background: var(--color-knowledge); transform-origin: left; transition: transform var(--transition-smooth); }
-  .embedded-demo b { border: 1px solid var(--color-knowledge); border-radius: var(--radius-sm); padding: .65rem; }
-  .project-showcase--embedded:hover .embedded-demo i, .project-showcase--embedded:focus-within .embedded-demo i { transform: scaleX(.72); }
-
-  .project-showcase--experiment .project-showcase__visual { overflow: hidden; background: color-mix(in srgb, var(--color-experiment) 20%, var(--color-surface)); }
-  .project-showcase--experiment img { width: 100%; height: 100%; object-fit: cover; }
-  .experiment-demo { display: grid; height: 100%; place-content: center; gap: var(--space-4); text-align: center; }
-  .experiment-demo span { color: var(--color-experiment-ink); font: 800 3rem/1 var(--font-mono); }
-  .experiment-demo b { font-size: 1.2rem; }
-  .experiment-demo i { width: 7rem; height: .65rem; border-radius: var(--radius-pill); background: var(--color-experiment); transform-origin: left; transition: transform var(--transition-smooth); }
-  .project-showcase--experiment:hover .experiment-demo i, .project-showcase--experiment:focus-within .experiment-demo i { transform: scaleX(.55); }
-
-  @keyframes terminal-type { from { width: 1ch; } to { width: 28ch; } }
-  @media (hover: none) { .tool-demo__command { width: 28ch; border-right: 0; } .tool-demo__line { opacity: 1; transform: none; } }
-  @media (max-width: 62rem) { .project-showcase { grid-template-columns: auto 1fr; } .project-showcase__visual { grid-column: 1 / -1; grid-row: 1; min-height: 18rem; } .project-showcase__index { grid-column: 1; grid-row: 2; } .project-showcase__body { grid-column: 2; grid-row: 2; } .project-showcase__link { grid-column: 2; grid-row: 3; } }
-  @media (max-width: 42rem) { .project-showcase { grid-template-columns: 1fr; } .project-showcase__visual, .project-showcase__index, .project-showcase__body, .project-showcase__link { grid-column: 1; } .project-showcase__visual { min-height: 15rem; } .project-showcase__index { grid-row: 2; } .project-showcase__body { grid-row: 3; } .project-showcase__link { grid-row: 4; } }
-  @media (prefers-reduced-motion: reduce) { .tool-demo__command { width: 28ch; border-right: 0; animation: none !important; } .tool-demo__line { opacity: 1; transform: none; } }
+  .project-showcase { display: grid; grid-template-columns: minmax(18rem, 5fr) minmax(20rem, 6fr); gap: clamp(2rem, 6vw, 6rem); align-items: stretch; border: 1px solid var(--color-border-strong); border-radius: var(--radius-xl); padding: clamp(1.2rem, 3vw, 2.4rem); background: var(--color-surface); box-shadow: var(--shadow-soft); }
+  .project-showcase__evidence { min-height: 25rem; overflow: hidden; border-radius: var(--radius-lg); background: var(--color-surface-strong); }
+  .project-showcase__evidence img { width: 100%; height: 100%; object-fit: cover; }
+  .project-record { display: grid; height: 100%; align-content: space-between; gap: var(--space-7); padding: clamp(1.5rem, 4vw, 3.2rem); border-left: .45rem solid var(--color-accent); background: linear-gradient(160deg, var(--color-surface-strong), var(--color-surface)); }
+  .project-record > p { display: flex; justify-content: space-between; gap: var(--space-4); color: var(--color-accent-strong); font: 750 .7rem/1.3 var(--font-mono); letter-spacing: .1em; }
+  .project-record > p span { font-size: clamp(2.5rem, 6vw, 5rem); line-height: .8; }
+  .project-record dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; border-top: 1px solid var(--color-border-strong); }
+  .project-record dl > div { display: grid; gap: .4rem; min-height: 5.6rem; border-bottom: 1px solid var(--color-border); padding: var(--space-3) var(--space-3) var(--space-3) 0; }
+  .project-record dl > div:nth-child(even) { padding-left: var(--space-3); border-left: 1px solid var(--color-border); }
+  .project-record .project-record__wide { grid-column: 1 / -1; border-left: 0; padding-left: 0; }
+  .project-record dt { color: var(--color-text-muted); font: 700 .6rem/1.3 var(--font-mono); letter-spacing: .08em; }
+  .project-record dd { margin: 0; color: var(--color-text); font-size: .8rem; line-height: 1.45; overflow-wrap: anywhere; }
+  .project-showcase__body { align-content: center; padding-block: var(--space-4); }
+  .project-showcase__body h2 { max-width: 16ch; font-size: clamp(2rem, 4.5vw, 4.5rem); }
+  .project-showcase__link { width: fit-content; margin-top: var(--space-3); border-bottom: 1px solid currentColor; color: var(--color-text); font-weight: 780; text-decoration: none; }
+  .project-showcase__link:hover { color: var(--color-accent-strong); }
+  @media (max-width: 62rem) { .project-showcase { grid-template-columns: 1fr; } .project-showcase__evidence { min-height: 20rem; } }
+  @media (max-width: 36rem) { .project-showcase { padding: var(--space-3); } .project-showcase__evidence { min-height: 18rem; } .project-record { padding: var(--space-5); } .project-record dl { grid-template-columns: 1fr; } .project-record dl > div:nth-child(even) { padding-left: 0; border-left: 0; } }
 </style>

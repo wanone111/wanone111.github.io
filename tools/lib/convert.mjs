@@ -14,6 +14,13 @@ const CALLOUT_LABELS = {
   failure: '失败',
   danger: '危险',
   bug: '缺陷',
+  problem: '故障现象',
+  environment: '实验环境',
+  diagnosis: '排查过程',
+  conclusion: '关键结论',
+  solution: '可复用方案',
+  limitations: '已知限制',
+  validation: '验证结果',
   example: '示例',
   quote: '引用',
 };
@@ -46,9 +53,10 @@ function headingAnchor(value) {
 }
 
 function convertCallouts(markdown) {
-  return markdown.replace(/^>\s*\[!([a-z]+)\][+-]?\s*(.*)$/gim, (_match, kind, title) => {
-    const label = CALLOUT_LABELS[kind.toLowerCase()] ?? kind;
-    return `> **${label}${title.trim() ? `：${title.trim()}` : ''}**`;
+  return markdown.replace(/^>[ \t]*\[!([a-z]+)\][+-]?[ \t]*([^\r\n]*)$/gim, (_match, kind, title) => {
+    const normalizedKind = kind.toLowerCase();
+    const label = CALLOUT_LABELS[normalizedKind] ?? kind;
+    return `> <span class="tech-callout__marker" data-tech-callout="${normalizedKind}" aria-hidden="true"></span> **${label}${title.trim() ? `：${title.trim()}` : ''}**`;
   });
 }
 

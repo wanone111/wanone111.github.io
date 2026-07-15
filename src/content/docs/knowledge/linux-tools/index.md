@@ -5,4 +5,4 @@ sidebar:
   order: 5
 ---
 
-该栏目已经建立，具体内容将在发布工具和旧内容迁移完成后加入。
+本栏目已收录[Linux 与工程编程学习路径](./linux-and-networking/)，从 Linux 与 C++ 入门提纲进入当前较完整的 Socket/TCP 实践笔记。

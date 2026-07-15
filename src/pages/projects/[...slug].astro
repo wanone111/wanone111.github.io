@@ -1,6 +1,9 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleRail from '../../components/ArticleRail.astro';
+import EngineeringSummary from '../../components/EngineeringSummary.astro';
+import PublishingLab from '../../components/PublishingLab.astro';
 import { formatDate, isPublic } from '../../lib/content';
 
 export async function getStaticPaths() {
@@ -10,32 +13,71 @@ export async function getStaticPaths() {
 
 interface Props { project: CollectionEntry<'projects'>; }
 const { project } = Astro.props;
-const { Content } = await render(project);
+const { Content, headings } = await render(project);
+const statusLabels = { draft: '草稿', review: '复核中', ready: '待发布', published: '已公开' };
+const period = project.data.time_range ?? (project.data.created.getTime() === project.data.updated.getTime()
+  ? formatDate(project.data.created)
+  : `${formatDate(project.data.created)} — ${formatDate(project.data.updated)}`);
+const summaryItems = [
+  { label: '项目状态', value: statusLabels[project.data.status] },
+  { label: '时间范围', value: period },
+  { label: '作者角色', value: project.data.role },
+  { label: '硬件平台', value: project.data.hardware },
+  { label: '软件环境', value: project.data.software },
+  { label: '技术栈', value: (project.data.stack.length > 0 ? project.data.stack : project.data.tags).join(' · '), wide: true },
+  { label: '核心结果', value: project.data.result, wide: true },
+  { label: '验证方式', value: project.data.validation, wide: true },
+  { label: '当前限制', value: project.data.limitations, wide: true },
+  { label: '下一步', value: project.data.next_step, wide: true },
+];
+const projectUrl = new URL(`/projects/${project.data.slug}/`, Astro.site ?? Astro.url.origin);
+const projectImage = project.data.cover ? new URL(project.data.cover, Astro.site ?? Astro.url.origin).href : undefined;
+const projectJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: project.data.title,
+  description: project.data.description,
+  url: projectUrl.href,
+  dateCreated: project.data.created.toISOString(),
+  dateModified: project.data.updated.toISOString(),
+  inLanguage: 'zh-CN',
+  keywords: project.data.tags,
+  creator: { '@type': 'Person', name: '万志成', alternateName: 'Wanone' },
+  ...(projectImage ? { image: projectImage } : {}),
+};
 ---
 
-<BaseLayout title={project.data.title} description={project.data.description}>
+<BaseLayout title={project.data.title} description={project.data.description} contentType="项目" image={project.data.cover} socialType="article" published={project.data.created} updated={project.data.updated} jsonLd={projectJsonLd}>
   <article class="project-detail stack-xl">
     <header class="project-header">
       <div class="stack-lg">
-        <p class="eyebrow">Project system · 更新于 {formatDate(project.data.updated)}</p>
+        <p class="eyebrow">PROJECT · 工程档案 · 更新于 {formatDate(project.data.updated)}</p>
         <h1>{project.data.title}</h1>
         <p class="lede">{project.data.description}</p>
         <div class="tag-list">{project.data.tags.map((tag) => <span class="tag">{tag}</span>)}</div>
       </div>
-      <a class="button secondary" href="/projects/">返回项目</a>
+      <a class="project-back" href="/projects/">返回项目</a>
     </header>
+    <EngineeringSummary items={summaryItems} label="项目工程摘要" />
     <div class="article-layout">
-      <aside class="project-aside"><p class="eyebrow">System record</p><p>目标、边界、实现与验证。</p></aside>
-      <div class="article-shell prose"><Content /></div>
+      <ArticleRail headings={headings} label="项目目录" />
+      <div class="article-shell prose">
+        <Content />
+        {project.data.slug === 'obsidian-astro-publishing' && <PublishingLab />}
+      </div>
     </div>
   </article>
 </BaseLayout>
 
 <style>
-  .project-header { display: flex; align-items: end; justify-content: space-between; gap: var(--space-7); border: 1px solid var(--color-border-strong); border-radius: var(--radius-xl); padding: clamp(1.5rem, 6vw, 5rem); background: linear-gradient(135deg, var(--color-accent-soft), var(--color-surface) 58%); box-shadow: var(--shadow-card); }
-  .project-header h1 { max-width: 15ch; font-size: clamp(2.8rem, 7vw, 6.5rem); }
+  .project-header { display: grid; grid-template-columns: minmax(0, 8fr) auto; align-items: end; gap: var(--space-7); border-top: .5rem solid var(--color-accent); border-bottom: 1px solid var(--color-border-strong); padding: clamp(2rem, 6vw, 5rem) clamp(0rem, 3vw, 2rem); }
+  .project-header h1 { max-width: 16ch; font-size: clamp(2.7rem, 6vw, 5.8rem); }
   .project-header .lede { max-width: 52rem; }
-  .project-aside { grid-column: 1 / span 2; position: sticky; top: 2rem; color: var(--color-text-muted); }
+  .project-back { border-bottom: 1px solid currentColor; color: var(--color-text); font-weight: 750; text-decoration: none; }
+  :global(.article-rail) { grid-column: 1 / span 2; }
   .article-shell { grid-column: 4 / span 7; }
-  @media (max-width: 48rem) { .project-header { align-items: flex-start; flex-direction: column; } .project-aside { display: none; } .article-shell { grid-column: 1 / -1; } }
+  :global(.article-shell .publishing-lab) { grid-template-columns: 1fr; gap: var(--space-6); margin-top: var(--space-8); }
+  :global(.article-shell .publishing-lab__intro h2) { max-width: none; font-size: clamp(1.8rem, 3vw, 2.8rem); }
+  @media (max-width: 64rem) { .article-shell { grid-column: 2 / span 10; } }
+  @media (max-width: 48rem) { .project-header { grid-template-columns: 1fr; align-items: start; } .article-shell { grid-column: 1 / -1; } }
 </style>

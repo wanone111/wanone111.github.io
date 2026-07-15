@@ -4,6 +4,8 @@
 
 唯一内容源是相邻目录 `../knowledge-base/80_Publish/`。发布工具不会读取知识库的其他目录，也不会反向修改源笔记。
 
+`workspace.config.json` 中的网站根目录必须解析到当前网站仓库，知识库与网站目录树不得互相嵌套，博客、项目和固定页输出也必须位于统一的生成内容根目录内。路径配置不满足这些边界时，发布工具会在读取或写入内容前失败。
+
 只有同时满足以下条件的文件会生成网站内容：
 
 - 文件位于 `80_Publish` 的类型目录中。
@@ -54,12 +56,14 @@ Slug 只能使用小写 ASCII 字母、数字、连字符和 `/`。例如：`emb
 npm.cmd run content:validate
 npm.cmd run content:check-secrets
 npm.cmd run content:sync
+npm.cmd run test:generated
 npm.cmd run test:content
 npm.cmd run check
 npm.cmd run build
 npm.cmd run test:links
 npm.cmd run test:routes
 npm.cmd run test:redirects
+npm.cmd run test:qa
 ```
 
 或者运行完整检查：

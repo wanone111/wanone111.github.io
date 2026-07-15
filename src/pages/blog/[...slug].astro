@@ -1,6 +1,8 @@
 ---
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleRail from '../../components/ArticleRail.astro';
+import EngineeringSummary from '../../components/EngineeringSummary.astro';
 import PIDTuningLab from '../../components/PIDTuningLab.astro';
 import ReadingProgressPlant from '../../components/ReadingProgressPlant.astro';
 import { formatDate, isPublic } from '../../lib/content';
@@ -12,25 +14,58 @@ export async function getStaticPaths() {
 
 interface Props { post: CollectionEntry<'blog'>; }
 const { post } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const articleBody = post.body ?? '';
+const chineseCharacters = articleBody.match(/[\u3400-\u9fff]/g)?.length ?? 0;
+const latinWords = articleBody.replace(/[\u3400-\u9fff]/g, ' ').match(/\b[\w-]+\b/g)?.length ?? 0;
+const readingMinutes = Math.max(1, Math.ceil(chineseCharacters / 350 + latinWords / 220));
+const statusLabels = { draft: '草稿', review: '复核中', ready: '待发布', published: '已公开' };
+const summaryItems = [
+  { label: '问题', value: post.data.problem ?? post.data.description, wide: true },
+  { label: '环境', value: post.data.environment ?? post.data.tags.join(' · '), wide: true },
+  { label: '结论', value: post.data.conclusion, wide: true },
+  { label: '状态', value: statusLabels[post.data.status] },
+  { label: '适用版本', value: post.data.applicable_version },
+  { label: '首次发布', value: post.data.published ? formatDate(post.data.published) : formatDate(post.data.created) },
+  { label: post.data.verified ? '最后验证' : '最后更新', value: formatDate(post.data.verified ?? post.data.updated) },
+  { label: '预计阅读', value: `${readingMinutes} 分钟` },
+];
+const articleUrl = new URL(`/blog/${post.data.slug}/`, Astro.site ?? Astro.url.origin);
+const articleImage = post.data.cover ? new URL(post.data.cover, Astro.site ?? Astro.url.origin).href : undefined;
+const articleJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: post.data.title,
+  description: post.data.description,
+  url: articleUrl.href,
+  datePublished: (post.data.published ?? post.data.created).toISOString(),
+  dateModified: post.data.updated.toISOString(),
+  inLanguage: 'zh-CN',
+  keywords: post.data.tags,
+  author: { '@type': 'Person', name: '万志成', alternateName: 'Wanone' },
+  ...(articleImage ? { image: articleImage } : {}),
+};
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description}>
+<BaseLayout title={post.data.title} description={post.data.description} contentType="文章" image={post.data.cover} socialType="article" published={post.data.published ?? post.data.created} updated={post.data.updated} jsonLd={articleJsonLd}>
   <article class="article-detail stack-xl">
-    <header class="article-header editorial-grid">
-      <div class="article-header__meta stack">
-        <a href="/blog/">博客 / 返回列表</a>
-        <p>{post.data.category ?? '工程笔记'}</p>
-        <time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time>
+    <header class="article-header">
+      <div class="editorial-grid">
+        <div class="article-header__meta stack">
+          <a href="/blog/">博客 / 返回列表</a>
+          <p>{post.data.category ?? '工程笔记'}</p>
+          <time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time>
+        </div>
+        <div class="article-header__body stack-lg">
+          <h1>{post.data.title}</h1>
+          <p class="lede">{post.data.description}</p>
+          <div class="tag-list">{post.data.tags.map((tag) => <a class="tag" href={`/tags/#${encodeURIComponent(tag)}`}>{tag}</a>)}</div>
+        </div>
       </div>
-      <div class="article-header__body stack-lg">
-        <h1>{post.data.title}</h1>
-        <p class="lede">{post.data.description}</p>
-        <div class="tag-list">{post.data.tags.map((tag) => <a class="tag" href={`/tags/#${encodeURIComponent(tag)}`}>{tag}</a>)}</div>
-      </div>
+      <EngineeringSummary items={summaryItems} label="文章工程摘要" />
     </header>
     <div class="article-layout">
-      <aside class="article-aside"><p class="eyebrow">Field notes</p><p>保留问题背景、关键过程和可复用结论。</p></aside>
+      <ArticleRail headings={headings} />
       <div class="article-shell prose">
         {post.data.slug === 'algorithms/pid' && <PIDTuningLab />}
         <Content />
@@ -70,16 +105,17 @@ const { Content } = await render(post);
 </script>
 
 <style>
-  .article-header { border-bottom: 1px solid var(--color-border-strong); padding-block: clamp(3.5rem, 8vw, 7rem) var(--space-7); }
+  .article-header { display: grid; gap: var(--space-7); border-bottom: 1px solid var(--color-border-strong); padding-block: clamp(3.5rem, 8vw, 7rem) var(--space-7); }
   .article-header__meta { grid-column: 1 / span 3; color: var(--color-text-muted); font: 600 .74rem/1.6 var(--font-mono); }
   .article-header__meta a { color: var(--color-accent-strong); }
   .article-header__body { grid-column: 4 / -1; }
   .article-header__body h1 { max-width: 16ch; font-size: clamp(2.8rem, 7vw, 6.5rem); }
-  .article-aside { grid-column: 1 / span 2; position: sticky; top: 2rem; color: var(--color-text-muted); font-size: .86rem; }
+  :global(.article-rail) { grid-column: 1 / span 2; }
   .article-shell { grid-column: 4 / span 7; }
   :global(.code-copy-shell) { position: relative; margin-block: 1.5rem; }
   :global(.code-copy-shell pre) { margin-block: 0; padding-top: 3.2rem; }
   :global(.code-copy-button) { position: absolute; z-index: 2; top: .65rem; right: .65rem; max-width: calc(100% - 1.3rem); overflow: hidden; border: 1px solid color-mix(in srgb, var(--color-blog) 45%, var(--color-border)); border-radius: var(--radius-pill); padding: .42rem .7rem; background: color-mix(in srgb, var(--color-surface) 92%, transparent); color: var(--color-text); font: 700 .68rem/1 var(--font-mono); text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
   :global(.code-copy-button:hover) { border-color: var(--color-blog); background: var(--color-blue-soft); }
-  @media (max-width: 48rem) { .article-header__meta, .article-header__body, .article-aside, .article-shell { grid-column: 1 / -1; } .article-aside { display: none; } }
+  @media (max-width: 64rem) { .article-shell { grid-column: 2 / span 10; } }
+  @media (max-width: 48rem) { .article-header__meta, .article-header__body, .article-shell { grid-column: 1 / -1; } }
 </style>

@@ -101,7 +101,15 @@
 .prose :where(a) { color: var(--color-accent-strong); }
 .prose :where(img) { border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
 .prose :where(pre) { max-width: 100%; overflow-x: auto; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-4); }
-.prose :where(blockquote) { margin: var(--space-3) 0; border-left: 4px solid var(--color-yellow); padding: var(--space-3) var(--space-5); background: color-mix(in srgb, var(--color-yellow) 12%, transparent); }
+.prose :where(blockquote) { --callout-color: var(--color-yellow); margin: var(--space-3) 0; border-left: 4px solid var(--callout-color); padding: var(--space-3) var(--space-5); background: color-mix(in srgb, var(--callout-color) 12%, transparent); }
+.prose :where(blockquote:has(.tech-callout__marker)) { border-block: 1px solid color-mix(in srgb, var(--callout-color) 34%, var(--color-border)); border-right: 1px solid color-mix(in srgb, var(--callout-color) 34%, var(--color-border)); }
+.prose :where(blockquote:has([data-tech-callout='problem']), blockquote:has([data-tech-callout='bug']), blockquote:has([data-tech-callout='failure']), blockquote:has([data-tech-callout='danger'])) { --callout-color: var(--color-accent); }
+.prose :where(blockquote:has([data-tech-callout='environment']), blockquote:has([data-tech-callout='info']), blockquote:has([data-tech-callout='note'])) { --callout-color: var(--color-blog); }
+.prose :where(blockquote:has([data-tech-callout='conclusion']), blockquote:has([data-tech-callout='success']), blockquote:has([data-tech-callout='validation'])) { --callout-color: var(--color-knowledge); }
+.prose :where(blockquote:has([data-tech-callout='solution']), blockquote:has([data-tech-callout='tip'])) { --callout-color: var(--color-experiment); }
+.prose :where(blockquote:has([data-tech-callout='limitations']), blockquote:has([data-tech-callout='caution']), blockquote:has([data-tech-callout='warning']), blockquote:has([data-tech-callout='diagnosis'])) { --callout-color: var(--color-yellow); }
+.prose :where(.tech-callout__marker) { display: none; }
+.prose :where(blockquote:has(.tech-callout__marker) strong) { color: var(--color-text); }
 .prose :where(table) { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; }
 .prose :where(th, td) { min-width: 8rem; border-bottom: 1px solid var(--color-border); padding: var(--space-2) var(--space-3); text-align: left; }
 .prose :where(hr) { width: 100%; border: 0; border-top: 1px solid var(--color-border); }

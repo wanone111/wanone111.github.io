@@ -1,10 +1,10 @@
 # 工程实验编辑部：设计与实现检查报告
 
 日期：2026-07-14
-状态：生产基线已部署；P1 QA 工具链已在本地完成，尚未提交、推送或部署
+状态：当前生产基线与 P1 QA 工具链均已提交、推送并通过部署 CI
 
-- 发布提交：`411d58a feat(site): redesign public website`
-- 部署工作流：<https://github.com/wanone111/wanone111.github.io/actions/runs/29329217492>
+- 发布提交：`62c49a6 feat(home): refine intro and hide hotspots`
+- 部署工作流：<https://github.com/wanone111/wanone111.github.io/actions/runs/29405379137>
 - 生产地址：<https://wanone111.github.io/>
 
 ## 视觉依据
@@ -40,7 +40,8 @@
 
 | 资产 | 页面 | 尺寸与格式 | 移动端 | 透明 | CSS 可替代 | 深色版本 | 性能 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `public/images/brand/engineering-workbench.webp` | 首页首屏 | 1536 × 1024 WebP，约 208 KB | 同源响应式裁切 | 否 | 否 | 暂无 | 首屏高优先级加载，固定尺寸避免布局偏移 |
+| `public/images/brand/engineering-workbench-v2.webp` | 首页与 Uses 页面 | 1536 × 1024 WebP，约 194 KB | 同源响应式裁切 | 否 | 否 | 暂无 | 首屏高优先级加载，固定尺寸避免布局偏移 |
+| `public/images/brand/knowledge-*-v1.webp` | 首页知识花园、阅读进度与 Starlight 标题 | 三个 WebP，约 8–20 KB/个 | 同源缩放 | 是 | 否 | 暂无 | 非首屏按需加载；装饰用途使用空替代文本 |
 
 资产表达温暖、有人使用痕迹的个人工作台，不包含开发板、无人机、虚构项目、指标、文字或品牌标识。
 
@@ -69,18 +70,20 @@
 
 ## 自动检查
 
-- 22 个源笔记全部通过发布资格与敏感信息检查。
-- 22 个生成页面、9 个生成资产的清单哈希通过。
-- 11 个内容工具测试全部通过。
-- Astro 检查：45 个文件，0 错误、0 警告、0 提示。
-- 静态构建：33 个页面成功。
-- 658 个站内链接和资产通过。
-- 10 个必要路由通过。
+以下数字来自 2026-07-15 的本地待审候选，其中包含四篇尚未推送或部署的 `ready` 知识导读；生产基线仍为上方列出的 `62c49a6`。
+
+- 26 个源笔记全部通过发布资格与敏感信息检查。
+- 26 个生成页面、9 个生成资产的清单哈希通过。
+- 15 个内容与工作区边界测试全部通过。
+- Astro 检查：64 个文件，0 错误、0 警告、0 提示。
+- 静态构建：38 个页面成功。
+- 1123 个站内链接和资产通过。
+- 11 个必要路由通过。
 - 18 个旧 URL 重定向通过。
-- Pagefind 成功索引 51 个 HTML 文件。
+- Pagefind 成功索引 56 个 HTML 文件。
 - 生产首页、博客、简历、友链、项目、知识库和工作台图片均返回 HTTP 200，并包含预期内容。
-- Playwright 浏览器检查：10 条主要路由和 6 项关键交互，16/16 通过。
-- axe 自动无障碍检查：桌面与移动共 9 个场景，9/9 通过，未排除 WCAG A/AA 规则。
+- Playwright 浏览器检查：11 条主要路由和 17 项关键交互，28/28 通过。
+- axe 自动无障碍检查：桌面与移动共 14 个场景，14/14 通过，未排除 WCAG A/AA 规则。
 - Lighthouse：主页三次中位数为 99/100/100/100，博客与知识库均为 100/100/100/100（性能/无障碍/最佳实践/SEO）。性能门槛为 95，其余门槛为 100。
 - 响应式与互动证据截图：四档首页、移动菜单、博客筛选和 Starlight 侧栏共 5 项检查通过；截图保存在本地 `qa-artifacts/screenshots/`，不提交公开仓库。
 
@@ -104,7 +107,7 @@
 
 ### P2 — 性能、分享与维护
 
-- 首页工作台是单一 WebP 资源，没有响应式图片变体、AVIF 或移动端专用裁切。
+- 首页与 Uses 页面共用单一 WebP 工作台资源，没有响应式图片变体、AVIF 或移动端专用裁切。
 - 站点尚未提供 Open Graph、Twitter Card、JSON-LD 和稳定社交分享图。
 - 依赖更新和外部链接健康检查仍依赖人工维护。
 - 项目区只有一个真实项目，多项目状态下的内容密度尚未经过真实数据验证。
@@ -120,5 +123,44 @@
 | 信息架构与导航 | 主导航、首页四条知识路径和 Starlight 侧栏已通过桌面/移动测试，现阶段没有可观测阻塞 | 当前保持不变；等知识正文或项目数量显著增加后，再用真实内容评估分组和层级 | 是否增加入口、导航命名、层级调整、公开 URL 或重定向策略 |
 
 上述项目均可能改变内容发现方式、公开元数据、URL 或隐私边界，因此本轮只记录证据和最小选项，没有修改页面结构、feed、导航、知识正文或分享数据。
+
+## 2026-07-15 首页自我介绍与工作桌热点复核
+
+- 参考来源：用户提供的 `codex-clipboard-630de55f-06c9-4883-8402-78c34df19dde.png`（Amber 自我介绍）与 `codex-clipboard-88dda7db-f726-489d-a370-cc836567a289.png`（工作桌热点）。
+- 实现截图：`qa-artifacts/screenshots/home-intro-final-desktop.png`、`qa-artifacts/screenshots/home-intro-mobile-390.png`。
+- 检查视口：桌面 1440 × 900；移动端 390 × 844；浅色主题；工作桌信息卡关闭；无 Hover。
+- 保真重点：自然段式自我介绍、姓名与兴趣重点层级、紧凑 CTA 组合、暖色页面基底，以及既有工作桌插画和导航语义。
+- 比较记录：首轮桌面版顶部留白偏大、中等屏幕两栏偏窄；第二轮将首屏最小高度从 43rem 收紧到 38rem，并在 1024px 以下改为单列，复核通过。
+- 交互复核：六个工作桌热点的计算样式均为透明背景、无边框、无阴影；指针点击仍可打开当前研究卡；按钮、链接、ARIA 状态与 44px 命中区域保持不变。
+- 自动检查：Astro check 64 个文件 0 错误、0 警告、0 提示；静态构建 38 个页面成功。
+- 部署结果：提交 `62c49a6 feat(home): refine intro and hide hotspots`；GitHub Pages 工作流 `29405379137` 的 build、tests 与 deploy 均成功；生产首页返回 HTTP 200，并包含新版自我介绍，工作桌插画返回 HTTP 200。
+
+## 2026-07-15 页头导航与侧边主题按键复核
+
+- Source visual truth：用户提供的 `codex-clipboard-4ddc8b8a-7e0d-421c-ba82-4ef38bfc4494.png`。
+- Implementation screenshot：`qa-artifacts/screenshots/header-side-theme-desktop-1440.png`。
+- Viewport：1440 × 900；首页；浅色主题；导航关闭；主题按钮未 Hover。
+- Full-view comparison evidence：实现截图覆盖完整首屏，可确认页头密度、右侧按键位置及其与正文的关系。
+- Focused region comparison evidence：参考图本身是页头聚焦裁切；与实现截图顶部区域在同一次比较中查看，导航字体、胶囊轮廓和按钮文字均清晰可辨，不需要额外裁切。
+- Fonts and typography：沿用现有系统字体与等宽小字；主导航字重和字号未改变，侧边“明暗”改为竖排但仍保持可读。
+- Spacing and layout rhythm：导航减少“简历”后宽度自然收紧；主题按键与胶囊导航分离并贴附页头右侧，命中区域不小于 48 × 80px。
+- Colors and visual tokens：背景、边框、文字、阴影和深色激活状态均复用现有设计令牌，没有引入新的随机颜色。
+- Image quality and asset fidelity：首页工作桌与品牌图像没有变化，未新增或替换任何视觉资产。
+- Copy and content：“简历”仅从主导航移除；`/resume/` 路由及首页“查看简历”入口继续保留；“明暗”标签和切换主题的无障碍名称保持不变。
+- Findings：未发现 P0、P1 或 P2 差异；侧边按钮的竖向形态属于用户要求的结构变化。
+- Verification：Astro check 64 个文件 0 诊断；静态构建 38 个页面成功；DOM 证据显示主导航只有首页、项目、博客、知识库、关于五项，主题按钮仍为原生 button。
+- Deployment：提交 `cc92b26 feat(header): simplify nav and add side toggle`；GitHub Pages 工作流 `29411871589` 的 build、完整测试与 deploy 均成功；生产首页返回 HTTP 200，主导航不再包含 `/resume/`，而 `/resume/` 仍返回 HTTP 200。
+
+## 2026-07-15 侧边主题按键复核
+
+- Source visual truth：用户提供的 `codex-clipboard-b37cbe43-edd2-4818-9026-fb96209cc879.png`，以及 <https://butterfly.js.org/> 当前右侧控制组。
+- Comparison evidence：`qa-artifacts/theme-toggle-2026-07-15/02-theme-toggle-comparison.png`；同一组中包含原控件、Butterfly 参考、Wanone 浅色状态与深色状态。
+- Layout：从页头容器内移出，改为视口右下角固定方键；桌面距右 16px、距底 40px，与 Butterfly 侧边组的停靠关系一致。移动端使用安全区偏移，不遮挡系统底部区域。
+- Sizing：Butterfly 当前按钮为 35×35px；Wanone 使用 48×48px，以满足本站触摸命中区与键盘焦点基线。
+- Iconography：复用 Starlight 自带 `moon` / `sun` 图标，没有新增字体、手写 SVG 或装饰资产。
+- State and copy：浅色主题显示月亮，`aria-label` 与 `title` 为“切换到深色主题”；深色主题显示太阳，并动态更新为“切换到浅色主题”。`aria-pressed`、站点主题数据与本地偏好保持同步。
+- Motion：仅保留短时透明度、缩放和 hover 位移；现有 `prefers-reduced-motion` 全局规则继续接管非必要过渡。
+- Findings：未发现 P0、P1 或 P2 差异；较参考增加的尺寸属于明确的可访问性调整。
+- Verification：Astro check 67 个文件 0 诊断；静态构建 38 页成功；Playwright 交互 35/35、axe WCAG A/AA 14/14、视觉证据 9/9 通过。
 
 final result: passed

@@ -5,4 +5,4 @@ sidebar:
   order: 4
 ---
 
-该栏目已经建立，具体内容将在发布工具和旧内容迁移完成后加入。
+本栏目已收录[FPGA、Verilog 与 HLS 学习路径](./fpga-development/)，覆盖旧博客已经记录的 FPGA 流程、RTL、Verilog、PYNQ 与 Vitis HLS 内容。

@@ -202,3 +202,9 @@ int A[10][10];
     确保设计满足所有时序约束要求（建立时间、保持时间等）。
 
 这通常涉及性能优化和布局布线策略的调整，以满足时序收敛（Timing Closure）。
+
+## 相关内容
+
+- [FPGA、Verilog 与 HLS 学习路径](/knowledge/fpga-edge-ai/fpga-development/)
+- [FPGA 概览](/blog/fpga/fpga-overview/)
+- [Verilog 学习笔记](/blog/fpga/verilog-notes/)

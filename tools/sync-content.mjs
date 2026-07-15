@@ -65,6 +65,20 @@ function generatedFrontmatter(note) {
     tags: note.data.tags ?? [],
     cover: note.data.cover,
     featured: note.data.featured ?? false,
+    problem: note.data.problem,
+    environment: note.data.environment,
+    conclusion: note.data.conclusion,
+    applicable_version: note.data.applicable_version,
+    verified: note.data.verified ? isoDate(note.data.verified) : undefined,
+    time_range: note.data.time_range,
+    role: note.data.role,
+    hardware: note.data.hardware,
+    software: note.data.software,
+    stack: note.data.stack,
+    result: note.data.result,
+    limitations: note.data.limitations,
+    next_step: note.data.next_step,
+    validation: note.data.validation,
   });
 }
 

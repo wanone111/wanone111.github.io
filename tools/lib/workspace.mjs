@@ -51,6 +51,20 @@ export async function loadWorkspace() {
     Object.entries(config).map(([key, value]) => [key, resolveConfiguredPath(value, configBaseRoot)]),
   );
 
+  validateWorkspacePaths(paths, websiteRoot);
+
+  return { config, paths, configPath, workspaceRoot: configBaseRoot, websiteRoot };
+}
+
+export function validateWorkspacePaths(paths, actualWebsiteRoot = websiteRoot) {
+  if (resolve(paths.websiteRoot) !== resolve(actualWebsiteRoot)) {
+    throw new Error(`websiteRoot must resolve to the current website repository: ${actualWebsiteRoot}`);
+  }
+
+  if (isInside(paths.knowledgeRoot, paths.websiteRoot) || isInside(paths.websiteRoot, paths.knowledgeRoot)) {
+    throw new Error('knowledgeRoot and websiteRoot must be separate directory trees.');
+  }
+
   assertInside(paths.publishRoot, paths.knowledgeRoot, 'publishRoot');
   assertInside(paths.assetsRoot, paths.knowledgeRoot, 'assetsRoot');
   for (const key of [
@@ -66,7 +80,9 @@ export async function loadWorkspace() {
     assertInside(paths[key], paths.websiteRoot, key);
   }
 
-  return { config, paths, configPath, workspaceRoot: configBaseRoot, websiteRoot };
+  for (const key of ['generatedBlogRoot', 'generatedProjectsRoot', 'generatedPagesRoot']) {
+    assertInside(paths[key], paths.generatedContentRoot, key);
+  }
 }
 
 export function isInside(candidate, parent) {

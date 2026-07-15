@@ -2,15 +2,64 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
-import { isPublic } from '../../lib/content';
+import { byNewest, formatDate, isPublic } from '../../lib/content';
 
-const posts = (await getCollection('blog')).filter(isPublic);
-const tags = [...new Set(posts.flatMap((post) => post.data.tags))].sort((a, b) => a.localeCompare(b, 'zh-CN'));
+const posts = (await getCollection('blog')).filter(isPublic).sort(byNewest);
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))]
+  .map((tag) => ({ tag, posts: posts.filter((post) => post.data.tags.includes(tag)) }))
+  .sort((a, b) => b.posts.length - a.posts.length || a.tag.localeCompare(b.tag, 'zh-CN'));
 ---
 
 <BaseLayout title="标签" description="按技术标签浏览博客文章。">
   <div class="stack-lg">
-    <PageIntro eyebrow="Tags" title="标签" description="按具体技术、工具和平台查找文章。" />
-    {tags.length > 0 ? <div class="tag-list">{tags.map((tag) => <span class="tag" id={tag}>{tag}</span>)}</div> : <div class="empty-state">迁移文章后将自动生成标签。</div>}
+    <PageIntro eyebrow={`Tags · ${tags.length}`} title="技术标签" description="每个标签都连接到具体文章、更新时间与内容分类；原有锚点链接继续有效。" />
+    {tags.length > 0 ? (
+      <div class="tag-browser">
+        <nav class="tag-index" aria-label="标签索引">
+          {tags.map(({ tag, posts }) => <a href={`#${encodeURIComponent(tag)}`}>{tag}<span>{posts.length}</span></a>)}
+        </nav>
+        <div class="tag-groups">
+          {tags.map(({ tag, posts }) => (
+            <section class="tag-group" id={tag} aria-labelledby={`${tag}-title`} data-tag-section>
+              <header>
+                <div><p class="eyebrow">TAG</p><h2 id={`${tag}-title`}>{tag}</h2></div>
+                <span>{posts.length} 篇文章</span>
+              </header>
+              <ol>
+                {posts.map((post) => (
+                  <li>
+                    <a href={`/blog/${post.data.slug}/`}>
+                      <span class="tag-group__type">{post.data.category ?? '工程笔记'}</span>
+                      <strong>{post.data.title}</strong>
+                      <time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ))}
+        </div>
+      </div>
+    ) : <div class="empty-state">暂无公开标签。</div>}
   </div>
 </BaseLayout>
+
+<style>
+  .tag-browser { display: grid; grid-template-columns: minmax(11rem, 2fr) minmax(0, 8fr); gap: clamp(2rem, 6vw, 7rem); align-items: start; }
+  .tag-index { position: sticky; top: var(--space-5); display: grid; max-height: calc(100vh - 3rem); overflow: auto; border-top: 1px solid var(--color-border-strong); }
+  .tag-index a { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); border-bottom: 1px solid var(--color-border); padding: .65rem .2rem; color: var(--color-text-muted); font: 650 .76rem/1.3 var(--font-mono); text-decoration: none; }
+  .tag-index a:hover { color: var(--color-accent-strong); }
+  .tag-index span { color: var(--color-text-muted); }
+  .tag-groups { display: grid; }
+  .tag-group { scroll-margin-top: var(--space-5); border-top: 1px solid var(--color-border-strong); padding-block: var(--space-6) var(--space-8); }
+  .tag-group header { display: flex; align-items: end; justify-content: space-between; gap: var(--space-5); }
+  .tag-group h2 { margin-top: var(--space-2); font-size: clamp(1.8rem, 4vw, 3.5rem); }
+  .tag-group header > span { border-left: 3px solid var(--color-blog); padding-left: var(--space-3); color: var(--color-text-muted); font: 650 .72rem/1.4 var(--font-mono); }
+  .tag-group ol { margin: var(--space-5) 0 0; padding: 0; list-style: none; }
+  .tag-group li { border-top: 1px solid var(--color-border); }
+  .tag-group a { display: grid; grid-template-columns: minmax(7rem, 1.5fr) minmax(0, 6fr) auto; gap: var(--space-4); align-items: center; min-height: 4.5rem; color: var(--color-text); text-decoration: none; }
+  .tag-group a:hover strong { color: var(--color-accent-strong); text-decoration: underline; text-underline-offset: .25rem; }
+  .tag-group__type, .tag-group time { color: var(--color-text-muted); font: 650 .7rem/1.4 var(--font-mono); }
+  @media (max-width: 52rem) { .tag-browser { grid-template-columns: 1fr; } .tag-index { position: static; display: flex; max-height: none; flex-wrap: wrap; gap: var(--space-2) var(--space-4); border-bottom: 1px solid var(--color-border); padding-block: var(--space-3); } .tag-index a { gap: .5rem; border: 0; padding: .3rem 0; } }
+  @media (max-width: 36rem) { .tag-group a { grid-template-columns: 1fr auto; padding-block: var(--space-3); } .tag-group__type { grid-column: 1 / -1; } }
+</style>

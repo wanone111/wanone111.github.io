@@ -77,3 +77,9 @@ impl会生成一个zip压缩包
 添加自定IP核
 然后创建时钟进行连线
 ![FPGA 3](/images/generated/fpga-3-2a2d59ef3f5a.png)
+
+## 相关内容
+
+- [FPGA、Verilog 与 HLS 学习路径](/knowledge/fpga-edge-ai/fpga-development/)
+- [FPGA RTL 学习笔记](/blog/fpga/rtl-notes/)
+- [FPGA HLS 学习笔记](/blog/fpga/vitis-hls-notes/)

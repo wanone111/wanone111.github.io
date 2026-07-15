@@ -22,3 +22,8 @@ featured: false
 SLAM是同步定位与地图构建(Simultaneous Localization And Mapping)的缩写。
 
 ###
+
+## 相关内容
+
+- [ROS 2 与机器人仿真学习路径](/knowledge/robotics/ros2-and-simulation/)
+- [ROS 2 学习笔记](/blog/robotics/ros2-notes/)

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('mobile menu exposes synchronized state', async ({ page }) => {
+test('mobile menu synchronizes state, manages focus, and closes predictably', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
 
@@ -12,6 +12,19 @@ test('mobile menu exposes synchronized state', async ({ page }) => {
   await menu.click();
   await expect(menu).toHaveAttribute('aria-expanded', 'true');
   await expect(navigation).toBeVisible();
+  await expect(navigation.locator('a').first()).toBeFocused();
+
+  await page.keyboard.press('Escape');
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
+  await expect(menu).toBeFocused();
+
+  await menu.click();
+  await page.mouse.click(10, 200);
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
+
+  await menu.click();
+  await page.setViewportSize({ width: 1280, height: 844 });
+  await expect(menu).toHaveAttribute('aria-expanded', 'false');
 });
 
 test('theme preference stays consistent across Astro and Starlight', async ({ page }) => {
@@ -19,11 +32,17 @@ test('theme preference stays consistent across Astro and Starlight', async ({ pa
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 
-  const themeToggle = page.locator('[data-site-header] [data-theme-toggle]');
+  const themeToggle = page.locator('[data-theme-toggle]');
   await expect(themeToggle).toHaveCSS('position', 'fixed');
+  await expect(themeToggle).toHaveAttribute('aria-label', '切换到深色主题');
+  await expect(themeToggle.locator('.theme-toggle__icon--moon')).toHaveCSS('opacity', '1');
+  await expect(themeToggle.locator('.theme-toggle__icon--sun')).toHaveCSS('opacity', '0');
   await expect(page.locator('#site-navigation a[href="/resume/"]')).toHaveCount(0);
   await themeToggle.click();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect(themeToggle).toHaveAttribute('aria-label', '切换到浅色主题');
+  await expect(themeToggle.locator('.theme-toggle__icon--sun')).toHaveCSS('opacity', '1');
+  await expect(themeToggle.locator('.theme-toggle__icon--moon')).toHaveCSS('opacity', '0');
   await expect.poll(() => page.evaluate(() => localStorage.getItem('starlight-theme'))).toBe('dark');
 
   await page.goto('/knowledge/');
@@ -36,6 +55,7 @@ test('theme preference stays consistent across Astro and Starlight', async ({ pa
 
   await page.goto('/');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+  await expect(page.locator('[data-theme-toggle]')).toHaveAttribute('aria-label', '切换到深色主题');
 });
 
 test('blog category filter updates pressed state and visible posts', async ({ page }) => {
@@ -57,40 +77,37 @@ test('blog category filter updates pressed state and visible posts', async ({ pa
   await categoryButton.click();
   await expect(categoryButton).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('[data-post-category]:visible')).toHaveCount(expectedCount);
+  await expect(page).toHaveURL(new RegExp(`\\?category=${category}$`));
+  await expect(page.locator('[data-visible-count]')).toHaveText(`${expectedCount}`);
+
+  await page.reload();
+  await expect(categoryButton).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-post-category]:visible')).toHaveCount(expectedCount);
 
   const allButton = page.locator('[data-category="all"]');
   await allButton.click();
   await expect(allButton).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('[data-post-category]:visible')).toHaveCount(await posts.count());
+  await page.goBack();
+  await expect(categoryButton).toHaveAttribute('aria-pressed', 'true');
+  await page.goForward();
+  await expect(allButton).toHaveAttribute('aria-pressed', 'true');
 });
 
-test('technology ecosystem filters real content without hiding it from no-JS markup', async ({ page }) => {
+test('homepage follows the 01–05 editorial sequence without duplicate systems', async ({ page }) => {
   await page.goto('/');
-
-  const items = page.locator('[data-tech-tags]');
-  await expect(items).toHaveCount(6);
-
-  const linuxButton = page.locator('[data-tech="linux"]');
-  const expectedLinuxCount = await items.evaluateAll(
-    (entries) => entries.filter((entry) => entry.getAttribute('data-tech-tags')?.split(' ').includes('linux')).length,
-  );
-
-  await linuxButton.click();
-  await expect(linuxButton).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('[data-tech-tags]:visible')).toHaveCount(expectedLinuxCount);
-  await expect(page.locator('[data-tech-count]')).toHaveText(`${expectedLinuxCount} 个相关入口`);
-
-  const allButton = page.locator('[data-tech="all"]');
-  await allButton.click();
-  await expect(allButton).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('[data-tech-tags]:visible')).toHaveCount(6);
+  await expect(page.locator('.section-marker')).toHaveText([
+    '01 / INTRO', '02 / CURRENT', '03 / SELECTED SYSTEMS', '04 / FIELD NOTES', '05 / KNOWLEDGE',
+  ]);
+  await expect(page.locator('.home-hero__actions a')).toHaveCount(2);
+  await expect(page.locator('[data-tech-tags]')).toHaveCount(0);
 });
 
 test('workbench hotspots stay visually hidden while interactions remain available', async ({ page }) => {
   await page.goto('/');
 
   const hotspots = page.locator('[data-workbench] .workbench__hotspot');
-  await expect(hotspots).toHaveCount(6);
+  await expect(hotspots).toHaveCount(2);
   const visualStates = await hotspots.evaluateAll((items) =>
     items.map((item) => {
       const style = getComputedStyle(item);
@@ -105,8 +122,7 @@ test('workbench hotspots stay visually hidden while interactions remain availabl
   await expect(note).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#current-research')).toBeVisible();
 
-  await expect(page.locator('.hotspot--laptop')).toHaveAttribute('href', '/projects/');
-  await expect(page.locator('.hotspot--books')).toHaveAttribute('href', '/knowledge/');
+  await expect(page.locator('#current-research a')).toHaveAttribute('href', '/projects/obsidian-astro-publishing/');
 });
 
 test('knowledge garden exposes real paths and maturity definitions', async ({ page }) => {
@@ -162,8 +178,11 @@ test('critical content and navigation remain available without JavaScript', asyn
 
   await expect(page.locator('h1')).toBeVisible();
   await expect(page.getByRole('link', { name: '项目', exact: true })).toBeVisible();
-  await expect(page.locator('[data-tech-tags]')).toHaveCount(6);
-  await expect(page.locator('[data-tech-tags]:visible')).toHaveCount(6);
+  await expect(page.locator('.section-marker')).toHaveCount(5);
+  await expect(page.locator('[data-post-category]:visible')).toHaveCount(0);
+
+  await page.goto('/blog/?category=robotics');
+  await expect(page.locator('[data-post-category]:visible')).toHaveCount(await page.locator('[data-post-category]').count());
 
   await page.goto('/knowledge/');
   await expect(page.getByRole('heading', { name: '公开知识库', level: 1 })).toBeVisible();
@@ -176,7 +195,7 @@ test('critical content and navigation remain available without JavaScript', asyn
 });
 
 test('publishing tabs support pointer and arrow-key activation', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/projects/obsidian-astro-publishing/');
 
   const privateTab = page.locator('#tab-private');
   const publicTab = page.locator('#tab-public');
@@ -242,16 +261,37 @@ test('logo easter egg activates a temporary theme without replacing home navigat
   await expect(page.locator('[data-logo-toast]')).toContainText('实验主题已开启');
 });
 
-test('command palette opens by keyboard and filters destinations', async ({ page }) => {
+test('command palette searches Pagefind content and restores trigger focus', async ({ page }) => {
   await page.goto('/');
-  await page.keyboard.press('Control+k');
+  const trigger = page.locator('.header-search');
+  await trigger.click();
   const palette = page.locator('[data-command-palette]');
   await expect(palette).toHaveAttribute('open', '');
   await page.locator('[data-command-search]').fill('uses');
   await expect(palette.locator('[data-command]:visible')).toHaveCount(1);
   await expect(palette.getByRole('link', { name: /\/uses/ })).toBeVisible();
+  await page.locator('[data-command-search]').fill('ROS2');
+  await expect(palette.locator('[data-pagefind-results] a').first()).toBeVisible();
+  await expect(palette.locator('[data-search-status]')).toContainText('条结果');
   await page.keyboard.press('Escape');
   await expect(palette).not.toHaveAttribute('open', '');
+  await expect(trigger).toBeFocused();
+
+  await page.keyboard.press('Control+k');
+  await expect(palette).toHaveAttribute('open', '');
+});
+
+test('tags expose article lists and long articles expose engineering navigation', async ({ page }) => {
+  await page.goto('/tags/');
+  expect(await page.locator('[data-tag-section]').count()).toBeGreaterThan(0);
+  await expect(page.locator('[data-tag-section] li').first()).toBeVisible();
+
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto('/blog/robotics/ros2-notes/');
+  await expect(page.locator('.engineering-summary')).toBeVisible();
+  await expect(page.locator('.article-rail')).toBeVisible();
+  expect(await page.locator('.article-rail a[href^="#"]').count()).toBeGreaterThan(0);
+  await expect(page.locator('.article-rail progress')).toHaveAttribute('max', '100');
 });
 
 test('uses explorer keeps details stable while switching real tool purposes', async ({ page }) => {

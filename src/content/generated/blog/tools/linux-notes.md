@@ -23,3 +23,9 @@ featured: false
 ## vim编辑器的使用
 
 ## shell的使用
+
+## 相关内容
+
+- [Linux 与工程编程学习路径](/knowledge/linux-tools/linux-and-networking/)
+- [Linux Socket 笔记](/blog/networking/linux-socket/)
+- [C++ 学习笔记](/blog/programming/cpp-notes/)

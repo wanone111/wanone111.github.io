@@ -1,4 +1,6 @@
 ---
+import { Icon } from '@astrojs/starlight/components';
+
 const pathname = Astro.url.pathname;
 const items = [
   { href: '/', label: '首页' },
@@ -17,36 +19,67 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
       <a class="brand__text" href="/" aria-label="Wanone 首页">Wanone <small>engineering notes</small></a>
     </div>
     <div class="site-header__actions">
+      <button class="header-search" type="button" data-command-trigger aria-label="搜索文章、项目和知识库">搜索 <kbd>⌘K</kbd></button>
       <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">菜单</button>
       <nav id="site-navigation" aria-label="主导航">
         <ul>
           {items.map((item) => (
             <li><a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>{item.label}</a></li>
           ))}
+          <li class="nav-search"><button type="button" data-command-trigger>搜索站内内容</button></li>
         </ul>
       </nav>
     </div>
   </div>
-  <button class="theme-toggle" type="button" aria-label="切换明暗主题" title="切换明暗主题" data-theme-toggle data-theme-control>明暗</button>
   <p class="logo-toast" role="status" aria-live="polite" hidden data-logo-toast></p>
 </header>
+<button class="theme-toggle" type="button" aria-label="切换到深色主题" title="切换到深色主题" data-theme-toggle data-theme-control>
+  <span class="theme-toggle__icon theme-toggle__icon--moon"><Icon name="moon" size="1.25rem" /></span>
+  <span class="theme-toggle__icon theme-toggle__icon--sun"><Icon name="sun" size="1.25rem" /></span>
+</button>
 
 <script>
   const header = document.querySelector('[data-site-header]');
   if (header) {
     const menu = header.querySelector<HTMLButtonElement>('.menu-toggle');
     const nav = header.querySelector<HTMLElement>('#site-navigation');
-    menu?.addEventListener('click', () => {
-      const open = menu.getAttribute('aria-expanded') === 'true';
-      menu.setAttribute('aria-expanded', String(!open));
-      nav?.toggleAttribute('data-open', !open);
+    const mobileQuery = window.matchMedia('(max-width: 64rem)');
+    const closeMenu = (restoreFocus = false) => {
+      if (menu?.getAttribute('aria-expanded') !== 'true') return;
+      menu.setAttribute('aria-expanded', 'false');
+      nav?.removeAttribute('data-open');
+      if (restoreFocus) menu.focus();
+    };
+    const openMenu = () => {
+      menu?.setAttribute('aria-expanded', 'true');
+      nav?.setAttribute('data-open', '');
+      nav?.querySelector<HTMLElement>('a, button')?.focus();
+    };
+    menu?.addEventListener('click', () => menu.getAttribute('aria-expanded') === 'true' ? closeMenu(true) : openMenu());
+    nav?.querySelectorAll('a, [data-command-trigger]').forEach((item) => item.addEventListener('click', () => closeMenu(false)));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && menu?.getAttribute('aria-expanded') === 'true') {
+        event.preventDefault();
+        closeMenu(true);
+      }
     });
+    document.addEventListener('pointerdown', (event) => {
+      if (menu?.getAttribute('aria-expanded') !== 'true') return;
+      if (event.target instanceof Node && !nav?.contains(event.target) && !menu.contains(event.target)) closeMenu(false);
+    });
+    mobileQuery.addEventListener('change', () => closeMenu(false));
   }
   const themeToggles = document.querySelectorAll<HTMLButtonElement>('[data-theme-control]');
   const syncThemeControls = (theme: string) => {
+    const isDark = theme === 'dark';
     themeToggles.forEach((control) => {
-      control.setAttribute('aria-pressed', String(theme === 'dark'));
+      control.setAttribute('aria-pressed', String(isDark));
       control.dataset.themeState = theme;
+      if (control.matches('[data-theme-toggle]')) {
+        const actionLabel = isDark ? '切换到浅色主题' : '切换到深色主题';
+        control.setAttribute('aria-label', actionLabel);
+        control.setAttribute('title', actionLabel);
+      }
     });
   };
   syncThemeControls(document.documentElement.dataset.theme ?? 'light');
@@ -92,27 +125,37 @@ const isActive = (href: string) => href === '/' ? pathname === '/' : pathname.st
   .brand__text { display: grid; color: var(--color-text); font-weight: 850; letter-spacing: -.03em; line-height: 1; text-decoration: none; }
   .brand small { margin-top: .25rem; color: var(--color-text-muted); font: 500 .6rem/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
   .site-header__actions { display: flex; align-items: center; gap: var(--space-2); }
-  nav { border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: .22rem; background: var(--color-surface); box-shadow: var(--shadow-soft); }
-  ul { display: flex; margin: 0; padding: 0; list-style: none; }
-  nav a { display: block; border-radius: var(--radius-pill); padding: .55rem .78rem; color: var(--color-text-muted); font-size: .85rem; font-weight: 700; text-decoration: none; transition: color var(--transition-fast), background var(--transition-fast), transform var(--transition-fast); }
-  nav a:hover { color: var(--color-text); transform: translateY(-1px); }
-  nav a[aria-current='page'] { background: var(--color-text); color: var(--color-bg); }
-  .menu-toggle { min-width: 2.7rem; min-height: 2.7rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-text); font: 700 .72rem/1 var(--font-mono); cursor: pointer; }
-  .theme-toggle { position: fixed; z-index: 45; top: 50%; right: 0; display: grid; width: 3rem; min-height: 5rem; place-items: center; transform: translateY(-50%); border: 1px solid var(--color-border); border-right: 0; border-radius: var(--radius-lg) 0 0 var(--radius-lg); padding: .75rem .6rem; background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-soft); font: 750 .72rem/1.2 var(--font-mono); letter-spacing: .12em; writing-mode: vertical-rl; cursor: pointer; transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast); }
-  .theme-toggle:hover { transform: translate(-.25rem, -50%); border-color: var(--color-border-strong); background: var(--color-accent-soft); }
+  .header-search { display: inline-flex; min-height: 2.8rem; align-items: center; gap: .6rem; border: 0; border-bottom: 1px solid var(--color-border-strong); padding-inline: .4rem; background: transparent; color: var(--color-text); font: 750 .74rem/1 var(--font-mono); cursor: pointer; }
+  .header-search kbd { color: var(--color-text-muted); font: inherit; }
+  nav { padding: 0; }
+  ul { display: flex; gap: var(--space-4); margin: 0; padding: 0; list-style: none; }
+  nav a { display: block; border-bottom: 2px solid transparent; padding: .65rem .08rem .5rem; color: var(--color-text-muted); font-size: .85rem; font-weight: 700; text-decoration: none; transition: color var(--transition-fast), border-color var(--transition-fast); }
+  nav a:hover { border-color: var(--color-border-strong); color: var(--color-text); }
+  nav a[aria-current='page'] { border-color: var(--color-accent); color: var(--color-text); }
+  .menu-toggle { min-width: 2.7rem; min-height: 2.7rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font: 700 .72rem/1 var(--font-mono); cursor: pointer; }
+  .theme-toggle { position: fixed; z-index: 45; right: 1rem; bottom: 2.5rem; display: grid; width: 3rem; min-height: 3rem; place-items: center; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0; background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-soft); cursor: pointer; transition: transform var(--transition-fast), background var(--transition-fast), border-color var(--transition-fast); }
+  .theme-toggle:hover { transform: translateY(-.2rem); border-color: var(--color-border-strong); background: var(--color-accent-soft); }
   .theme-toggle[aria-pressed='true'] { background: color-mix(in srgb, var(--color-experiment) 18%, var(--color-surface)); }
+  .theme-toggle__icon { display: grid; grid-area: 1 / 1; place-items: center; line-height: 0; transition: opacity var(--transition-fast), transform var(--transition-fast); }
+  .theme-toggle__icon--sun, .theme-toggle[data-theme-state='dark'] .theme-toggle__icon--moon { opacity: 0; transform: scale(.75) rotate(-18deg); }
+  .theme-toggle__icon--moon, .theme-toggle[data-theme-state='dark'] .theme-toggle__icon--sun { opacity: 1; transform: scale(1) rotate(0); }
   .logo-toast { position: fixed; z-index: 50; top: calc(var(--header-height) + var(--space-3)); left: 50%; transform: translateX(-50%); margin: 0; border: 1px solid var(--color-experiment); border-radius: var(--radius-pill); padding: .65rem 1rem; background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-float); font: 750 .75rem/1.2 var(--font-mono); }
   .menu-toggle { display: none; padding-inline: 1rem; }
+  .nav-search { display: none; }
   @media (max-width: 64rem) {
     .site-header__inner { padding-right: calc(var(--space-page) + 3.5rem); }
+    .header-search { display: none; }
     .menu-toggle { display: block; }
-    nav { position: absolute; top: calc(100% + .5rem); right: var(--space-page); left: var(--space-page); display: none; border-radius: var(--radius-lg); padding: var(--space-3); }
+    nav { position: absolute; top: calc(100% + .5rem); right: var(--space-page); left: var(--space-page); display: none; border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-3); background: var(--color-surface); box-shadow: var(--shadow-soft); }
     nav[data-open] { display: block; }
-    nav ul { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2); }
+    nav ul { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-2) var(--space-4); }
     nav a { text-align: center; }
+    .nav-search { display: block; grid-column: 1 / -1; border-top: 1px solid var(--color-border); padding-top: var(--space-2); }
+    .nav-search button { width: 100%; min-height: 2.8rem; border: 0; border-radius: var(--radius-sm); background: var(--color-accent-soft); color: var(--color-text); font-weight: 750; cursor: pointer; }
   }
   @media (max-width: 34rem) {
     .brand small { display: none; }
     nav ul { grid-template-columns: repeat(2, 1fr); }
+    .theme-toggle { right: .75rem; bottom: calc(.75rem + env(safe-area-inset-bottom)); }
   }
 </style>

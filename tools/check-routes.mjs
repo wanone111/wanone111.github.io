@@ -13,6 +13,7 @@ const expected = [
   'archive/index.html',
   'uses/index.html',
   '404.html',
+  'rss.xml',
 ];
 
 const missing = [];

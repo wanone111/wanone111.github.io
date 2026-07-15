@@ -69,3 +69,40 @@ test('capture uses explorer and draggable 404 cards', async ({ page }) => {
   await page.goto('/404.html');
   await page.screenshot({ path: resolve(outputDirectory, '404-scatter-desktop.png'), fullPage: true });
 });
+
+test('capture engineering project, article rail, tags, and Pagefind search', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+
+  await page.goto('/projects/obsidian-astro-publishing/');
+  await expect(page.locator('.engineering-summary')).toBeVisible();
+  await page.screenshot({ path: resolve(outputDirectory, 'project-record-desktop.png'), fullPage: true });
+
+  await page.goto('/blog/robotics/ros2-notes/');
+  await expect(page.locator('.article-rail')).toBeVisible();
+  await page.screenshot({ path: resolve(outputDirectory, 'engineering-article-desktop.png'), fullPage: true });
+
+  await page.goto('/tags/');
+  await expect(page.locator('[data-tag-section]').first()).toBeVisible();
+  await page.screenshot({ path: resolve(outputDirectory, 'tag-browser-desktop.png'), fullPage: true });
+
+  await page.goto('/');
+  await page.locator('.header-search').click();
+  await page.locator('[data-command-search]').fill('ROS2');
+  await expect(page.locator('[data-pagefind-results] a').first()).toBeVisible();
+  await page.screenshot({ path: resolve(outputDirectory, 'pagefind-command-palette.png'), fullPage: false });
+});
+
+test('capture side theme control in both theme states', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+
+  const themeToggle = page.locator('[data-theme-toggle]');
+  await expect(themeToggle).toHaveAttribute('aria-label', '切换到深色主题');
+  await page.screenshot({ path: resolve(outputDirectory, 'side-theme-light.png'), fullPage: false });
+
+  await themeToggle.click();
+  await expect(themeToggle).toHaveAttribute('aria-label', '切换到浅色主题');
+  await page.waitForTimeout(300);
+  await page.screenshot({ path: resolve(outputDirectory, 'side-theme-dark.png'), fullPage: false });
+});

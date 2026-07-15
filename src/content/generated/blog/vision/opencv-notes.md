@@ -34,3 +34,8 @@ featured: false
 ### C++ 图像处理
 
 ### C++ 视频处理
+
+## 相关内容
+
+- [各种滤波算法](/blog/algorithms/filtering/)
+- [Matlab 学习笔记](/blog/vision/matlab-notes/)

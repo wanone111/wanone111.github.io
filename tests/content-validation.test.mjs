@@ -56,3 +56,49 @@ test('accepts the allowlisted fixed links page', async () => {
   assert.deepEqual(result.errors, []);
   assert.equal(result.publishable[0].route, '/links/');
 });
+
+test('accepts optional engineering report metadata', async () => {
+  const note = validNote({
+    content_type: 'project',
+    slug: 'test-system',
+    problem: 'Verify a real system boundary.',
+    environment: 'Hardware and software bench.',
+    conclusion: 'The current stage is reproducible.',
+    applicable_version: 'v1',
+    verified: '2026-07-14',
+    time_range: '2026-07',
+    role: 'System integration',
+    hardware: 'Development board',
+    software: 'Linux',
+    stack: ['Astro'],
+    result: 'Public record generated.',
+    limitations: 'One public project.',
+    next_step: 'Add measured evidence.',
+    validation: 'Automated QA',
+  });
+  note.file = 'C:/kb/80_Publish/projects/test-system.md';
+  note.relativePath = 'projects/test-system.md';
+  note.folder = 'projects';
+  const result = await validateNotes([note], [], paths, policy);
+  assert.deepEqual(result.errors, []);
+});
+
+test('rejects malformed optional engineering metadata', async () => {
+  const result = await validateNotes([validNote({ problem: ['not', 'text'], verified: 'not-a-date' })], [], paths, policy);
+  assert.ok(result.errors.some((error) => error.field === 'problem'));
+  assert.ok(result.errors.some((error) => error.field === 'verified'));
+});
+
+test('allows a private draft to defer its public slug', async () => {
+  const result = await validateNotes([validNote({ status: 'draft', visibility: 'private', slug: '' })], [], paths, policy);
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.publishable.length, 0);
+});
+
+test('still requires a valid slug before content can publish', async () => {
+  const missing = await validateNotes([validNote({ slug: '' })], [], paths, policy);
+  assert.ok(missing.errors.some((error) => error.field === 'slug'));
+
+  const malformed = await validateNotes([validNote({ slug: '中文路径' })], [], paths, policy);
+  assert.ok(malformed.errors.some((error) => error.field === 'slug'));
+});

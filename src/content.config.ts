@@ -20,6 +20,11 @@ const sharedSchema = z.object({
   category: z.string().optional(),
   cover: z.string().optional(),
   featured: z.boolean().default(false),
+  problem: z.string().optional(),
+  environment: z.string().optional(),
+  conclusion: z.string().optional(),
+  applicable_version: z.string().optional(),
+  verified: z.coerce.date().optional(),
 });
 
 const blog = defineCollection({
@@ -29,7 +34,18 @@ const blog = defineCollection({
 
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/generated/projects' }),
-  schema: sharedSchema.extend({ content_type: z.literal('project') }),
+  schema: sharedSchema.extend({
+    content_type: z.literal('project'),
+    time_range: z.string().optional(),
+    role: z.string().optional(),
+    hardware: z.string().optional(),
+    software: z.string().optional(),
+    stack: z.array(z.string()).default([]),
+    result: z.string().optional(),
+    limitations: z.string().optional(),
+    next_step: z.string().optional(),
+    validation: z.string().optional(),
+  }),
 });
 
 const pages = defineCollection({

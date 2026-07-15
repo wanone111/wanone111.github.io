@@ -16,7 +16,7 @@ The user owns visual direction, information architecture, content meaning, and f
 
 ## Required Checks
 
-For content changes, run `npm.cmd run content:validate`, `npm.cmd run content:check-secrets`, `npm.cmd run content:sync`, `npm.cmd run test:content`, `npm.cmd run check`, `npm.cmd run build`, `npm.cmd run test:links`, `npm.cmd run test:routes`, and `npm.cmd run test:redirects`. `npm.cmd run content:publish` runs the publishing verification chain. CI must block deployment if any required check fails.
+For content changes, run `npm.cmd run content:validate`, `npm.cmd run content:check-secrets`, `npm.cmd run content:sync`, `npm.cmd run test:generated`, `npm.cmd run test:content`, `npm.cmd run check`, `npm.cmd run build`, `npm.cmd run test:links`, `npm.cmd run test:routes`, `npm.cmd run test:redirects`, and `npm.cmd run test:qa`. `npm.cmd run content:publish` runs this publishing verification chain. CI must block deployment if any required check fails.
 
 ## Generated Directories
 

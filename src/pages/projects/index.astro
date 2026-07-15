@@ -23,6 +23,8 @@ const projects = (await getCollection('projects')).filter(isPublic).sort(byNewes
             tags={project.data.tags}
             href={`/projects/${project.data.slug}/`}
             cover={project.data.cover}
+            status={project.data.status}
+            validation={project.data.validation}
           />
         ))}
       </div>

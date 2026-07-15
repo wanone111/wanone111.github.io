@@ -35,3 +35,9 @@ featured: false
 FIFO（First In First Out），是一种先进先出数据存储、缓冲器。
 分为同步FIFO和异步FIFO
 同步FIFO读写采用同一个时钟。它的作用一般是做交互数据的一个缓冲，当数据发生突发写入（即数据写入过快，并且间隔时间长）时，通过设置一定深度的FIFO，可以起到数据暂存的功能，防止数据丢失且使得后续处理流程平滑；异步FIFO读写采用不同的时钟，它主要有两个作用，一个是实现数据在不同时钟域进行传递，另一个作用就是实现不同数据宽度的数据接口互联。
+
+## 相关内容
+
+- [FPGA、Verilog 与 HLS 学习路径](/knowledge/fpga-edge-ai/fpga-development/)
+- [FPGA 概览](/blog/fpga/fpga-overview/)
+- [Verilog 学习笔记](/blog/fpga/verilog-notes/)
