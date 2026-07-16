@@ -1,0 +1,65 @@
+---
+interface Section {
+  id: string;
+  label: string;
+  shortLabel?: string;
+}
+
+interface Props {
+  sections: readonly Section[];
+}
+
+const { sections } = Astro.props;
+---
+
+<nav class="uses-section-nav" aria-label="本页章节" data-uses-nav>
+  <ol>
+    {sections.map((section, index) => (
+      <li>
+        <a
+          href={`#${section.id}`}
+          data-uses-nav-link={section.id}
+          aria-label={section.label}
+          aria-current={index === 0 ? 'location' : undefined}
+        >
+          <span class="uses-section-nav__label">{section.label}</span>
+          {section.shortLabel && (
+            <span class="uses-section-nav__short-label" aria-hidden="true">{section.shortLabel}</span>
+          )}
+        </a>
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-uses-nav]').forEach((nav) => {
+    if (!('IntersectionObserver' in window)) return;
+
+    const links = [...nav.querySelectorAll<HTMLAnchorElement>('[data-uses-nav-link]')];
+    const linksById = new Map(links.map((link) => [link.dataset.usesNavLink ?? '', link]));
+    const visibleSections = new Map<string, number>();
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          visibleSections.set(entry.target.id, entry.boundingClientRect.top);
+        } else {
+          visibleSections.delete(entry.target.id);
+        }
+      });
+
+      const currentId = [...visibleSections.entries()]
+        .sort(([, firstTop], [, secondTop]) => firstTop - secondTop)[0]?.[0];
+
+      if (!currentId) return;
+      links.forEach((link) => link.removeAttribute('aria-current'));
+      linksById.get(currentId)?.setAttribute('aria-current', 'location');
+    }, { rootMargin: '-18% 0px -68% 0px' });
+
+    linksById.forEach((_, id) => {
+      const section = document.getElementById(id);
+      if (section) observer.observe(section);
+    });
+  });
+</script>

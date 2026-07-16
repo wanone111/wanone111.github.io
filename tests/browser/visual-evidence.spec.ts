@@ -59,12 +59,19 @@ test('capture knowledge garden and PID experiment', async ({ page }) => {
   await page.screenshot({ path: resolve(outputDirectory, 'knowledge-garden-mobile.png'), fullPage: true });
 });
 
-test('capture uses explorer and draggable 404 cards', async ({ page }) => {
+test('capture uses workflows and draggable 404 cards', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/uses/');
-  await page.locator('.uses-explorer__tabs [data-use="bench"]').click();
-  await expect(page.locator('[data-use-title]:visible')).toContainText('小实验');
-  await page.screenshot({ path: resolve(outputDirectory, 'uses-explorer-desktop.png'), fullPage: true });
+  const videoWorkflow = page.locator('[data-workflow="video"]');
+  await videoWorkflow.locator('[data-workflow-node="video-transfer"]').focus();
+  await videoWorkflow.locator('summary').click();
+  await expect(videoWorkflow.getByText('通信压测框架')).toBeVisible();
+  await page.screenshot({ path: resolve(outputDirectory, 'uses-workflows-desktop.png'), fullPage: true });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/uses/');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.screenshot({ path: resolve(outputDirectory, 'uses-workflows-mobile.png'), fullPage: true });
 
   await page.goto('/404.html');
   await page.screenshot({ path: resolve(outputDirectory, '404-scatter-desktop.png'), fullPage: true });

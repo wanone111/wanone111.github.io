@@ -1,32 +1,169 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import UsesExplorer from '../components/UsesExplorer.astro';
+import UsesSectionNav from '../components/UsesSectionNav.astro';
+import UsesWorkflowMap from '../components/UsesWorkflowMap.astro';
+import {
+  constraints,
+  hardwareGroups,
+  overview,
+  principles,
+  projects,
+  readings,
+  sections,
+  softwareGroups,
+  workflows,
+} from '../data/uses';
+import '../styles/uses.css';
 ---
 
-<BaseLayout title="使用的工具" description="Wanone 的工作区、软件工具与工程用途。">
-  <header class="uses-hero stack-lg">
-    <p class="eyebrow">/uses · Workbench</p>
-    <h1>工具本身不重要，重要的是它帮我把哪类问题变清楚。</h1>
-    <p class="lede">这里不列品牌和型号，只记录真实使用方式。图片上的亮点可以点击；同样的信息也保留在旁边的按钮和文字中。</p>
-  </header>
-  <UsesExplorer />
-  <section class="uses-principles section-grid" aria-labelledby="uses-principles-title">
-    <div class="stack"><p class="eyebrow">Working rules</p><h2 id="uses-principles-title">一套会继续生长的工作方式</h2></div>
-    <div class="uses-principles__list">
-      <article><strong>先验证，再抽象</strong><p>从能复现的小实验开始，确认接口、时序和数据流。</p></article>
-      <article><strong>内容源与展示分离</strong><p>知识库负责思考，网站只接收明确允许公开的内容。</p></article>
-      <article><strong>工具服务于问题</strong><p>只有当新工具能减少不确定性或重复劳动时，才把它留在工作流里。</p></article>
-    </div>
-  </section>
-</BaseLayout>
+<BaseLayout
+  title="使用的工具"
+  description="Wanone 在嵌入式、机器人、FPGA、边缘 AI 与内容发布中的真实工具、验证路径和当前边界。"
+>
+  <div class="uses-page">
+    <header class="uses-hero" id="overview">
+      <div class="uses-hero__content">
+        <p class="eyebrow">{overview.eyebrow}</p>
+        <h1>{overview.title}</h1>
+        <p class="lede">{overview.intro}</p>
+      </div>
+      <aside class="uses-hero__meta" aria-label="页面范围">
+        <p>{overview.note}</p>
+        <dl>
+          <div><dt>工作流</dt><dd>{workflows.length}</dd></div>
+          <div><dt>公开项目</dt><dd>{projects.length}</dd></div>
+          <div><dt>延伸阅读</dt><dd>{readings.length}</dd></div>
+        </dl>
+      </aside>
+    </header>
 
-<style>
-  .uses-hero { max-width: 68rem; padding-block: clamp(4rem, 10vw, 8rem); }
-  .uses-hero h1 { max-width: 15ch; font-size: clamp(3rem, 8vw, 7rem); }
-  .uses-principles { margin-top: var(--space-section); border-top: 1px solid var(--color-border-strong); padding-top: var(--space-7); }
-  .uses-principles > .stack { grid-column: 1 / span 4; }
-  .uses-principles__list { grid-column: 6 / -1; display: grid; gap: var(--space-3); }
-  .uses-principles article { display: grid; grid-template-columns: minmax(9rem, .35fr) 1fr; gap: var(--space-4); border-bottom: 1px solid var(--color-border); padding-block: var(--space-4); }
-  .uses-principles article p { color: var(--color-text-muted); }
-  @media (max-width: 48rem) { .uses-principles > .stack, .uses-principles__list { grid-column: 1 / -1; } .uses-principles article { grid-template-columns: 1fr; gap: var(--space-2); } }
-</style>
+    <UsesSectionNav sections={sections} />
+
+    <section class="uses-section" id="hardware" aria-labelledby="uses-hardware-title">
+      <header class="uses-section__heading">
+        <p class="uses-section__index">01 / Hardware</p>
+        <h2 id="uses-hardware-title">硬件按验证角色组织</h2>
+        <p class="uses-section__intro">这里记录设备在公开工程中的作用，不把缺少证据的品牌、型号和配置补成完整清单。</p>
+      </header>
+      <div class="uses-hardware-grid">
+        {hardwareGroups.map((group) => (
+          <article class="uses-hardware-group">
+            <header>
+              <p class="eyebrow">{group.id}</p>
+              <h3>{group.title}</h3>
+              <p>{group.summary}</p>
+            </header>
+            <ul class="uses-device-list">
+              {group.items.map((item) => (
+                <li class="uses-device-card">
+                  <h4>{item.label}</h4>
+                  <p>{item.role}</p>
+                  <p class="uses-device-card__limit"><strong>边界：</strong>{item.limit}</p>
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="uses-section" id="software" aria-labelledby="uses-software-title">
+      <header class="uses-section__heading">
+        <p class="uses-section__index">02 / Software</p>
+        <h2 id="uses-software-title">软件跟着系统问题进入工作流</h2>
+        <p class="uses-section__intro">语言、框架和工具只有在减少不确定性、保留证据或降低重复劳动时才有意义。</p>
+      </header>
+      <div class="uses-software-grid">
+        {softwareGroups.map((group) => (
+          <article class="uses-software-card">
+            <p class="eyebrow">{group.id}</p>
+            <h3>{group.title}</h3>
+            <p>{group.summary}</p>
+            <ul>
+              {group.items.map((item) => (
+                <li><strong>{item.label}</strong><span>{item.detail}</span></li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="uses-section" id="workflows" aria-labelledby="uses-workflows-title">
+      <header class="uses-section__heading">
+        <p class="uses-section__index">03 / Workflows</p>
+        <h2 id="uses-workflows-title">沿数据流逐段缩短排障路径</h2>
+        <p class="uses-section__intro">指向节点可查看对应步骤；每条链路同时保留已验证结果和不能越过的结论边界。</p>
+      </header>
+      <UsesWorkflowMap workflows={workflows} />
+    </section>
+
+    <section class="uses-section" id="principles" aria-labelledby="uses-principles-title">
+      <header class="uses-section__heading">
+        <p class="uses-section__index">04 / Principles</p>
+        <h2 id="uses-principles-title">工具选择服从四条工作原则</h2>
+        <p class="uses-section__intro">这些原则同时约束工程验证、知识整理与公开发布。</p>
+      </header>
+      <div class="uses-principles">
+        {principles.map((principle, index) => (
+          <article class="uses-principle">
+            <p class="uses-card-index">{String(index + 1).padStart(2, '0')}</p>
+            <h3>{principle.title}</h3>
+            <p>{principle.detail}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="uses-section" id="constraints" aria-labelledby="uses-constraints-title">
+      <header class="uses-section__heading">
+        <p class="uses-section__index">05 / Constraints</p>
+        <h2 id="uses-constraints-title">公开记录不替代尚未完成的验证</h2>
+        <p class="uses-section__intro">页面主动保留空白，避免把设备清单、性能指标或阶段性结果写成已经完成的成果。</p>
+      </header>
+      <div class="uses-constraints">
+        {constraints.map((constraint, index) => (
+          <article class="uses-constraint">
+            <p class="uses-card-index">{String(index + 1).padStart(2, '0')}</p>
+            <h3>{constraint.title}</h3>
+            <p>{constraint.detail}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="uses-section" id="projects" aria-labelledby="uses-projects-title">
+      <header class="uses-section__heading">
+        <p class="uses-section__index">06 / Evidence</p>
+        <h2 id="uses-projects-title">从项目记录继续核对证据</h2>
+        <p class="uses-section__intro">工具和流程最终都回到公开项目、文章与知识路径，而不是停留在孤立名称上。</p>
+      </header>
+      <div class="uses-project-grid">
+        {projects.map((project) => (
+          <article class="uses-project-card">
+            <div>
+              <p class="eyebrow">{project.role}</p>
+              <h3><a href={project.href}>{project.title}</a></h3>
+              <p>{project.result}</p>
+            </div>
+            <p><strong>当前边界</strong>{project.limit}</p>
+          </article>
+        ))}
+      </div>
+      <div class="uses-readings">
+        <header>
+          <p class="eyebrow">Related notes</p>
+          <h3>延伸阅读</h3>
+        </header>
+        <ol class="uses-reading-list">
+          {readings.map((reading) => (
+            <li>
+              <a href={reading.href}>{reading.title}</a>
+              <p>{reading.topic}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

@@ -1,0 +1,108 @@
+---
+interface WorkflowNode {
+  id: string;
+  label: string;
+  protocol: string;
+  detail: string;
+}
+
+interface Workflow {
+  id: string;
+  title: string;
+  summary: string;
+  projectHref: string;
+  nodes: readonly WorkflowNode[];
+  result: string | readonly string[];
+  limit: string | readonly string[];
+}
+
+interface Props {
+  workflows: readonly Workflow[];
+}
+
+const { workflows } = Astro.props;
+const toParagraphs = (value: string | readonly string[]) => typeof value === 'string' ? [value] : value;
+---
+
+<div class="uses-workflows" data-uses-workflows>
+  {workflows.map((workflow, workflowIndex) => {
+    const titleId = `uses-workflow-${workflowIndex + 1}-title`;
+
+    return (
+      <article class="uses-workflow" data-workflow={workflow.id} aria-labelledby={titleId}>
+        <header class="uses-workflow__header">
+          <div>
+            <p class="uses-workflow__index">{String(workflowIndex + 1).padStart(2, '0')}</p>
+            <h3 id={titleId}>{workflow.title}</h3>
+            <p>{workflow.summary}</p>
+          </div>
+          <a class="uses-workflow__project" href={workflow.projectHref}>查看项目记录</a>
+        </header>
+
+        <nav class="uses-workflow__path" aria-label={`${workflow.title}工作流节点`}>
+          <ol>
+            {workflow.nodes.map((node, nodeIndex) => {
+              const detailId = `uses-workflow-${workflowIndex + 1}-node-${nodeIndex + 1}`;
+
+              return (
+                <li>
+                  <a href={`#${detailId}`} data-workflow-node={node.id}>
+                    <span class="uses-workflow__protocol">{node.protocol}</span>
+                    <span>{node.label}</span>
+                  </a>
+                </li>
+              );
+            })}
+          </ol>
+        </nav>
+
+        <div class="uses-workflow__details">
+          {workflow.nodes.map((node, nodeIndex) => {
+            const detailId = `uses-workflow-${workflowIndex + 1}-node-${nodeIndex + 1}`;
+
+            return (
+              <section class="uses-workflow__node-detail" id={detailId} tabindex="-1">
+                <p class="uses-workflow__protocol">{node.protocol}</p>
+                <h4>{node.label}</h4>
+                <p>{node.detail}</p>
+              </section>
+            );
+          })}
+        </div>
+
+        <details class="uses-evidence">
+          <summary>验证结果与当前限制</summary>
+          <div class="uses-evidence__content">
+            <section>
+              <h4>已验证</h4>
+              {toParagraphs(workflow.result).map((item) => <p>{item}</p>)}
+            </section>
+            <section>
+              <h4>仍有限制</h4>
+              {toParagraphs(workflow.limit).map((item) => <p>{item}</p>)}
+            </section>
+          </div>
+        </details>
+      </article>
+    );
+  })}
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-uses-workflows]').forEach((root) => {
+    root.querySelectorAll<HTMLElement>('[data-workflow]').forEach((workflow) => {
+      const nodes = [...workflow.querySelectorAll<HTMLAnchorElement>('[data-workflow-node]')];
+      const clearPath = () => nodes.forEach((node) => node.removeAttribute('data-path-state'));
+      const setPath = (activeIndex: number) => nodes.forEach((node, nodeIndex) => {
+        node.dataset.pathState = nodeIndex < activeIndex ? 'passed' : nodeIndex === activeIndex ? 'active' : 'upcoming';
+      });
+
+      nodes.forEach((node, nodeIndex) => {
+        node.addEventListener('pointerenter', () => setPath(nodeIndex));
+        node.addEventListener('focus', () => setPath(nodeIndex));
+        node.addEventListener('pointerleave', clearPath);
+        node.addEventListener('blur', clearPath);
+      });
+    });
+  });
+</script>

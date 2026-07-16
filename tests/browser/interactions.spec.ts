@@ -177,8 +177,9 @@ test('critical content and navigation remain available without JavaScript', asyn
   await expect(page.locator('[data-knowledge-garden] .garden-path')).toHaveCount(4);
 
   await page.goto('/uses/');
-  await expect(page.getByRole('heading', { name: /工具本身不重要/, level: 1 })).toBeVisible();
-  await expect(page.locator('[data-use-panel]:visible')).toHaveCount(4);
+  await expect(page.getByRole('heading', { name: /缩短验证路径/, level: 1 })).toBeVisible();
+  await expect(page.locator('[data-uses-nav-link]')).toHaveCount(7);
+  await expect(page.locator('[data-workflow]')).toHaveCount(3);
   await context.close();
 });
 
@@ -282,13 +283,22 @@ test('tags expose article lists and long articles expose engineering navigation'
   await expect(page.locator('.article-rail progress')).toHaveAttribute('max', '100');
 });
 
-test('uses explorer keeps details stable while switching real tool purposes', async ({ page }) => {
+test('uses workflow map exposes path state, details, and evidence', async ({ page }) => {
   await page.goto('/uses/');
-  const notebook = page.locator('.uses-explorer__tabs [data-use="notebook"]');
-  await notebook.click();
-  await expect(notebook).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('[data-use-title]:visible')).toContainText('私有知识库');
-  await expect(page.locator('[data-use-detail]:visible')).toContainText('Obsidian');
+  const workflow = page.locator('[data-workflow="video"]');
+  const input = workflow.locator('[data-workflow-node="video-input"]');
+  const transfer = workflow.locator('[data-workflow-node="video-transfer"]');
+  const inference = workflow.locator('[data-workflow-node="video-inference"]');
+
+  await transfer.focus();
+  await expect(input).toHaveAttribute('data-path-state', 'passed');
+  await expect(transfer).toHaveAttribute('data-path-state', 'active');
+  await expect(inference).toHaveAttribute('data-path-state', 'upcoming');
+
+  await transfer.click();
+  await expect(page.locator('#uses-workflow-1-node-3')).toBeVisible();
+  await workflow.locator('summary').click();
+  await expect(workflow.getByText('通信压测框架')).toBeVisible();
 });
 
 test('code copy feedback and reading plant reward completion', async ({ page, context }) => {
