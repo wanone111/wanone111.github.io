@@ -2,133 +2,133 @@
   "version": 1,
   "content": [
     {
-      "source": "knowledge-base/80_Publish/docs/embedded-communication-path.md",
+      "source": "knowledge-base/80_Publish/docs/嵌入式与通信学习路径.md",
       "output": "src/content/docs/knowledge/embedded/communication-path.md",
       "route": "/knowledge/embedded/communication-path/",
       "sha256": "64ff75fd81c254626c8fab2ec4dfbc7430cdb22cf13ec5b0eb7367478039165c"
     },
     {
-      "source": "knowledge-base/80_Publish/docs/fpga-development-path.md",
+      "source": "knowledge-base/80_Publish/docs/FPGA、Verilog 与 HLS 学习路径.md",
       "output": "src/content/docs/knowledge/fpga-edge-ai/fpga-development.md",
       "route": "/knowledge/fpga-edge-ai/fpga-development/",
       "sha256": "8157f31acf66f387f6e66603c738b63a852f23771282c5835e14e0f0584b9bd3"
     },
     {
-      "source": "knowledge-base/80_Publish/docs/linux-engineering-path.md",
+      "source": "knowledge-base/80_Publish/docs/Linux 与工程编程学习路径.md",
       "output": "src/content/docs/knowledge/linux-tools/linux-and-networking.md",
       "route": "/knowledge/linux-tools/linux-and-networking/",
       "sha256": "2c8c97e4044cd4b9678415b59526cb15d89644009fe252c6799e823b3923ef97"
     },
     {
-      "source": "knowledge-base/80_Publish/docs/robotics-ros2-path.md",
+      "source": "knowledge-base/80_Publish/docs/ROS 2 与机器人仿真学习路径.md",
       "output": "src/content/docs/knowledge/robotics/ros2-and-simulation.md",
       "route": "/knowledge/robotics/ros2-and-simulation/",
       "sha256": "024231cce3d7a3a032aca03c552859dd5882871e896a28bdd60ee3990cf6cf90"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/filtering-algorithms.md",
+      "source": "knowledge-base/80_Publish/notes/各种滤波算法.md",
       "output": "src/content/generated/blog/algorithms/filtering.md",
       "route": "/blog/algorithms/filtering/",
       "sha256": "331b33d46872bfd307d12acda8a89ca1bdb687f0be130b52a54a3ade55a7c749"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/pid-control-notes.md",
+      "source": "knowledge-base/80_Publish/notes/PID.md",
       "output": "src/content/generated/blog/algorithms/pid.md",
       "route": "/blog/algorithms/pid/",
       "sha256": "637b88739cee118eee0338b77ab77efc925681431e0be0b180432817b4d62c83"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/embedded-communication.md",
+      "source": "knowledge-base/80_Publish/notes/嵌入式通信.md",
       "output": "src/content/generated/blog/embedded/communication-protocols.md",
       "route": "/blog/embedded/communication-protocols/",
       "sha256": "3eac4e4fec8790d129cad3574a2e9566598dc7abedae4f6a0719cce8d224430f"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/electronic-design-contest.md",
+      "source": "knowledge-base/80_Publish/notes/电赛.md",
       "output": "src/content/generated/blog/embedded/electronic-design-contest.md",
       "route": "/blog/embedded/electronic-design-contest/",
       "sha256": "986501fe987922d5626db72c404fd2d52168961eb330c20c3d9dc6bfcf3504eb"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/stm32-communication.md",
+      "source": "knowledge-base/80_Publish/notes/STM32-通信.md",
       "output": "src/content/generated/blog/embedded/stm32-communication.md",
       "route": "/blog/embedded/stm32-communication/",
       "sha256": "3c78244c314d244a8dd847269c076d7844a9b156f7b52e4f573e71381c365bd2"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/stm32-learning-notes.md",
+      "source": "knowledge-base/80_Publish/notes/STM32 学习笔记.md",
       "output": "src/content/generated/blog/embedded/stm32-notes.md",
       "route": "/blog/embedded/stm32-notes/",
       "sha256": "b5fe9203c3b823ea325cb2ab1f4e03a6b3147bfe6eee77ea65dec644b38252d2"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/fpga-overview.md",
+      "source": "knowledge-base/80_Publish/notes/FPGA.md",
       "output": "src/content/generated/blog/fpga/fpga-overview.md",
       "route": "/blog/fpga/fpga-overview/",
       "sha256": "2f1104c827dfcb34c6ad32c8364ae8493c665713c148281a9114a9d56b226d04"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/fpga-rtl-learning-notes.md",
+      "source": "knowledge-base/80_Publish/notes/FPGA-RTL学习笔记.md",
       "output": "src/content/generated/blog/fpga/rtl-notes.md",
       "route": "/blog/fpga/rtl-notes/",
       "sha256": "e0ab3ba132a04e5d1b6317b81c521d1bd291a143dcca626bc95ec4e2382a3dcb"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/verilog-learning-notes.md",
+      "source": "knowledge-base/80_Publish/notes/verilog学习笔记.md",
       "output": "src/content/generated/blog/fpga/verilog-notes.md",
       "route": "/blog/fpga/verilog-notes/",
       "sha256": "a874123a42c050993525800e80f39dc29623db7a3a4c8c34496e7728f0c1138c"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/fpga-hls-learning-notes.md",
+      "source": "knowledge-base/80_Publish/notes/fpga-hls-learning-notes.md",
       "output": "src/content/generated/blog/fpga/vitis-hls-notes.md",
       "route": "/blog/fpga/vitis-hls-notes/",
       "sha256": "c06eaa1098af518cdc932d84ba367f6a7be20011c9010fbc7fd15ffe6dd4e2dd"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/linux-socket.md",
+      "source": "knowledge-base/80_Publish/notes/linux-socket.md",
       "output": "src/content/generated/blog/networking/linux-socket.md",
       "route": "/blog/networking/linux-socket/",
       "sha256": "92c6b3ae0c4fe33d9a690a89dbb4e07fa418625d67698fc115f90d2c040b8701"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/cpp-learning-notes.md",
+      "source": "knowledge-base/80_Publish/notes/C++学习笔记.md",
       "output": "src/content/generated/blog/programming/cpp-notes.md",
       "route": "/blog/programming/cpp-notes/",
       "sha256": "a57af7e9f402ff779b342491eea30391e748836116ece12536b62e2b9f44554d"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/gazebo-simulation.md",
+      "source": "knowledge-base/80_Publish/notes/Gazebo仿真.md",
       "output": "src/content/generated/blog/robotics/gazebo-simulation.md",
       "route": "/blog/robotics/gazebo-simulation/",
       "sha256": "a752100279e1eead975e73f39d5f039bad3c9b70c36ee1eada4b7d9dcd67de39"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/ros2-learning-notes.md",
+      "source": "knowledge-base/80_Publish/notes/ROS2学习笔记.md",
       "output": "src/content/generated/blog/robotics/ros2-notes.md",
       "route": "/blog/robotics/ros2-notes/",
       "sha256": "7314b55e3c1da9de3af2ae1644c3626f49151303b9baaac1afb908d8458e21aa"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/slam-learning-notes.md",
+      "source": "knowledge-base/80_Publish/notes/SLAM学习笔记.md",
       "output": "src/content/generated/blog/robotics/slam-notes.md",
       "route": "/blog/robotics/slam-notes/",
       "sha256": "7b35b50e4a7d776b620d724e17b13d1c5f0203e956b5a2abc64cfcc4c0b8beca"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/linux-learning-notes.md",
+      "source": "knowledge-base/80_Publish/notes/linux学习笔记.md",
       "output": "src/content/generated/blog/tools/linux-notes.md",
       "route": "/blog/tools/linux-notes/",
       "sha256": "cbc83258c9cf0d7f2d3e58fb1779d5408e83127d67fb7d6d3f6def6157891353"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/matlab-learning-notes.md",
+      "source": "knowledge-base/80_Publish/notes/matlab学习笔记.md",
       "output": "src/content/generated/blog/vision/matlab-notes.md",
       "route": "/blog/vision/matlab-notes/",
       "sha256": "9a5302b210636baabeebb20020ba72329194c5c10325656a8ab88aad10e8d1e4"
     },
     {
-      "source": "knowledge-base/80_Publish/blog/opencv-learning-notes.md",
+      "source": "knowledge-base/80_Publish/notes/opencv学习笔记.md",
       "output": "src/content/generated/blog/vision/opencv-notes.md",
       "route": "/blog/vision/opencv-notes/",
       "sha256": "523d8b59a66b2958d4f43da073846bd96cea4a5b85e930912d05ffdab0e87439"

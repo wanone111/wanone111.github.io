@@ -17,7 +17,7 @@
 
 | 源目录 | `content_type` | 路由 |
 |---|---|---|
-| `80_Publish/blog` | `blog` | `/blog/<slug>/` |
+| `80_Publish/notes` | `blog` | `/blog/<slug>/` |
 | `80_Publish/docs` | `docs` | `/knowledge/<slug>/` |
 | `80_Publish/projects` | `project` | `/projects/<slug>/` |
 | `80_Publish/pages` | `page` | `/about/`、`/resume/` 或 `/links/` |

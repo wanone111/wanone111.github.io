@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validateNotes } from '../tools/lib/content.mjs';
+import { buildLinkIndex, validateNotes } from '../tools/lib/content.mjs';
 
 const policy = {
   allowedPageSlugs: ['about', 'resume', 'links'],
@@ -39,6 +39,27 @@ test('accepts a valid publishable note', async () => {
   assert.deepEqual(result.errors, []);
   assert.equal(result.publishable.length, 1);
   assert.equal(result.publishable[0].route, '/knowledge/embedded/test/');
+});
+
+test('accepts notes directory as blog content without changing its public route', async () => {
+  const note = validNote({ content_type: 'blog', slug: 'embedded/test-note' });
+  note.file = 'C:/kb/80_Publish/notes/test-note.md';
+  note.relativePath = 'notes/test-note.md';
+  note.folder = 'notes';
+  const result = await validateNotes([note], [], paths, policy);
+  assert.deepEqual(result.errors, []);
+  assert.equal(result.publishable[0].route, '/blog/embedded/test-note/');
+});
+
+test('indexes migrated notes under their legacy blog wikilink path', () => {
+  const note = validNote({ content_type: 'blog', slug: 'embedded/test-note' });
+  note.file = 'C:/kb/80_Publish/notes/test-note.md';
+  note.relativePath = 'notes/test-note.md';
+  note.folder = 'notes';
+  note.route = '/blog/embedded/test-note/';
+  const { index } = buildLinkIndex([note]);
+  assert.equal(index.get('blog/test-note'), note);
+  assert.equal(index.get('blog/embedded/test-note'), note);
 });
 
 test('rejects invalid slugs and directory/type mismatches', async () => {

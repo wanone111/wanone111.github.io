@@ -5,6 +5,7 @@ import { relativePosix, walkFiles } from './files.mjs';
 
 const TYPE_BY_DIRECTORY = {
   blog: 'blog',
+  notes: 'blog',
   docs: 'docs',
   projects: 'project',
   pages: 'page',
@@ -171,7 +172,12 @@ export function buildLinkIndex(notes) {
   const index = new Map();
   const ambiguous = new Set();
   for (const note of notes) {
-    const keys = [note.data.title, note.data.slug, basename(note.file, extname(note.file)), note.relativePath.replace(/\.[^.]+$/, '')];
+    const relativeKey = note.relativePath.replace(/\.[^.]+$/, '');
+    const keys = [note.data.title, note.data.slug, basename(note.file, extname(note.file)), relativeKey];
+    if (note.folder === 'notes' && relativeKey.startsWith('notes/')) {
+      keys.push(`blog/${relativeKey.slice('notes/'.length)}`);
+      keys.push(`blog/${note.data.slug}`);
+    }
     for (const raw of keys) {
       const key = String(raw).trim().toLocaleLowerCase('zh-CN').replace(/\\/g, '/');
       if (!key) continue;
