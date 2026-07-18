@@ -8,12 +8,11 @@ const buildLabel = new Intl.DateTimeFormat('zh-CN', {
 <footer class="site-footer">
   <div class="page-shell site-footer__inner">
     <div class="stack">
-      <p class="footer-title">把工程问题写清楚，留给下一次构建。</p>
       <p>© {new Date().getFullYear()} Wanone · Astro + Starlight · 内容由 Obsidian 管理</p>
       <p class="build-status" role="status"><span aria-hidden="true"></span> Build ready · <time datetime={buildDate.toISOString()}>{buildLabel} 更新</time></p>
     </div>
     <nav aria-label="页脚导航">
-      <a href="/blog/">博客</a>
+      <a href="/notes/">笔记</a>
       <a href="/knowledge/">知识库</a>
       <a href="/uses/">/uses</a>
       <a href="/links/">友链</a>
@@ -27,7 +26,6 @@ const buildLabel = new Intl.DateTimeFormat('zh-CN', {
 <style>
   .site-footer { margin-top: var(--space-section); border-top: 1px solid var(--color-border); background: var(--color-surface-strong); color: var(--color-text-muted); }
   .site-footer__inner { display: flex; min-height: 13rem; align-items: center; justify-content: space-between; gap: var(--space-7); padding-block: var(--space-7); font-size: .86rem; }
-  .footer-title { max-width: 32rem; color: var(--color-text); font-size: clamp(1.4rem, 3vw, 2.4rem); font-weight: 800; letter-spacing: -.04em; }
   nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-4); }
   nav a, nav button { border: 0; padding: 0; background: transparent; color: var(--color-text); font-weight: 750; text-decoration: none; cursor: pointer; }
   nav a:hover, nav button:hover { color: var(--color-accent); }

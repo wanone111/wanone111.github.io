@@ -10,7 +10,7 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))]
   .sort((a, b) => b.posts.length - a.posts.length || a.tag.localeCompare(b.tag, 'zh-CN'));
 ---
 
-<BaseLayout title="标签" description="按技术标签浏览博客文章。">
+<BaseLayout title="标签" description="按技术标签浏览笔记。">
   <div class="stack-lg">
     <PageIntro eyebrow={`Tags · ${tags.length}`} title="技术标签" description="每个标签都连接到具体文章、更新时间与内容分类；原有锚点链接继续有效。" />
     {tags.length > 0 ? (
@@ -28,7 +28,7 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))]
               <ol>
                 {posts.map((post) => (
                   <li>
-                    <a href={`/blog/${post.data.slug}/`}>
+                    <a href={`/notes/${post.data.slug}/`}>
                       <span class="tag-group__type">{post.data.category ?? '工程笔记'}</span>
                       <strong>{post.data.title}</strong>
                       <time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time>

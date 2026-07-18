@@ -48,7 +48,6 @@ const stages = [
       <p class="garden-eyebrow">Knowledge garden</p>
       <h2 id="knowledge-garden-title">沿着关系，而不是文件夹浏览。</h2>
     </div>
-    <p>四条路径都已经长出公开笔记，目前处于 Growing。它们形成稳定指南后，才会进入 Evergreen。</p>
   </div>
 
   <nav class="garden-map" aria-label="知识路径关系">
@@ -96,9 +95,8 @@ const stages = [
 
 <style>
   .knowledge-garden { margin-block: 2.5rem 3rem; border-block: 1px solid var(--color-border-strong); padding-block: clamp(2rem, 5vw, 4rem); }
-  .knowledge-garden__intro { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(16rem, .75fr); gap: clamp(1.5rem, 5vw, 4rem); align-items: end; }
+  .knowledge-garden__intro { display: block; }
   .knowledge-garden__intro h2 { max-width: 13ch; margin: .45rem 0 0; border: 0; padding: 0; font-size: clamp(1.9rem, 4vw, 3.5rem); }
-  .knowledge-garden__intro > p { margin: 0; color: var(--color-text-muted); }
   .garden-eyebrow { margin: 0; color: var(--color-knowledge-ink); font: 750 .68rem/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
 
   .garden-map { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 5rem; margin-block: 3rem; padding-block: 1rem; }
@@ -126,7 +124,6 @@ const stages = [
   .garden-stage small { color: var(--color-text-muted); font-size: .7rem; line-height: 1.35; }
 
   @media (max-width: 52rem) {
-    .knowledge-garden__intro { grid-template-columns: 1fr; }
     .garden-map { grid-template-columns: 1fr; gap: .8rem; margin-block: 2rem; padding: 0; }
     .garden-map__center, .garden-path::before { display: none; }
     .garden-legend { grid-template-columns: 1fr; }

@@ -32,7 +32,7 @@ test('capture mobile navigation, blog filter, and Starlight sidebar', async ({ p
   await page.locator('[data-site-header] .menu-toggle').click();
   await page.screenshot({ path: resolve(outputDirectory, 'mobile-menu.png'), fullPage: false });
 
-  await page.goto('/blog/');
+  await page.goto('/notes/');
   const categoryButtons = page.locator('[data-category]:not([data-category="all"])');
   expect(await categoryButtons.count()).toBeGreaterThan(0);
   await categoryButtons.first().click();
@@ -49,7 +49,7 @@ test('capture knowledge garden and PID experiment', async ({ page }) => {
   await expect(page.locator('[data-knowledge-garden]')).toBeVisible();
   await page.screenshot({ path: resolve(outputDirectory, 'knowledge-garden-desktop.png'), fullPage: true });
 
-  await page.goto('/blog/algorithms/pid/');
+  await page.goto('/notes/algorithms/pid/');
   await page.getByRole('slider', { name: 'Ki 积分参数' }).fill('1.5');
   await expect(page.locator('[data-pid-metric="overshoot"]')).toHaveText('22.8%');
   await page.screenshot({ path: resolve(outputDirectory, 'pid-lab-desktop.png'), fullPage: true });
@@ -84,7 +84,7 @@ test('capture engineering project, article rail, tags, and Pagefind search', asy
   await expect(page.locator('.engineering-summary')).toBeVisible();
   await page.screenshot({ path: resolve(outputDirectory, 'project-record-desktop.png'), fullPage: true });
 
-  await page.goto('/blog/robotics/ros2-notes/');
+  await page.goto('/notes/robotics/ros2-notes/');
   await expect(page.locator('.article-rail')).toBeVisible();
   await page.screenshot({ path: resolve(outputDirectory, 'engineering-article-desktop.png'), fullPage: true });
 

@@ -7,12 +7,12 @@ import { byNewest, formatDate, isPublic } from '../../lib/content';
 const posts = (await getCollection('blog')).filter(isPublic).sort(byNewest);
 ---
 
-<BaseLayout title="文章归档" description="按更新时间排列的全部博客文章。">
+<BaseLayout title="文章归档" description="按更新时间排列的全部笔记。">
   <div class="stack-lg">
     <PageIntro eyebrow="Archive" title="文章归档" description="按时间浏览全部公开文章。" />
     {posts.length > 0 ? (
       <ol class="archive-list">
-        {posts.map((post) => <li><time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time><a href={`/blog/${post.data.slug}/`}>{post.data.title}</a></li>)}
+        {posts.map((post) => <li><time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time><a href={`/notes/${post.data.slug}/`}>{post.data.title}</a></li>)}
       </ol>
     ) : <div class="empty-state">暂无已迁移文章。</div>}
   </div>

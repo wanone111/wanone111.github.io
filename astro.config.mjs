@@ -5,9 +5,20 @@ import { readFileSync } from 'node:fs';
 const legacyUrlMap = JSON.parse(
   readFileSync(new URL('./legacy-url-map.json', import.meta.url), 'utf8'),
 );
-const redirects = Object.fromEntries(
-  legacyUrlMap.redirects.map(({ source, destination }) => [source, destination]),
+const legacyRedirects = legacyUrlMap.redirects.map(
+  ({ source, destination }) => [source, destination],
 );
+const blogCompatibilityRedirects = [
+  ['/blog/', '/notes/'],
+  ...legacyUrlMap.redirects.map(({ destination }) => [
+    destination.replace(/^\/notes\//, '/blog/'),
+    destination,
+  ]),
+];
+const redirects = Object.fromEntries([
+  ...legacyRedirects,
+  ...blogCompatibilityRedirects,
+]);
 
 export default defineConfig({
   site: 'https://wanone111.github.io',
@@ -41,7 +52,7 @@ export default defineConfig({
       sidebar: [
         { label: '返回主页', link: '/' },
         { label: '项目', link: '/projects/' },
-        { label: '博客', link: '/blog/' },
+        { label: '笔记', link: '/notes/' },
         { label: '知识库首页', slug: 'knowledge' },
         {
           label: '技术方向',

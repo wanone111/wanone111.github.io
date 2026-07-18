@@ -3,7 +3,7 @@
   "port": 4322,
   "routes": [
     { "name": "home", "path": "/" },
-    { "name": "blog", "path": "/blog/" },
+    { "name": "notes", "path": "/notes/" },
     { "name": "knowledge", "path": "/knowledge/" }
   ],
   "minimumScores": {

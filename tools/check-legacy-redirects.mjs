@@ -59,10 +59,30 @@ for (const [index, redirect] of redirects.entries()) {
   }
 }
 
+const previousBlogRedirects = [
+  { source: '/blog/', destination: '/notes/' },
+  ...redirects.map(({ destination }) => ({
+    source: destination.replace(/^\/notes\//, '/blog/'),
+    destination,
+  })),
+];
+
+for (const { source, destination } of previousBlogRedirects) {
+  const sourceOutput = routeOutput(source);
+  if (!await pathExists(sourceOutput)) {
+    errors.push(`${source} did not produce a compatibility redirect page.`);
+    continue;
+  }
+  const html = await readFile(sourceOutput, 'utf8');
+  if (!html.includes(destination)) {
+    errors.push(`${source} compatibility redirect does not reference ${destination}.`);
+  }
+}
+
 if (errors.length > 0) {
   console.error(`Legacy redirect checks failed (${errors.length}):`);
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
 
-console.log(`Verified ${redirects.length} legacy URL redirect(s).`);
+console.log(`Verified ${redirects.length} legacy URL redirect(s) and ${previousBlogRedirects.length} /blog/ compatibility redirect(s).`);

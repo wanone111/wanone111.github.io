@@ -24,5 +24,5 @@ featured: false
 
 ## 相关内容
 
-- [各种滤波算法](/blog/algorithms/filtering/)
-- [OpenCV 学习笔记](/blog/vision/opencv-notes/)
+- [各种滤波算法](/notes/algorithms/filtering/)
+- [OpenCV 学习笔记](/notes/vision/opencv-notes/)

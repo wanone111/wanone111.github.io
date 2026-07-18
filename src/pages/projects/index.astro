@@ -13,7 +13,7 @@ const projects = (await getCollection('projects')).filter(isPublic).sort((a, b) 
 
 <BaseLayout title="项目" description="Wanone 的嵌入式、机器人、FPGA 与边缘 AI 项目。">
   <div class="stack-xl">
-    <PageIntro eyebrow="Projects · systems" title="项目系统" description="不堆叠概念卡片；只展示真实目标、系统结构、关键实现和验证结果。" />
+    <PageIntro eyebrow="Projects · systems" title="项目系统" />
     {projects.length > 0 ? (
       <div class="project-list">
         {projects.map((project, index) => (

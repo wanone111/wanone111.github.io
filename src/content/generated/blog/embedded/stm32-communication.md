@@ -32,6 +32,6 @@ featured: false
 ## 相关内容
 
 - [嵌入式与通信学习路径](/knowledge/embedded/communication-path/)
-- [通信基础笔记](/blog/embedded/communication-protocols/)
-- [STM32 学习笔记](/blog/embedded/stm32-notes/)
-- [电赛 STM32 通信记录](/blog/embedded/electronic-design-contest/)
+- [通信基础笔记](/notes/embedded/communication-protocols/)
+- [STM32 学习笔记](/notes/embedded/stm32-notes/)
+- [电赛 STM32 通信记录](/notes/embedded/electronic-design-contest/)

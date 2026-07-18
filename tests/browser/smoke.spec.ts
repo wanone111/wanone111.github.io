@@ -6,8 +6,8 @@ const routes = [
   '/projects/heterogeneous-video-pipeline/',
   '/projects/indoor-autonomous-drone/',
   '/projects/obsidian-astro-publishing/',
-  '/blog/',
-  '/blog/robotics/ros2-notes/',
+  '/notes/',
+  '/notes/robotics/ros2-notes/',
   '/knowledge/',
   '/resume/',
   '/about/',
@@ -24,7 +24,7 @@ test('/rss.xml returns a public RSS feed', async ({ request }) => {
   expect(response.headers()['content-type']).toMatch(/(?:application\/rss\+xml|text\/xml)/);
   const body = await response.text();
   expect(body).toContain('<rss version="2.0">');
-  expect(body).toContain('/blog/');
+  expect(body).toContain('/notes/');
 });
 
 function collectRuntimeErrors(page: Page) {
@@ -86,7 +86,7 @@ for (const route of routes) {
 
 for (const schemaCase of [
   { route: '/', types: ['Person', 'WebSite'] },
-  { route: '/blog/robotics/ros2-notes/', types: ['TechArticle'] },
+  { route: '/notes/robotics/ros2-notes/', types: ['TechArticle'] },
   { route: '/projects/heterogeneous-video-pipeline/', types: ['CreativeWork'] },
   { route: '/projects/indoor-autonomous-drone/', types: ['CreativeWork'] },
   { route: '/projects/obsidian-astro-publishing/', types: ['CreativeWork'] },

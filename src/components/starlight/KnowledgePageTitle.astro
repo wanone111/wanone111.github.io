@@ -50,7 +50,7 @@ const relatedPosts = pathFilters[pathname]
       <ul>
         {relatedPosts.map((post) => (
           <li>
-            <a href={`/blog/${post.data.slug}/`}>
+            <a href={`/notes/${post.data.slug}/`}>
               <strong>{post.data.title}</strong>
               <time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time>
             </a>

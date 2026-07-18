@@ -21,6 +21,6 @@ featured: false
 
 ## 相关内容
 
-- [PID 控制笔记](/blog/algorithms/pid/)
-- [Matlab 学习笔记](/blog/vision/matlab-notes/)
-- [OpenCV 学习笔记](/blog/vision/opencv-notes/)
+- [PID 控制笔记](/notes/algorithms/pid/)
+- [Matlab 学习笔记](/notes/vision/matlab-notes/)
+- [OpenCV 学习笔记](/notes/vision/opencv-notes/)

@@ -29,4 +29,4 @@ HAL库使用的是STM32Cubemx
 ## 相关内容
 
 - [嵌入式与通信学习路径](/knowledge/embedded/communication-path/)
-- [STM32 通信笔记](/blog/embedded/stm32-communication/)
+- [STM32 通信笔记](/notes/embedded/stm32-communication/)

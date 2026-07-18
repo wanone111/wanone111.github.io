@@ -15,7 +15,7 @@
     <p class="command-palette__section-label">快速导航</p>
     <nav aria-label="快速导航入口">
       <a href="/projects/" data-command-item data-command="项目 project software"><strong>项目</strong><span>查看公开工程档案</span></a>
-      <a href="/blog/" data-command-item data-command="博客 blog writing"><strong>博客</strong><span>阅读工程笔记与实验文章</span></a>
+      <a href="/notes/" data-command-item data-command="笔记 博客 notes blog writing"><strong>笔记</strong><span>阅读工程笔记与实验文章</span></a>
       <a href="/knowledge/" data-command-item data-command="知识 knowledge garden"><strong>知识库</strong><span>沿公开知识路径继续探索</span></a>
       <a href="/uses/" data-command-item data-command="工具 uses setup device"><strong>/uses</strong><span>打开工作区与工具说明</span></a>
       <a href="/about/" data-command-item data-command="关于 about wanone"><strong>关于</strong><span>了解这个站点与作者</span></a>
@@ -63,7 +63,7 @@
     const inferType = (url: string, declared?: string) => {
       if (declared && declared !== '页面') return declared;
       if (url.startsWith('/projects/')) return '项目';
-      if (url.startsWith('/blog/')) return '文章';
+      if (url.startsWith('/notes/')) return '文章';
       if (url.startsWith('/knowledge/')) return '知识库';
       return '页面';
     };

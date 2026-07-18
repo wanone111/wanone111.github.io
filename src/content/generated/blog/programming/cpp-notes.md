@@ -44,5 +44,5 @@ protected 类内部、派生类、友元可访问
 ## 相关内容
 
 - [Linux 与工程编程学习路径](/knowledge/linux-tools/linux-and-networking/)
-- [Linux 学习笔记](/blog/tools/linux-notes/)
-- [Linux Socket 笔记](/blog/networking/linux-socket/)
+- [Linux 学习笔记](/notes/tools/linux-notes/)
+- [Linux Socket 笔记](/notes/networking/linux-socket/)

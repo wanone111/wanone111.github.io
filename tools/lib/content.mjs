@@ -35,7 +35,7 @@ export function isPublishable(note) {
 
 export function routeFor(data) {
   switch (data.content_type) {
-    case 'blog': return `/blog/${data.slug}/`;
+    case 'blog': return `/notes/${data.slug}/`;
     case 'docs': return `/knowledge/${data.slug}/`;
     case 'project': return `/projects/${data.slug}/`;
     case 'page': return `/${data.slug}/`;

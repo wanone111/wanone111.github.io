@@ -14,17 +14,17 @@ lastUpdated: 2026-07-15
 
 ### 1. ROS 2 基础与 RCLCPP
 
-[ROS 2 学习笔记](/blog/robotics/ros2-notes/)是当前最完整的机器人方向正文。它从安装入口与 RCLCPP 日志开始，依次记录节点、话题、服务、参数和动作，并包含接口定义、功能包配置和 launch 文件示例。
+[ROS 2 学习笔记](/notes/robotics/ros2-notes/)是当前最完整的机器人方向正文。它从安装入口与 RCLCPP 日志开始，依次记录节点、话题、服务、参数和动作，并包含接口定义、功能包配置和 launch 文件示例。
 
 这篇笔记适合按通信模型分段阅读：先理解节点的职责，再区分话题的异步数据流、服务的请求响应、参数配置和动作的长任务反馈，最后进入自定义接口与 launch 组织。
 
 ### 2. Gazebo 仿真入口
 
-[Gazebo 仿真笔记](/blog/robotics/gazebo-simulation/)记录了 ROS 环境相关命令和启动仿真的入口。目前内容较短，尚未形成从世界文件、机器人模型、插件到控制闭环的完整过程。
+[Gazebo 仿真笔记](/notes/robotics/gazebo-simulation/)记录了 ROS 环境相关命令和启动仿真的入口。目前内容较短，尚未形成从世界文件、机器人模型、插件到控制闭环的完整过程。
 
 ### 3. SLAM 提纲
 
-[SLAM 学习笔记](/blog/robotics/slam-notes/)目前只有主题入口，尚无可验证的算法、传感器、地图或实验记录。因此它只能作为后续写作位置，不能视为已经完成的 SLAM 指南。
+[SLAM 学习笔记](/notes/robotics/slam-notes/)目前只有主题入口，尚无可验证的算法、传感器、地图或实验记录。因此它只能作为后续写作位置，不能视为已经完成的 SLAM 指南。
 
 ## 建议阅读顺序
 
@@ -43,6 +43,6 @@ lastUpdated: 2026-07-15
 
 ## 相关内容
 
-- [ROS 2 学习笔记](/blog/robotics/ros2-notes/)
-- [Gazebo 仿真笔记](/blog/robotics/gazebo-simulation/)
-- [SLAM 学习笔记](/blog/robotics/slam-notes/)
+- [ROS 2 学习笔记](/notes/robotics/ros2-notes/)
+- [Gazebo 仿真笔记](/notes/robotics/gazebo-simulation/)
+- [SLAM 学习笔记](/notes/robotics/slam-notes/)

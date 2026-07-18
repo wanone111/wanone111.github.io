@@ -37,5 +37,5 @@ featured: false
 
 ## 相关内容
 
-- [各种滤波算法](/blog/algorithms/filtering/)
-- [Matlab 学习笔记](/blog/vision/matlab-notes/)
+- [各种滤波算法](/notes/algorithms/filtering/)
+- [Matlab 学习笔记](/notes/vision/matlab-notes/)

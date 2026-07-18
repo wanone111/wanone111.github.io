@@ -279,5 +279,5 @@ int main(int argc,char *argv[])
 ## 相关内容
 
 - [Linux 与工程编程学习路径](/knowledge/linux-tools/linux-and-networking/)
-- [Linux 学习笔记](/blog/tools/linux-notes/)
-- [C++ 学习笔记](/blog/programming/cpp-notes/)
+- [Linux 学习笔记](/notes/tools/linux-notes/)
+- [C++ 学习笔记](/notes/programming/cpp-notes/)

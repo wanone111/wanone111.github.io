@@ -14,15 +14,15 @@ lastUpdated: 2026-07-15
 
 ### 1. Linux 环境基础
 
-[Linux 学习笔记](/blog/tools/linux-notes/)目前只建立了常用命令、Vim 和 Shell 三个章节，尚无具体命令与实验记录。它适合作为后续沉淀环境搭建、文件操作、进程、权限和脚本用法的位置。
+[Linux 学习笔记](/notes/tools/linux-notes/)目前只建立了常用命令、Vim 和 Shell 三个章节，尚无具体命令与实验记录。它适合作为后续沉淀环境搭建、文件操作、进程、权限和脚本用法的位置。
 
 ### 2. C++ 类与对象
 
-[C++ 学习笔记](/blog/programming/cpp-notes/)记录 class 与 struct 的默认访问权限，以及 public、private、protected 和继承的基础提纲。正文仍处于入门阶段，尚未覆盖构造析构、资源管理、标准库和工程构建。
+[C++ 学习笔记](/notes/programming/cpp-notes/)记录 class 与 struct 的默认访问权限，以及 public、private、protected 和继承的基础提纲。正文仍处于入门阶段，尚未覆盖构造析构、资源管理、标准库和工程构建。
 
 ### 3. Linux Socket 与 TCP
 
-[Linux Socket 笔记](/blog/networking/linux-socket/)解释了 Socket 作为应用层与 TCP/IP 协议之间接口的作用，并记录 TCP 服务器的 socket、bind、listen、accept 流程，客户端的 connect 流程，以及 read/recv、write/send 和 close 等接口。文章还包含客户端与服务器示例代码；UDP 目前只有章节标题。
+[Linux Socket 笔记](/notes/networking/linux-socket/)解释了 Socket 作为应用层与 TCP/IP 协议之间接口的作用，并记录 TCP 服务器的 socket、bind、listen、accept 流程，客户端的 connect 流程，以及 read/recv、write/send 和 close 等接口。文章还包含客户端与服务器示例代码；UDP 目前只有章节标题。
 
 ## 建议阅读顺序
 
@@ -40,6 +40,6 @@ lastUpdated: 2026-07-15
 
 ## 相关内容
 
-- [Linux 学习笔记](/blog/tools/linux-notes/)
-- [Linux Socket 笔记](/blog/networking/linux-socket/)
-- [C++ 学习笔记](/blog/programming/cpp-notes/)
+- [Linux 学习笔记](/notes/tools/linux-notes/)
+- [Linux Socket 笔记](/notes/networking/linux-socket/)
+- [C++ 学习笔记](/notes/programming/cpp-notes/)

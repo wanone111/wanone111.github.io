@@ -179,4 +179,4 @@ void TIM2_IRQHandler(void)
 
 ## 相关内容
 
-- [各种滤波算法](/blog/algorithms/filtering/)
+- [各种滤波算法](/notes/algorithms/filtering/)

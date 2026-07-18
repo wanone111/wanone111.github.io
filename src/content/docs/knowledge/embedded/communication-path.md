@@ -14,19 +14,19 @@ lastUpdated: 2026-07-15
 
 ### 1. 通信概念与常见协议
 
-[通信基础笔记](/blog/embedded/communication-protocols/)记录了全双工、半双工、单工、同步、异步、波特率和串行帧等术语，也整理了 UART、SPI 与 I²C 的信号线、主从关系和基本传输过程。文末已经列出 TCP、UDP、IP、ARP 与 ZeroMQ，但这些部分目前仍是待补充提纲。
+[通信基础笔记](/notes/embedded/communication-protocols/)记录了全双工、半双工、单工、同步、异步、波特率和串行帧等术语，也整理了 UART、SPI 与 I²C 的信号线、主从关系和基本传输过程。文末已经列出 TCP、UDP、IP、ARP 与 ZeroMQ，但这些部分目前仍是待补充提纲。
 
 ### 2. STM32 开发入口
 
-[STM32 学习笔记](/blog/embedded/stm32-notes/)目前确认了标准库与 HAL 库两条入口，并记录 HAL 工程使用 STM32CubeMX。正文仍很短，适合作为后续补充 GPIO、USART、中断和工程生成流程的起点。
+[STM32 学习笔记](/notes/embedded/stm32-notes/)目前确认了标准库与 HAL 库两条入口，并记录 HAL 工程使用 STM32CubeMX。正文仍很短，适合作为后续补充 GPIO、USART、中断和工程生成流程的起点。
 
 ### 3. UART 专题
 
-[STM32 通信笔记](/blog/embedded/stm32-communication/)已经建立 UART 硬件、代码和注意事项三个章节，但代码区仍为空。阅读时可先用通信基础笔记理解帧结构，再回到这里补充具体外设配置与验证记录。
+[STM32 通信笔记](/notes/embedded/stm32-communication/)已经建立 UART 硬件、代码和注意事项三个章节，但代码区仍为空。阅读时可先用通信基础笔记理解帧结构，再回到这里补充具体外设配置与验证记录。
 
 ### 4. 项目中的串口数据包
 
-[电赛 STM32 通信记录](/blog/embedded/electronic-design-contest/)保存了一份基于 STM32 HAL 的双串口代码：一条串口用于模块通信，另一条用于串口屏；接收逻辑包含帧头、长度、数据、校验和、状态机与中断回调。它是项目代码记录，不应在未核对引脚、缓冲区大小和协议约定时直接复用。
+[电赛 STM32 通信记录](/notes/embedded/electronic-design-contest/)保存了一份基于 STM32 HAL 的双串口代码：一条串口用于模块通信，另一条用于串口屏；接收逻辑包含帧头、长度、数据、校验和、状态机与中断回调。它是项目代码记录，不应在未核对引脚、缓冲区大小和协议约定时直接复用。
 
 ## 建议阅读顺序
 
@@ -44,7 +44,7 @@ lastUpdated: 2026-07-15
 
 ## 相关内容
 
-- [通信基础笔记](/blog/embedded/communication-protocols/)
-- [STM32 学习笔记](/blog/embedded/stm32-notes/)
-- [STM32 通信笔记](/blog/embedded/stm32-communication/)
-- [电赛 STM32 通信记录](/blog/embedded/electronic-design-contest/)
+- [通信基础笔记](/notes/embedded/communication-protocols/)
+- [STM32 学习笔记](/notes/embedded/stm32-notes/)
+- [STM32 通信笔记](/notes/embedded/stm32-communication/)
+- [电赛 STM32 通信记录](/notes/embedded/electronic-design-contest/)

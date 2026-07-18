@@ -1,5 +1,5 @@
 ---
-interface Props { eyebrow: string; title: string; description: string; }
+interface Props { eyebrow: string; title: string; description?: string; }
 const { eyebrow, title, description } = Astro.props;
 ---
 
@@ -7,7 +7,7 @@ const { eyebrow, title, description } = Astro.props;
   <p class="eyebrow">{eyebrow}</p>
   <div class="page-intro__body stack">
     <h1>{title}</h1>
-    <p class="lede">{description}</p>
+    {description && <p class="lede">{description}</p>}
   </div>
 </header>
 

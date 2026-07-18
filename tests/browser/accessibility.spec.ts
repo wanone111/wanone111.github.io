@@ -3,9 +3,9 @@ import { expect, test } from '@playwright/test';
 
 const pages = [
   { name: 'home', route: '/' },
-  { name: 'blog', route: '/blog/' },
-  { name: 'long article', route: '/blog/robotics/ros2-notes/' },
-  { name: 'PID experiment', route: '/blog/algorithms/pid/' },
+  { name: 'notes', route: '/notes/' },
+  { name: 'long article', route: '/notes/robotics/ros2-notes/' },
+  { name: 'PID experiment', route: '/notes/algorithms/pid/' },
   { name: 'projects', route: '/projects/' },
   { name: 'resume', route: '/resume/' },
   { name: 'tags', route: '/tags/' },
@@ -14,7 +14,7 @@ const pages = [
   { name: 'not found', route: '/404.html' },
   { name: 'home mobile', route: '/', viewport: { width: 390, height: 844 } },
   { name: 'knowledge mobile', route: '/knowledge/', viewport: { width: 390, height: 844 } },
-  { name: 'PID experiment mobile', route: '/blog/algorithms/pid/', viewport: { width: 390, height: 844 } },
+  { name: 'PID experiment mobile', route: '/notes/algorithms/pid/', viewport: { width: 390, height: 844 } },
   { name: 'uses mobile', route: '/uses/', viewport: { width: 390, height: 844 } },
 ];
 

@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 const expected = [
   'index.html',
   'projects/index.html',
-  'blog/index.html',
+  'notes/index.html',
   'knowledge/index.html',
   'resume/index.html',
   'about/index.html',

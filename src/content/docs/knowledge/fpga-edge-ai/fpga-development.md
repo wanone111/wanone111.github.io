@@ -14,19 +14,19 @@ lastUpdated: 2026-07-15
 
 ### 1. FPGA 架构与开发流程
 
-[FPGA 概览](/blog/fpga/fpga-overview/)从器件架构进入设计定义、设计输入、功能仿真、综合、布局布线、性能分析和板级调试，并记录 Quartus 与 Vitis/Vivado 工程入口。它适合用于建立完整流程框架。
+[FPGA 概览](/notes/fpga/fpga-overview/)从器件架构进入设计定义、设计输入、功能仿真、综合、布局布线、性能分析和板级调试，并记录 Quartus 与 Vitis/Vivado 工程入口。它适合用于建立完整流程框架。
 
 ### 2. RTL 与状态机入口
 
-[FPGA RTL 学习笔记](/blog/fpga/rtl-notes/)目前以编程语言、状态机、仿真和模块为提纲。内容尚短，可与 Verilog 笔记配合阅读。
+[FPGA RTL 学习笔记](/notes/fpga/rtl-notes/)目前以编程语言、状态机、仿真和模块为提纲。内容尚短，可与 Verilog 笔记配合阅读。
 
 ### 3. Verilog 语言基础
 
-[Verilog 学习笔记](/blog/fpga/verilog-notes/)记录四值逻辑、wire/reg、initial/always、语句块、模块与端口、模块例化、函数、任务、状态机和 testbench 等主题。它是学习过程记录，具体语法和赋值规则应结合仿真器、综合器结果及权威手册复核。
+[Verilog 学习笔记](/notes/fpga/verilog-notes/)记录四值逻辑、wire/reg、initial/always、语句块、模块与端口、模块例化、函数、任务、状态机和 testbench 等主题。它是学习过程记录，具体语法和赋值规则应结合仿真器、综合器结果及权威手册复核。
 
 ### 4. PYNQ 与 Vitis HLS
 
-[FPGA HLS 学习笔记](/blog/fpga/vitis-hls-notes/)包含 PYNQ、循环展开、先决条件、URAM，以及性能、资源、功耗、面积和时序优化方向。阅读重点应放在指令如何改变延迟、吞吐率和资源占用，并用综合报告确认实际效果。
+[FPGA HLS 学习笔记](/notes/fpga/vitis-hls-notes/)包含 PYNQ、循环展开、先决条件、URAM，以及性能、资源、功耗、面积和时序优化方向。阅读重点应放在指令如何改变延迟、吞吐率和资源占用，并用综合报告确认实际效果。
 
 ## 建议阅读顺序
 
@@ -44,7 +44,7 @@ lastUpdated: 2026-07-15
 
 ## 相关内容
 
-- [FPGA 概览](/blog/fpga/fpga-overview/)
-- [FPGA RTL 学习笔记](/blog/fpga/rtl-notes/)
-- [Verilog 学习笔记](/blog/fpga/verilog-notes/)
-- [FPGA HLS 学习笔记](/blog/fpga/vitis-hls-notes/)
+- [FPGA 概览](/notes/fpga/fpga-overview/)
+- [FPGA RTL 学习笔记](/notes/fpga/rtl-notes/)
+- [Verilog 学习笔记](/notes/fpga/verilog-notes/)
+- [FPGA HLS 学习笔记](/notes/fpga/vitis-hls-notes/)

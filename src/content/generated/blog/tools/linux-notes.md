@@ -27,5 +27,5 @@ featured: false
 ## 相关内容
 
 - [Linux 与工程编程学习路径](/knowledge/linux-tools/linux-and-networking/)
-- [Linux Socket 笔记](/blog/networking/linux-socket/)
-- [C++ 学习笔记](/blog/programming/cpp-notes/)
+- [Linux Socket 笔记](/notes/networking/linux-socket/)
+- [C++ 学习笔记](/notes/programming/cpp-notes/)

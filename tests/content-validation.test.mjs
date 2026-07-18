@@ -41,14 +41,14 @@ test('accepts a valid publishable note', async () => {
   assert.equal(result.publishable[0].route, '/knowledge/embedded/test/');
 });
 
-test('accepts notes directory as blog content without changing its public route', async () => {
+test('publishes blog content from the notes directory under the notes route', async () => {
   const note = validNote({ content_type: 'blog', slug: 'embedded/test-note' });
   note.file = 'C:/kb/80_Publish/notes/test-note.md';
   note.relativePath = 'notes/test-note.md';
   note.folder = 'notes';
   const result = await validateNotes([note], [], paths, policy);
   assert.deepEqual(result.errors, []);
-  assert.equal(result.publishable[0].route, '/blog/embedded/test-note/');
+  assert.equal(result.publishable[0].route, '/notes/embedded/test-note/');
 });
 
 test('indexes migrated notes under their legacy blog wikilink path', () => {
@@ -56,7 +56,7 @@ test('indexes migrated notes under their legacy blog wikilink path', () => {
   note.file = 'C:/kb/80_Publish/notes/test-note.md';
   note.relativePath = 'notes/test-note.md';
   note.folder = 'notes';
-  note.route = '/blog/embedded/test-note/';
+  note.route = '/notes/embedded/test-note/';
   const { index } = buildLinkIndex([note]);
   assert.equal(index.get('blog/test-note'), note);
   assert.equal(index.get('blog/embedded/test-note'), note);

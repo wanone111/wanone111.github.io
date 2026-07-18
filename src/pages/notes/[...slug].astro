@@ -30,7 +30,7 @@ const summaryItems = [
   { label: post.data.verified ? '最后验证' : '最后更新', value: formatDate(post.data.verified ?? post.data.updated) },
   { label: '预计阅读', value: `${readingMinutes} 分钟` },
 ];
-const articleUrl = new URL(`/blog/${post.data.slug}/`, Astro.site ?? Astro.url.origin);
+const articleUrl = new URL(`/notes/${post.data.slug}/`, Astro.site ?? Astro.url.origin);
 const articleImage = post.data.cover ? new URL(post.data.cover, Astro.site ?? Astro.url.origin).href : undefined;
 const articleJsonLd = {
   '@context': 'https://schema.org',
@@ -52,7 +52,7 @@ const articleJsonLd = {
     <header class="article-header">
       <div class="editorial-grid">
         <div class="article-header__meta stack">
-          <a href="/blog/">博客 / 返回列表</a>
+          <a href="/notes/">笔记 / 返回列表</a>
           <p>{post.data.category ?? '工程笔记'}</p>
           <time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time>
         </div>

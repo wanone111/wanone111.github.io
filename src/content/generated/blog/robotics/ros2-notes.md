@@ -1104,5 +1104,5 @@ ld.add_action(another-launch)
 ## 相关内容
 
 - [ROS 2 与机器人仿真学习路径](/knowledge/robotics/ros2-and-simulation/)
-- [Gazebo 仿真笔记](/blog/robotics/gazebo-simulation/)
-- [SLAM 学习笔记](/blog/robotics/slam-notes/)
+- [Gazebo 仿真笔记](/notes/robotics/gazebo-simulation/)
+- [SLAM 学习笔记](/notes/robotics/slam-notes/)

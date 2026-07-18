@@ -49,4 +49,4 @@ git clone https://github.com/PX4/px4_ros_com.git
 ## 相关内容
 
 - [ROS 2 与机器人仿真学习路径](/knowledge/robotics/ros2-and-simulation/)
-- [ROS 2 学习笔记](/blog/robotics/ros2-notes/)
+- [ROS 2 学习笔记](/notes/robotics/ros2-notes/)

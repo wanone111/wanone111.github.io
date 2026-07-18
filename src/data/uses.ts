@@ -287,37 +287,37 @@ export const readings = [
   {
     id: 'ros2-notes',
     title: 'ROS 2 学习笔记',
-    href: '/blog/robotics/ros2-notes/',
+    href: '/notes/robotics/ros2-notes/',
     topic: '节点、Topic、服务、参数、动作与构建流程。',
   },
   {
     id: 'gazebo-simulation',
     title: 'Gazebo 仿真笔记',
-    href: '/blog/robotics/gazebo-simulation/',
+    href: '/notes/robotics/gazebo-simulation/',
     topic: '机器人仿真环境与验证入口。',
   },
   {
     id: 'fpga-overview',
     title: 'FPGA 概览',
-    href: '/blog/fpga/fpga-overview/',
+    href: '/notes/fpga/fpga-overview/',
     topic: '设计、仿真、综合、实现和板级调试流程。',
   },
   {
     id: 'vitis-hls-notes',
     title: 'FPGA HLS 学习笔记',
-    href: '/blog/fpga/vitis-hls-notes/',
+    href: '/notes/fpga/vitis-hls-notes/',
     topic: 'HLS 仿真、综合、协同验证与 IP 交付。',
   },
   {
     id: 'linux-notes',
     title: 'Linux 学习笔记',
-    href: '/blog/tools/linux-notes/',
+    href: '/notes/tools/linux-notes/',
     topic: '构建、命令行、日志和系统工具。',
   },
   {
     id: 'linux-socket',
     title: 'Linux Socket 学习笔记',
-    href: '/blog/networking/linux-socket/',
+    href: '/notes/networking/linux-socket/',
     topic: '网络通信与 Socket 编程基础。',
   },
 ] as const;

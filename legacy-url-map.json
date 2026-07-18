@@ -3,92 +3,92 @@
   "redirects": [
     {
       "source": "/2025/09/16/ROS2学习笔记/",
-      "destination": "/blog/robotics/ros2-notes/",
+      "destination": "/notes/robotics/ros2-notes/",
       "legacyFile": "source/_posts/ROS2学习笔记.md"
     },
     {
       "source": "/2025/09/18/FPGA-RTL学习笔记/",
-      "destination": "/blog/fpga/rtl-notes/",
+      "destination": "/notes/fpga/rtl-notes/",
       "legacyFile": "source/_posts/FPGA-RTL学习笔记.md"
     },
     {
       "source": "/2025/09/18/linux学习笔记/",
-      "destination": "/blog/tools/linux-notes/",
+      "destination": "/notes/tools/linux-notes/",
       "legacyFile": "source/_posts/linux学习笔记.md"
     },
     {
       "source": "/2025/09/18/PID/",
-      "destination": "/blog/algorithms/pid/",
+      "destination": "/notes/algorithms/pid/",
       "legacyFile": "source/_posts/PID.md"
     },
     {
       "source": "/2025/09/18/STM32学习笔记/",
-      "destination": "/blog/embedded/stm32-notes/",
+      "destination": "/notes/embedded/stm32-notes/",
       "legacyFile": "source/_posts/STM32学习笔记.md"
     },
     {
       "source": "/2025/09/18/嵌入式通信/",
-      "destination": "/blog/embedded/communication-protocols/",
+      "destination": "/notes/embedded/communication-protocols/",
       "legacyFile": "source/_posts/嵌入式通信.md"
     },
     {
       "source": "/2025/09/23/FPGA/",
-      "destination": "/blog/fpga/fpga-overview/",
+      "destination": "/notes/fpga/fpga-overview/",
       "legacyFile": "source/_posts/FPGA.md"
     },
     {
       "source": "/2025/09/23/STM32-通信/",
-      "destination": "/blog/embedded/stm32-communication/",
+      "destination": "/notes/embedded/stm32-communication/",
       "legacyFile": "source/_posts/STM32-通信.md"
     },
     {
       "source": "/2025/10/16/FPGA-HLS学习笔记/",
-      "destination": "/blog/fpga/vitis-hls-notes/",
+      "destination": "/notes/fpga/vitis-hls-notes/",
       "legacyFile": "source/_posts/FPGA-HLS学习笔记.md"
     },
     {
       "source": "/2025/10/16/电赛/",
-      "destination": "/blog/embedded/electronic-design-contest/",
+      "destination": "/notes/embedded/electronic-design-contest/",
       "legacyFile": "source/_posts/电赛.md"
     },
     {
       "source": "/2025/10/17/Linux-socket/",
-      "destination": "/blog/networking/linux-socket/",
+      "destination": "/notes/networking/linux-socket/",
       "legacyFile": "source/_posts/Linux-socket.md"
     },
     {
       "source": "/2026/03/07/Gazebo仿真/",
-      "destination": "/blog/robotics/gazebo-simulation/",
+      "destination": "/notes/robotics/gazebo-simulation/",
       "legacyFile": "source/_posts/Gazebo仿真.md"
     },
     {
       "source": "/2026/04/07/C++学习笔记/",
-      "destination": "/blog/programming/cpp-notes/",
+      "destination": "/notes/programming/cpp-notes/",
       "legacyFile": "source/_posts/C++学习笔记.md"
     },
     {
       "source": "/2026/04/07/SLAM学习笔记/",
-      "destination": "/blog/robotics/slam-notes/",
+      "destination": "/notes/robotics/slam-notes/",
       "legacyFile": "source/_posts/SLAM学习笔记.md"
     },
     {
       "source": "/2026/04/07/verilog学习笔记/",
-      "destination": "/blog/fpga/verilog-notes/",
+      "destination": "/notes/fpga/verilog-notes/",
       "legacyFile": "source/_posts/verilog学习笔记.md"
     },
     {
       "source": "/2026/04/08/matlab学习笔记/",
-      "destination": "/blog/vision/matlab-notes/",
+      "destination": "/notes/vision/matlab-notes/",
       "legacyFile": "source/_posts/matlab学习笔记.md"
     },
     {
       "source": "/2026/04/08/opencv学习笔记/",
-      "destination": "/blog/vision/opencv-notes/",
+      "destination": "/notes/vision/opencv-notes/",
       "legacyFile": "source/_posts/opencv学习笔记.md"
     },
     {
       "source": "/2026/04/08/各种滤波算法/",
-      "destination": "/blog/algorithms/filtering/",
+      "destination": "/notes/algorithms/filtering/",
       "legacyFile": "source/_posts/各种滤波算法.md"
     }
   ]

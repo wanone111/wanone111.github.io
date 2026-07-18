@@ -23,9 +23,9 @@ const categoryOptions = categories.map((category) => ({
 }));
 ---
 
-<BaseLayout title="博客" description="开发记录、完整教程、项目复盘和技术思考。">
+<BaseLayout title="笔记" description="开发记录、完整教程、项目复盘和技术思考。">
   <div class="stack-xl">
-    <PageIntro eyebrow={`Blog · ${posts.length} dispatches`} title="工程博客" description="按时间记录调试现场、完整教程与项目复盘。短笔记保留速度，长文章保留上下文。" />
+    <PageIntro eyebrow={`Notes · ${posts.length}`} title="工程笔记" />
     {posts.length > 0 ? (
       <section data-blog-filter>
         <div class="blog-toolbar">
@@ -41,7 +41,7 @@ const categoryOptions = categories.map((category) => ({
         <div class="article-list" aria-live="polite">
           {posts.map((post) => (
             <div data-post-category={post.data.category ? categoryKey(post.data.category) : ''}>
-              <ArticleRow href={`/blog/${post.data.slug}/`} title={post.data.title} description={post.data.description} category={post.data.category} meta={formatDate(post.data.updated)} headingLevel="h2" />
+              <ArticleRow href={`/notes/${post.data.slug}/`} title={post.data.title} description={post.data.description} category={post.data.category} meta={formatDate(post.data.updated)} headingLevel="h2" />
             </div>
           ))}
         </div>

@@ -206,5 +206,5 @@ int A[10][10];
 ## 相关内容
 
 - [FPGA、Verilog 与 HLS 学习路径](/knowledge/fpga-edge-ai/fpga-development/)
-- [FPGA 概览](/blog/fpga/fpga-overview/)
-- [Verilog 学习笔记](/blog/fpga/verilog-notes/)
+- [FPGA 概览](/notes/fpga/fpga-overview/)
+- [Verilog 学习笔记](/notes/fpga/verilog-notes/)

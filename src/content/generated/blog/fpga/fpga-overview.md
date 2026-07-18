@@ -81,5 +81,5 @@ impl会生成一个zip压缩包
 ## 相关内容
 
 - [FPGA、Verilog 与 HLS 学习路径](/knowledge/fpga-edge-ai/fpga-development/)
-- [FPGA RTL 学习笔记](/blog/fpga/rtl-notes/)
-- [FPGA HLS 学习笔记](/blog/fpga/vitis-hls-notes/)
+- [FPGA RTL 学习笔记](/notes/fpga/rtl-notes/)
+- [FPGA HLS 学习笔记](/notes/fpga/vitis-hls-notes/)

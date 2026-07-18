@@ -15,7 +15,7 @@ export async function GET() {
     getCollection('projects').then((entries) => entries.filter(isPublic)),
   ]);
   const items = [...posts, ...projects].sort(byNewest).map((entry) => {
-    const section = entry.collection === 'projects' ? 'projects' : 'blog';
+    const section = entry.collection === 'projects' ? 'projects' : 'notes';
     const url = `${site}/${section}/${entry.data.slug}/`;
     return `<item>
       <title>${escapeXml(entry.data.title)}</title>
