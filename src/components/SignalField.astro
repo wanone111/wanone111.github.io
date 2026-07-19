@@ -1,0 +1,331 @@
+---
+interface Props {
+  variant?: 'hero' | 'footer';
+}
+
+const { variant = 'hero' } = Astro.props;
+---
+
+<div
+  class:list={['signal-field', `signal-field--${variant}`]}
+  data-signal-field={variant}
+  data-signal-active="false"
+  aria-hidden="true"
+>
+  <canvas data-signal-canvas></canvas>
+</div>
+
+<script>
+  const clamp = (value: number, minimum: number, maximum: number) =>
+    Math.min(maximum, Math.max(minimum, value));
+
+  const initSignalFields = () => {
+    document.querySelectorAll<HTMLElement>('[data-signal-field]').forEach((field) => {
+      if (field.dataset.signalReady === 'true') return;
+
+      const canvas = field.querySelector<HTMLCanvasElement>('[data-signal-canvas]');
+      const context = canvas?.getContext('2d');
+      if (!canvas || !context) return;
+
+      field.dataset.signalReady = 'true';
+      const variant = field.dataset.signalField === 'footer' ? 'footer' : 'hero';
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+      const interactive = !reducedMotion && !coarsePointer;
+      field.dataset.signalMotion = interactive ? 'spring' : 'static';
+
+      let width = 0;
+      let height = 0;
+      let pixelRatio = 1;
+      let frame = 0;
+      let visible = true;
+      let pointerInside = false;
+      let point = { x: 0, y: 0 };
+      let goal = { x: 0, y: 0 };
+      let velocity = { x: 0, y: 0 };
+
+      const readColors = () => {
+        const styles = getComputedStyle(document.documentElement);
+        return {
+          paths: [
+            styles.getPropertyValue('--color-project').trim() || '#ef7657',
+            styles.getPropertyValue('--color-blog').trim() || '#67a7b3',
+            styles.getPropertyValue('--color-knowledge').trim() || '#7fa27a',
+            styles.getPropertyValue('--color-experiment').trim() || '#a78bc3',
+          ],
+          text: styles.getPropertyValue('--color-text-muted').trim() || '#6d625a',
+          border: styles.getPropertyValue('--color-border-strong').trim() || '#b9a78f',
+          surface: styles.getPropertyValue('--color-surface').trim() || '#fffaf1',
+        };
+      };
+
+      let colors = readColors();
+
+      const defaultPoint = () => variant === 'hero'
+        ? { x: width * 0.9, y: height * 0.52 }
+        : { x: width * 0.62, y: height * 0.52 };
+
+      const drawCurve = (
+        start: { x: number; y: number },
+        end: { x: number; y: number },
+        color: string,
+        index: number,
+        ghost = false,
+      ) => {
+        const pull = variant === 'hero' ? width * (0.29 + index * 0.012) : width * 0.2;
+        const speedFactor = ghost ? 14 + index * 2 : 4 + index;
+        const elasticEnd = {
+          x: end.x - velocity.x * speedFactor,
+          y: end.y - velocity.y * speedFactor,
+        };
+        const verticalSpan = elasticEnd.y - start.y;
+
+        context.beginPath();
+        context.moveTo(start.x, start.y);
+        context.bezierCurveTo(
+          start.x + pull,
+          start.y + verticalSpan * 0.1,
+          elasticEnd.x - pull,
+          elasticEnd.y - verticalSpan * 0.08,
+          elasticEnd.x,
+          elasticEnd.y,
+        );
+        context.strokeStyle = color;
+        context.globalAlpha = ghost ? 0.12 : 0.82;
+        context.lineWidth = ghost ? 1 : variant === 'hero' ? 1.8 : 1.25;
+        context.stroke();
+      };
+
+      const drawNode = (x: number, y: number, color: string, radius = 5) => {
+        context.save();
+        context.globalAlpha = 0.26;
+        context.fillStyle = color;
+        context.beginPath();
+        context.arc(x, y, radius + 5, 0, Math.PI * 2);
+        context.fill();
+        context.globalAlpha = 1;
+        context.fillStyle = colors.surface;
+        context.strokeStyle = color;
+        context.lineWidth = 1.2;
+        context.beginPath();
+        context.arc(x, y, radius + 2, 0, Math.PI * 2);
+        context.fill();
+        context.stroke();
+        context.fillStyle = color;
+        context.beginPath();
+        context.arc(x, y, radius, 0, Math.PI * 2);
+        context.fill();
+        context.restore();
+      };
+
+      const drawHeroMarks = () => {
+        const dots = [
+          [0.47, 0.18], [0.66, 0.12], [0.79, 0.24], [0.61, 0.34],
+          [0.7, 0.46], [0.55, 0.57], [0.77, 0.64], [0.49, 0.75],
+          [0.67, 0.82], [0.84, 0.78],
+        ];
+        context.save();
+        context.strokeStyle = colors.border;
+        context.fillStyle = colors.border;
+        context.globalAlpha = 0.28;
+        context.lineWidth = 1;
+        dots.forEach(([x, y], index) => {
+          const px = width * x;
+          const py = height * y;
+          context.beginPath();
+          context.arc(px, py, index % 3 === 0 ? 2.2 : 1.3, 0, Math.PI * 2);
+          index % 3 === 0 ? context.stroke() : context.fill();
+        });
+
+        const segments = [
+          [0.51, 0.3, 0.59, 0.3, 0.63, 0.35],
+          [0.69, 0.18, 0.69, 0.29],
+          [0.73, 0.7, 0.79, 0.7, 0.82, 0.74],
+          [0.58, 0.68, 0.58, 0.77],
+        ];
+        segments.forEach(([x1, y1, x2, y2, x3, y3]) => {
+          context.beginPath();
+          context.moveTo(width * x1, height * y1);
+          context.lineTo(width * x2, height * y2);
+          if (x3 !== undefined && y3 !== undefined) context.lineTo(width * x3, height * y3);
+          context.stroke();
+        });
+        context.restore();
+      };
+
+      const drawHero = () => {
+        drawHeroMarks();
+        const sources = [
+          { x: 0.08, y: 0.12, label: 'ROS 2' },
+          { x: 0.2, y: 0.38, label: 'PX4' },
+          { x: 0.14, y: 0.68, label: 'FPGA' },
+          { x: 0.15, y: 0.9, label: 'AI' },
+        ];
+
+        sources.forEach((source, index) => {
+          const start = { x: width * source.x, y: height * source.y };
+          drawCurve(start, point, colors.paths[index], index, true);
+          drawCurve(start, point, colors.paths[index], index);
+          drawNode(start.x, start.y, colors.paths[index], 4.5);
+          context.save();
+          context.fillStyle = colors.paths[index];
+          context.globalAlpha = 0.92;
+          context.font = '700 12px "Cascadia Code", "JetBrains Mono", Consolas, monospace';
+          context.textBaseline = 'bottom';
+          context.fillText(source.label, start.x + 14, start.y - 7);
+          context.restore();
+        });
+
+        drawNode(point.x, point.y, colors.border, 3.5);
+      };
+
+      const drawFooter = () => {
+        const sources = [
+          { x: 0.08, y: 0.24 },
+          { x: 0.28, y: 0.35 },
+          { x: 0.1, y: 0.7 },
+          { x: 0.36, y: 0.78 },
+        ];
+
+        context.save();
+        context.setLineDash([3, 6]);
+        context.strokeStyle = colors.border;
+        context.globalAlpha = 0.35;
+        context.beginPath();
+        context.ellipse(width * 0.46, height * 0.55, width * 0.24, height * 0.28, 0, 0, Math.PI * 2);
+        context.stroke();
+        context.restore();
+
+        sources.forEach((source, index) => {
+          const start = { x: width * source.x, y: height * source.y };
+          drawCurve(start, point, colors.paths[index], index, true);
+          drawCurve(start, point, colors.paths[index], index);
+          drawNode(start.x, start.y, colors.paths[index], 3.2);
+        });
+        drawNode(point.x, point.y, colors.paths[2], 3.6);
+      };
+
+      const draw = () => {
+        context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        context.clearRect(0, 0, width, height);
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
+        variant === 'hero' ? drawHero() : drawFooter();
+        context.globalAlpha = 1;
+      };
+
+      const settled = () =>
+        Math.abs(goal.x - point.x) < 0.08 &&
+        Math.abs(goal.y - point.y) < 0.08 &&
+        Math.abs(velocity.x) < 0.02 &&
+        Math.abs(velocity.y) < 0.02;
+
+      const tick = () => {
+        frame = 0;
+        if (!visible || !interactive) return;
+
+        const stiffness = variant === 'hero' ? 0.046 : 0.035;
+        const damping = variant === 'hero' ? 0.81 : 0.84;
+        velocity.x = (velocity.x + (goal.x - point.x) * stiffness) * damping;
+        velocity.y = (velocity.y + (goal.y - point.y) * stiffness) * damping;
+        point.x += velocity.x;
+        point.y += velocity.y;
+        draw();
+
+        if (pointerInside || !settled()) frame = window.requestAnimationFrame(tick);
+      };
+
+      const wake = () => {
+        if (!frame && visible && interactive) frame = window.requestAnimationFrame(tick);
+      };
+
+      const resize = () => {
+        const rect = field.getBoundingClientRect();
+        width = Math.max(1, rect.width);
+        height = Math.max(1, rect.height);
+        pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * pixelRatio);
+        canvas.height = Math.round(height * pixelRatio);
+        const restingPoint = defaultPoint();
+        point = { ...restingPoint };
+        goal = { ...restingPoint };
+        velocity = { x: 0, y: 0 };
+        draw();
+      };
+
+      const handlePointerMove = (event: PointerEvent) => {
+        if (!interactive) return;
+        const rect = field.getBoundingClientRect();
+        const localX = event.clientX - rect.left;
+        const localY = event.clientY - rect.top;
+        const bounds = variant === 'hero'
+          ? { minX: width * 0.46, maxX: width * 0.96, minY: height * 0.08, maxY: height * 0.92 }
+          : { minX: width * 0.35, maxX: width * 0.88, minY: height * 0.18, maxY: height * 0.82 };
+        goal = {
+          x: clamp(localX, bounds.minX, bounds.maxX),
+          y: clamp(localY, bounds.minY, bounds.maxY),
+        };
+        pointerInside = true;
+        field.dataset.signalActive = 'true';
+        wake();
+      };
+
+      const handlePointerLeave = () => {
+        goal = defaultPoint();
+        pointerInside = false;
+        field.dataset.signalActive = 'false';
+        wake();
+      };
+
+      if (interactive) {
+        field.addEventListener('pointermove', handlePointerMove, { passive: true });
+        field.addEventListener('pointerleave', handlePointerLeave);
+      }
+
+      new ResizeObserver(resize).observe(field);
+      new IntersectionObserver((entries) => {
+        visible = entries[0]?.isIntersecting ?? true;
+        if (visible) wake();
+      }, { rootMargin: '120px' }).observe(field);
+
+      new MutationObserver(() => {
+        colors = readColors();
+        draw();
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme', 'data-experiment-theme'] });
+
+      resize();
+    });
+  };
+
+  initSignalFields();
+  document.addEventListener('astro:page-load', initSignalFields);
+</script>
+
+<style>
+  .signal-field {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    touch-action: pan-y;
+  }
+
+  .signal-field canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .signal-field--hero {
+    min-height: 34rem;
+  }
+
+  .signal-field--footer {
+    min-height: 7rem;
+  }
+
+  @media (max-width: 64rem) {
+    .signal-field {
+      display: none;
+    }
+  }
+</style>

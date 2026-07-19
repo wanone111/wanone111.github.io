@@ -1,4 +1,6 @@
 ---
+import SignalField from './SignalField.astro';
+
 const buildDate = new Date();
 const buildLabel = new Intl.DateTimeFormat('zh-CN', {
   timeZone: 'Asia/Shanghai', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false,
@@ -11,6 +13,7 @@ const buildLabel = new Intl.DateTimeFormat('zh-CN', {
       <p>© {new Date().getFullYear()} Wanone · Astro + Starlight · 内容由 Obsidian 管理</p>
       <p class="build-status" role="status"><span aria-hidden="true"></span> Build ready · <time datetime={buildDate.toISOString()}>{buildLabel} 更新</time></p>
     </div>
+    <SignalField variant="footer" />
     <nav aria-label="页脚导航">
       <a href="/notes/">笔记</a>
       <a href="/knowledge/">知识库</a>
@@ -25,11 +28,12 @@ const buildLabel = new Intl.DateTimeFormat('zh-CN', {
 
 <style>
   .site-footer { margin-top: var(--space-section); border-top: 1px solid var(--color-border); background: var(--color-surface-strong); color: var(--color-text-muted); }
-  .site-footer__inner { display: flex; min-height: 13rem; align-items: center; justify-content: space-between; gap: var(--space-7); padding-block: var(--space-7); font-size: .86rem; }
+  .site-footer__inner { display: grid; grid-template-columns: minmax(20rem, 1fr) minmax(17rem, .9fr) auto; min-height: 13rem; align-items: center; gap: clamp(1.5rem, 4vw, 4rem); padding-block: var(--space-7); font-size: .86rem; }
   nav { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-4); }
   nav a, nav button { border: 0; padding: 0; background: transparent; color: var(--color-text); font-weight: 750; text-decoration: none; cursor: pointer; }
   nav a:hover, nav button:hover { color: var(--color-accent); }
   .build-status { display: flex; align-items: center; gap: .45rem; color: var(--color-text-muted); font: 650 .7rem/1.4 var(--font-mono); }
   .build-status > span { width: .6rem; height: .6rem; border-radius: 50%; background: var(--color-knowledge); box-shadow: 0 0 0 .24rem color-mix(in srgb, var(--color-knowledge) 18%, transparent); }
-  @media (max-width: 42rem) { .site-footer__inner { align-items: flex-start; flex-direction: column; justify-content: center; } nav { justify-content: flex-start; } }
+  @media (max-width: 72rem) { .site-footer__inner { grid-template-columns: minmax(18rem, 1fr) auto; } .site-footer__inner :global(.signal-field--footer) { display: none; } }
+  @media (max-width: 42rem) { .site-footer__inner { grid-template-columns: 1fr; align-items: flex-start; justify-content: center; } nav { justify-content: flex-start; } }
 </style>

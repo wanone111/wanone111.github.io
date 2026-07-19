@@ -113,6 +113,47 @@ test('homepage follows the portfolio-first 01–05 editorial sequence', async ({
   await expect(page.locator('[data-tech-tags]')).toHaveCount(0);
 });
 
+test('homepage signal fields respond to pointer input and keep mobile quiet', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/');
+
+  const heroField = page.locator('[data-signal-field="hero"]');
+  const footerField = page.locator('[data-signal-field="footer"]');
+  await expect(heroField).toBeVisible();
+  await expect(heroField).toHaveAttribute('data-signal-motion', 'spring');
+  await expect(heroField.locator('canvas')).toBeVisible();
+  await expect(footerField).toHaveCount(1);
+
+  const box = await heroField.boundingBox();
+  expect(box).not.toBeNull();
+  if (!box) return;
+  await page.mouse.move(box.x + box.width * 0.7, box.y + box.height * 0.25);
+  await expect(heroField).toHaveAttribute('data-signal-active', 'true');
+  await page.mouse.move(10, 10);
+  await expect(heroField).toHaveAttribute('data-signal-active', 'false');
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(heroField).toBeHidden();
+  await expect(footerField).toBeHidden();
+});
+
+test('homepage signal fields respect reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/');
+
+  const heroField = page.locator('[data-signal-field="hero"]');
+  await expect(heroField).toBeVisible();
+  await expect(heroField).toHaveAttribute('data-signal-motion', 'static');
+  await expect(heroField).toHaveAttribute('data-signal-active', 'false');
+
+  const box = await heroField.boundingBox();
+  expect(box).not.toBeNull();
+  if (!box) return;
+  await page.mouse.move(box.x + box.width * 0.75, box.y + box.height * 0.3);
+  await expect(heroField).toHaveAttribute('data-signal-active', 'false');
+});
+
 test('knowledge garden exposes real paths and maturity definitions', async ({ page }) => {
   await page.goto('/knowledge/');
 

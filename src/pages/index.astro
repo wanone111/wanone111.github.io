@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleRow from '../components/ArticleRow.astro';
 import ProjectShowcaseCard from '../components/ProjectShowcaseCard.astro';
+import SignalField from '../components/SignalField.astro';
 import { byNewest, formatDate, isPublic } from '../lib/content';
 
 const posts = (await getCollection('blog')).filter(isPublic).sort(byNewest);
@@ -55,6 +56,7 @@ const homeJsonLd = [
           <a href="/about/">关于</a>
         </div>
       </div>
+      <SignalField variant="hero" />
     </section>
 
     <section class="home-section systems-section" aria-labelledby="systems-title">
@@ -137,8 +139,9 @@ const homeJsonLd = [
 
 <style>
   .home-flow { display: grid; }
-  .home-intro { min-height: min(34rem, calc(100vh - var(--header-height))); padding-block: clamp(3rem, 8vw, 7rem); }
-  .home-hero__copy { grid-column: 1 / span 10; display: grid; gap: clamp(1rem, 2.4vw, 1.8rem); }
+  .home-intro { min-height: min(38rem, calc(100vh - var(--header-height))); align-items: center; padding-block: clamp(3rem, 7vw, 6rem); }
+  .home-hero__copy { grid-column: 1 / span 8; grid-row: 1; display: grid; gap: clamp(1rem, 2.4vw, 1.8rem); position: relative; z-index: 1; }
+  .home-intro :global(.signal-field--hero) { grid-column: 8 / -1; grid-row: 1; align-self: stretch; margin-left: clamp(-1rem, -1.2vw, 0rem); }
   .home-intro h1 { max-width: 20ch; font-size: clamp(2.4rem, 5.8vw, 5.8rem); font-weight: 520; line-height: 1.12; letter-spacing: -.055em; }
   .home-intro h1 strong { color: var(--color-accent-strong); font-weight: 850; }
   .home-hero__summary { max-width: 46rem; color: var(--color-text-muted); font-size: clamp(1rem, 1.5vw, 1.2rem); }
@@ -176,6 +179,7 @@ const homeJsonLd = [
   .about-section__links { justify-content: flex-start; }
   @media (max-width: 64rem) {
     .home-hero__copy { grid-column: 1 / -1; }
+    .home-intro :global(.signal-field--hero) { display: none; }
     .notes-layout { grid-template-columns: 1fr; }
     .featured-note h3 { max-width: 22ch; }
   }
