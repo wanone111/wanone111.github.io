@@ -99,4 +99,4 @@ npm.cmd run preview                # 本地预览构建结果
 5. **图片性能**：工作台 WebP 只保留在 `/uses/` 和默认分享图；真实项目素材加入后需要重新评估 `srcset`、AVIF 和移动端裁切。
 6. **维护与监控**：依赖更新、外链健康和生产路由巡检仍依赖人工；站点未接入统计或错误上报，以保持隐私和低维护成本。
 
-更完整的视觉检查和取舍见 [`design-qa.md`](design-qa.md)。私有源、恢复流程和跨仓库状态以知识库中的 `50_Procedures/Website-and-Knowledge-Base-Status.md` 为准。
+更完整的视觉检查和取舍见 [`design-qa.md`](design-qa.md)。私有源、恢复流程和跨仓库状态以知识库中的 `30_笔记/运维/Website-and-Knowledge-Base-Status.md` 为准。
