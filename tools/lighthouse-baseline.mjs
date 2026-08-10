@@ -1,57 +1,20 @@
-import { spawn } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import * as chromeLauncher from 'chrome-launcher';
 import lighthouse from 'lighthouse';
+import { startStaticPreview } from './lib/static-preview.mjs';
 
 const config = JSON.parse(await readFile(resolve('lighthouse.config.json'), 'utf8'));
 const outputDirectory = resolve('qa-artifacts', 'lighthouse');
-const chromeProfileDirectory = resolve(outputDirectory, '.chrome-profile');
+const chromeProfileDirectory = resolve(outputDirectory, `.chrome-profile-${process.pid}`);
 const host = '127.0.0.1';
-const origin = `http://${host}:${config.port}`;
 const categories = ['performance', 'accessibility', 'best-practices', 'seo'];
-const astroCli = resolve('node_modules', 'astro', 'bin', 'astro.mjs');
 
 await mkdir(outputDirectory, { recursive: true });
 await mkdir(chromeProfileDirectory, { recursive: true });
 
-const server = spawn(
-  process.execPath,
-  [astroCli, 'preview', '--host', host, '--port', String(config.port)],
-  { env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1' }, stdio: ['ignore', 'pipe', 'pipe'] },
-);
-
-let serverError = '';
-server.stderr.on('data', (chunk) => { serverError += chunk.toString(); });
-
-const delay = (milliseconds) => new Promise((resolveDelay) => setTimeout(resolveDelay, milliseconds));
-
-async function waitForServer() {
-  const deadline = Date.now() + 60_000;
-  while (Date.now() < deadline) {
-    if (server.exitCode !== null) {
-      throw new Error(`Astro preview exited early with code ${server.exitCode}.\n${serverError}`);
-    }
-    try {
-      const response = await fetch(`${origin}/`);
-      if (response.ok) return;
-    } catch {
-      // Preview is still starting.
-    }
-    await delay(250);
-  }
-  throw new Error(`Timed out waiting for Astro preview at ${origin}.\n${serverError}`);
-}
-
-async function stopServer() {
-  if (server.exitCode !== null) return;
-  server.kill();
-  await Promise.race([
-    new Promise((resolveExit) => server.once('exit', resolveExit)),
-    delay(5_000),
-  ]);
-  if (server.exitCode === null) server.kill('SIGKILL');
-}
+const preview = await startStaticPreview({ root: resolve('dist'), host, port: config.port });
+const origin = preview.origin;
 
 function median(values) {
   const sorted = [...values].sort((left, right) => left - right);
@@ -60,7 +23,6 @@ function median(values) {
 
 let chrome;
 try {
-  await waitForServer();
   chrome = await chromeLauncher.launch({
     chromeFlags: ['--headless=new', '--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage'],
     userDataDir: chromeProfileDirectory,
@@ -112,7 +74,7 @@ try {
   }
 } finally {
   if (chrome) chrome.kill();
-  await stopServer();
+  await preview.close();
 }
 
 process.exit(process.exitCode ?? 0);

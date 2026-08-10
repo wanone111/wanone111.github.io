@@ -26,7 +26,7 @@ const sources = new Set();
 
 for (const [index, redirect] of redirects.entries()) {
   const label = `redirects[${index}]`;
-  const { source, destination, legacyFile } = redirect;
+  const { source, retiredRoute, destination, legacyFile } = redirect;
 
   if (typeof source !== 'string' || !/^\/[^?#]*\/$/.test(source)) {
     errors.push(`${label}.source must be an absolute trailing-slash path without a query or fragment.`);
@@ -36,9 +36,15 @@ for (const [index, redirect] of redirects.entries()) {
     errors.push(`${label}.destination must be an absolute trailing-slash path without a query or fragment.`);
     continue;
   }
+  if (typeof retiredRoute !== 'string' || !/^\/notes\/[^?#]*\/$/.test(retiredRoute)) {
+    errors.push(`${label}.retiredRoute must be a trailing-slash path below /notes/.`);
+    continue;
+  }
   if (source === destination) errors.push(`${label} redirects to itself.`);
-  if (sources.has(source)) errors.push(`${label}.source duplicates ${source}.`);
-  sources.add(source);
+  for (const route of [source, retiredRoute, retiredRoute.replace(/^\/notes\//, '/blog/')]) {
+    if (sources.has(route)) errors.push(`${label} duplicates redirect source ${route}.`);
+    sources.add(route);
+  }
   if (typeof legacyFile !== 'string' || legacyFile.trim() === '') {
     errors.push(`${label}.legacyFile must identify the migrated Hexo source.`);
   }
@@ -59,15 +65,15 @@ for (const [index, redirect] of redirects.entries()) {
   }
 }
 
-const previousBlogRedirects = [
+const retiredRouteRedirects = [
   { source: '/blog/', destination: '/notes/' },
-  ...redirects.map(({ destination }) => ({
-    source: destination.replace(/^\/notes\//, '/blog/'),
-    destination,
-  })),
+  ...redirects.flatMap(({ retiredRoute, destination }) => [
+    ...(retiredRoute === destination ? [] : [{ source: retiredRoute, destination }]),
+    { source: retiredRoute.replace(/^\/notes\//, '/blog/'), destination },
+  ]),
 ];
 
-for (const { source, destination } of previousBlogRedirects) {
+for (const { source, destination } of retiredRouteRedirects) {
   const sourceOutput = routeOutput(source);
   if (!await pathExists(sourceOutput)) {
     errors.push(`${source} did not produce a compatibility redirect page.`);
@@ -85,4 +91,4 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log(`Verified ${redirects.length} legacy URL redirect(s) and ${previousBlogRedirects.length} /blog/ compatibility redirect(s).`);
+console.log(`Verified ${redirects.length} legacy URL redirect(s) and ${retiredRouteRedirects.length} retired route redirect(s).`);

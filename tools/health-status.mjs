@@ -6,8 +6,13 @@ import { loadValidatedContent } from './lib/content.mjs';
 import { loadWorkspace } from './lib/workspace.mjs';
 
 const execFileAsync = promisify(execFile);
-const { configPath, paths, websiteRoot, workspaceRoot } = await loadWorkspace();
+const { privateSourceAvailable, paths, websiteRoot, workspaceRoot } = await loadWorkspace();
 const errors = [];
+
+function gitArgs(root, ...args) {
+  const safeDirectory = root.replaceAll('\\', '/');
+  return ['-c', `safe.directory=${safeDirectory}`, '-C', root, ...args];
+}
 
 async function requirePath(path, label) {
   if (!await pathExists(path)) errors.push(`${label} is missing: ${path}`);
@@ -18,10 +23,10 @@ async function gitSummary(label, root) {
   if (!await pathExists(resolve(root, '.git'))) return;
   try {
     const [{ stdout: branch }, { stdout: head }, { stdout: remote }, { stdout: status }] = await Promise.all([
-      execFileAsync('git', ['-C', root, 'branch', '--show-current']),
-      execFileAsync('git', ['-C', root, 'log', '-1', '--format=%h %s']),
-      execFileAsync('git', ['-C', root, 'remote', 'get-url', 'origin']),
-      execFileAsync('git', ['-C', root, 'status', '--short', '--branch']),
+      execFileAsync('git', gitArgs(root, 'branch', '--show-current')),
+      execFileAsync('git', gitArgs(root, 'log', '-1', '--format=%h %s')),
+      execFileAsync('git', gitArgs(root, 'remote', 'get-url', 'origin')),
+      execFileAsync('git', gitArgs(root, 'status', '--short', '--branch')),
     ]);
     console.log(`${label}:`);
     console.log(`  branch: ${branch.trim()}`);
@@ -35,20 +40,20 @@ async function gitSummary(label, root) {
 
 async function isGitRepository(root) {
   try {
-    const { stdout } = await execFileAsync('git', ['-C', root, 'rev-parse', '--is-inside-work-tree']);
+    const { stdout } = await execFileAsync('git', gitArgs(root, 'rev-parse', '--is-inside-work-tree'));
     return stdout.trim() === 'true';
   } catch {
     return false;
   }
 }
 
-if (!configPath) errors.push('workspace.config.json is unavailable; run this command from the local sibling-repository workspace.');
+if (!privateSourceAvailable) errors.push('The private sibling knowledge_base repository is unavailable; run this command from the local sibling-repository workspace.');
 if (await isGitRepository(workspaceRoot)) {
   errors.push('The workspace root must not be a Git repository containing both private and public content.');
 }
 
 await Promise.all([
-  requirePath(resolve(workspaceRoot, 'AGENTS.md'), 'workspace AGENTS.md'),
+  requirePath(resolve(paths.knowledgeRoot, 'AGENTS.md'), 'knowledge_base AGENTS.md'),
   requirePath(resolve(websiteRoot, 'AGENTS.md'), 'website AGENTS.md'),
   requirePath(paths.publishRoot, 'publish allowlist root'),
   requirePath(paths.assetsRoot, 'private source asset root'),
@@ -58,7 +63,7 @@ await Promise.all([
   requirePath(resolve(websiteRoot, '.github', 'workflows', 'deploy.yml'), 'GitHub Pages workflow'),
 ]);
 
-if (configPath) {
+if (privateSourceAvailable) {
   try {
     const content = await loadValidatedContent(paths);
     if (content.errors.length > 0) errors.push(`Source validation has ${content.errors.length} error(s).`);
@@ -68,7 +73,7 @@ if (configPath) {
   }
 }
 
-await gitSummary('knowledge-base', paths.knowledgeRoot);
+await gitSummary('knowledge_base', paths.knowledgeRoot);
 await gitSummary('website', websiteRoot);
 
 if (errors.length > 0) {

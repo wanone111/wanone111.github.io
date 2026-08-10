@@ -6,7 +6,7 @@ status: published
 visibility: public
 slug: about
 created: 2026-07-13
-updated: 2026-07-15
+updated: 2026-08-10
 published: 2026-07-13
 category: profile
 tags:

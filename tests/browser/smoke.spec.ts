@@ -8,7 +8,9 @@ const routes = [
   '/projects/obsidian-astro-publishing/',
   '/notes/',
   '/notes/robotics/ros2-notes/',
+  '/notes/algorithms/pid-control-basics/',
   '/knowledge/',
+  '/knowledge/robotics/ros2-and-simulation/',
   '/resume/',
   '/about/',
   '/links/',
@@ -24,6 +26,7 @@ test('/rss.xml returns a public RSS feed', async ({ request }) => {
   expect(response.headers()['content-type']).toMatch(/(?:application\/rss\+xml|text\/xml)/);
   const body = await response.text();
   expect(body).toContain('<rss version="2.0">');
+  expect(body).toContain('/projects/');
   expect(body).toContain('/notes/');
 });
 

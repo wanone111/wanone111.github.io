@@ -1,13 +1,27 @@
-import { readFile } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const libraryDir = dirname(fileURLToPath(import.meta.url));
 export const websiteRoot = resolve(libraryDir, '..', '..');
 export const workspaceRoot = resolve(websiteRoot, '..');
+export const localWorkspaceConfig = Object.freeze({
+  knowledgeRoot: './knowledge_base',
+  publishRoot: './knowledge_base/40_Publish',
+  assetsRoot: './knowledge_base/_assets',
+  websiteRoot: './wanone111.github.io',
+  generatedContentRoot: './wanone111.github.io/src/content/generated',
+  generatedBlogRoot: './wanone111.github.io/src/content/generated/blog',
+  generatedDocsRoot: './wanone111.github.io/src/content/docs/knowledge',
+  generatedProjectsRoot: './wanone111.github.io/src/content/generated/projects',
+  generatedPagesRoot: './wanone111.github.io/src/content/generated/pages',
+  generatedAssetsRoot: './wanone111.github.io/public/images/generated',
+  generatedManifest: './wanone111.github.io/generated-content-manifest.json',
+  contentPolicy: './wanone111.github.io/tools/content-policy.json',
+});
 export const standaloneWorkspaceConfig = Object.freeze({
   knowledgeRoot: '../.private-source-unavailable',
-  publishRoot: '../.private-source-unavailable/80_Publish',
+  publishRoot: '../.private-source-unavailable/40_Publish',
   assetsRoot: '../.private-source-unavailable/_assets',
   websiteRoot: '.',
   generatedContentRoot: './src/content/generated',
@@ -32,6 +46,7 @@ export async function loadWorkspace() {
   let configPath = localConfigPath;
   let configBaseRoot = workspaceRoot;
   let config;
+  let privateSourceAvailable = true;
 
   try {
     config = JSON.parse(await readFile(localConfigPath, 'utf8'));
@@ -40,12 +55,19 @@ export async function loadWorkspace() {
       throw error;
     }
 
-    // GitHub Actions checks out only the public website repository. It must be
-    // able to build and verify already-generated public content without the
-    // private sibling knowledge-base or the local workspace configuration.
-    configPath = null;
-    configBaseRoot = websiteRoot;
-    config = standaloneWorkspaceConfig;
+    try {
+      await access(resolve(workspaceRoot, 'knowledge_base'));
+      configPath = null;
+      configBaseRoot = workspaceRoot;
+      config = localWorkspaceConfig;
+    } catch {
+      // GitHub Actions checks out only the public website repository. It must
+      // verify generated public content without the private sibling source.
+      configPath = null;
+      configBaseRoot = websiteRoot;
+      config = standaloneWorkspaceConfig;
+      privateSourceAvailable = false;
+    }
   }
 
   const paths = Object.fromEntries(
@@ -54,7 +76,7 @@ export async function loadWorkspace() {
 
   validateWorkspacePaths(paths, websiteRoot);
 
-  return { config, paths, configPath, workspaceRoot: configBaseRoot, websiteRoot };
+  return { config, paths, configPath, privateSourceAvailable, workspaceRoot: configBaseRoot, websiteRoot };
 }
 
 export function validateWorkspacePaths(paths, actualWebsiteRoot = websiteRoot) {

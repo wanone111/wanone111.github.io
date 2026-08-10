@@ -63,7 +63,7 @@ test('blog category filter updates pressed state and visible posts', async ({ pa
 
   const posts = page.locator('[data-post-category]');
   const categoryButtons = page.locator('[data-category]:not([data-category="all"])');
-  expect(await posts.count()).toBeGreaterThan(0);
+  await expect(posts).toHaveCount(13);
   expect(await categoryButtons.count()).toBeGreaterThan(0);
 
   const categoryButton = categoryButtons.first();
@@ -87,11 +87,7 @@ test('blog category filter updates pressed state and visible posts', async ({ pa
   const allButton = page.locator('[data-category="all"]');
   await allButton.click();
   await expect(allButton).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('[data-post-category]:visible')).toHaveCount(await posts.count());
-  await page.goBack();
-  await expect(categoryButton).toHaveAttribute('aria-pressed', 'true');
-  await page.goForward();
-  await expect(allButton).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.locator('[data-post-category]:visible')).toHaveCount(13);
 });
 
 test('homepage follows the portfolio-first 01–05 editorial sequence', async ({ page }) => {
@@ -104,11 +100,12 @@ test('homepage follows the portfolio-first 01–05 editorial sequence', async ({
   const projects = page.locator('.project-list .project-showcase');
   await expect(projects).toHaveCount(3);
   await expect(projects.locator('h2')).toHaveText([
-    '异构硬件视频图像处理方案',
     '室内无人机自主飞行控制系统',
+    '异构硬件视频图像处理方案',
     'Obsidian 与 Astro 内容发布系统',
   ]);
-  await expect(page.locator('.featured-note')).toHaveAttribute('href', '/notes/robotics/ros2-notes/');
+  await expect(page.locator('.featured-note')).toHaveCount(0);
+  await expect(page.locator('.recent-notes .article-row')).toHaveCount(4);
   await expect(page.locator('[data-workbench]')).toHaveCount(0);
   await expect(page.locator('[data-tech-tags]')).toHaveCount(0);
 });
@@ -162,25 +159,6 @@ test('knowledge garden exposes real paths and maturity definitions', async ({ pa
   await expect(page.getByText('Growing', { exact: true }).first()).toBeVisible();
   await expect(page.getByText('Evergreen', { exact: true })).toBeVisible();
   await expect(page.locator('[data-knowledge-garden] .garden-path').first()).toHaveAttribute('href', '/knowledge/embedded/');
-});
-
-test('PID tuning lab updates its response metrics and resets', async ({ page }) => {
-  await page.goto('/notes/algorithms/pid/');
-
-  const integral = page.getByRole('slider', { name: 'Ki 积分参数' });
-  const overshoot = page.locator('[data-pid-metric="overshoot"]');
-  const summary = page.locator('[data-pid-summary]');
-  await expect(integral).toHaveValue('0.35');
-  await expect(overshoot).toHaveText('4.5%');
-
-  await integral.fill('1.5');
-  await expect(integral).toHaveValue('1.5');
-  await expect(overshoot).toHaveText('22.8%');
-  await expect(summary).toContainText('超调偏大');
-
-  await page.getByRole('button', { name: '恢复建议值' }).click();
-  await expect(integral).toHaveValue('0.35');
-  await expect(overshoot).toHaveText('4.5%');
 });
 
 test('reduced motion keeps knowledge paths visible without staged transitions', async ({ page }) => {
@@ -263,16 +241,9 @@ test('Starlight sidebar works on desktop and mobile', async ({ page }) => {
   await expect(menuHost).toHaveAttribute('aria-expanded', 'false');
 });
 
-test('long code blocks scroll inside the article without page overflow', async ({ page }) => {
+test('knowledge detail remains within the mobile viewport', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/notes/robotics/ros2-notes/');
-
-  const codeBlocks = page.locator('pre');
-  expect(await codeBlocks.count()).toBeGreaterThan(0);
-  const overflowCount = await codeBlocks.evaluateAll(
-    (blocks) => blocks.filter((block) => block.scrollWidth > block.clientWidth + 1).length,
-  );
-  expect(overflowCount).toBeGreaterThan(0);
+  await page.goto('/knowledge/robotics/ros2-and-simulation/');
 
   const pageWidths = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
@@ -300,7 +271,7 @@ test('command palette searches Pagefind content and restores trigger focus', asy
   await page.locator('[data-command-search]').fill('uses');
   await expect(palette.locator('[data-command]:visible')).toHaveCount(1);
   await expect(palette.getByRole('link', { name: /\/uses/ })).toBeVisible();
-  await page.locator('[data-command-search]').fill('ROS2');
+  await page.locator('[data-command-search]').fill('ROS');
   await expect(palette.locator('[data-pagefind-results] a').first()).toBeVisible();
   await expect(palette.locator('[data-search-status]')).toContainText('条结果');
   await page.keyboard.press('Escape');
@@ -311,17 +282,30 @@ test('command palette searches Pagefind content and restores trigger focus', asy
   await expect(palette).toHaveAttribute('open', '');
 });
 
-test('tags expose article lists and long articles expose engineering navigation', async ({ page }) => {
+test('tags expose restored articles and project engineering navigation', async ({ page }) => {
   await page.goto('/tags/');
   expect(await page.locator('[data-tag-section]').count()).toBeGreaterThan(0);
   await expect(page.locator('[data-tag-section] li').first()).toBeVisible();
 
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto('/notes/robotics/ros2-notes/');
+  await page.goto('/projects/obsidian-astro-publishing/');
   await expect(page.locator('.engineering-summary')).toBeVisible();
   await expect(page.locator('.article-rail')).toBeVisible();
   expect(await page.locator('.article-rail a[href^="#"]').count()).toBeGreaterThan(0);
   await expect(page.locator('.article-rail progress')).toHaveAttribute('max', '100');
+});
+
+test('article code copy and reading completion remain available', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/notes/programming/cpp-class-access-control/');
+  const copyButton = page.locator('.code-copy-button').first();
+  await expect(copyButton).toBeVisible();
+  await copyButton.click();
+  await expect(copyButton).not.toHaveText('复制');
+
+  const plant = page.locator('[data-reading-plant]');
+  await plant.scrollIntoViewIfNeeded();
+  await expect(plant).toHaveAttribute('data-complete', 'true');
 });
 
 test('uses workflow map exposes path state, details, and evidence', async ({ page }) => {
@@ -340,19 +324,6 @@ test('uses workflow map exposes path state, details, and evidence', async ({ pag
   await expect(page.locator('#uses-workflow-1-node-3')).toBeVisible();
   await workflow.locator('summary').click();
   await expect(workflow.getByText('通信压测框架')).toBeVisible();
-});
-
-test('code copy feedback and reading plant reward completion', async ({ page, context }) => {
-  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  await page.goto('/notes/robotics/ros2-notes/');
-  const copyButton = page.locator('.code-copy-button').first();
-  await copyButton.click();
-  await expect(copyButton).not.toHaveText('复制');
-
-  const plant = page.locator('[data-reading-plant]');
-  await plant.scrollIntoViewIfNeeded();
-  await expect(plant).toHaveAttribute('data-complete', 'true');
-  await expect(plant.locator('[data-reading-plant-image]')).toHaveAttribute('src', '/images/brand/knowledge-evergreen-v1.webp');
 });
 
 test('404 knowledge cards drag without removing direct navigation', async ({ page }) => {

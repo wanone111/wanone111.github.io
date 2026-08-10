@@ -8,16 +8,16 @@ const legacyUrlMap = JSON.parse(
 const legacyRedirects = legacyUrlMap.redirects.map(
   ({ source, destination }) => [source, destination],
 );
-const blogCompatibilityRedirects = [
+const retiredRouteRedirects = [
   ['/blog/', '/notes/'],
-  ...legacyUrlMap.redirects.map(({ destination }) => [
-    destination.replace(/^\/notes\//, '/blog/'),
-    destination,
+  ...legacyUrlMap.redirects.flatMap(({ retiredRoute, destination }) => [
+    ...(retiredRoute === destination ? [] : [[retiredRoute, destination]]),
+    [retiredRoute.replace(/^\/notes\//, '/blog/'), destination],
   ]),
 ];
 const redirects = Object.fromEntries([
   ...legacyRedirects,
-  ...blogCompatibilityRedirects,
+  ...retiredRouteRedirects,
 ]);
 
 export default defineConfig({

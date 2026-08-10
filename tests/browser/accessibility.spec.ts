@@ -4,8 +4,9 @@ import { expect, test } from '@playwright/test';
 const pages = [
   { name: 'home', route: '/' },
   { name: 'notes', route: '/notes/' },
-  { name: 'long article', route: '/notes/robotics/ros2-notes/' },
-  { name: 'PID experiment', route: '/notes/algorithms/pid/' },
+  { name: 'ROS 2 article', route: '/notes/robotics/ros2-notes/' },
+  { name: 'robotics knowledge', route: '/knowledge/robotics/ros2-and-simulation/' },
+  { name: 'project record', route: '/projects/obsidian-astro-publishing/' },
   { name: 'projects', route: '/projects/' },
   { name: 'resume', route: '/resume/' },
   { name: 'tags', route: '/tags/' },
@@ -14,7 +15,8 @@ const pages = [
   { name: 'not found', route: '/404.html' },
   { name: 'home mobile', route: '/', viewport: { width: 390, height: 844 } },
   { name: 'knowledge mobile', route: '/knowledge/', viewport: { width: 390, height: 844 } },
-  { name: 'PID experiment mobile', route: '/notes/algorithms/pid/', viewport: { width: 390, height: 844 } },
+  { name: 'C++ article mobile', route: '/notes/programming/cpp-class-access-control/', viewport: { width: 390, height: 844 } },
+  { name: 'robotics knowledge mobile', route: '/knowledge/robotics/ros2-and-simulation/', viewport: { width: 390, height: 844 } },
   { name: 'uses mobile', route: '/uses/', viewport: { width: 390, height: 844 } },
 ];
 

@@ -4,11 +4,10 @@ import { parseMarkdown } from './frontmatter.mjs';
 import { relativePosix, walkFiles } from './files.mjs';
 
 const TYPE_BY_DIRECTORY = {
-  blog: 'blog',
-  notes: 'blog',
-  docs: 'docs',
-  projects: 'project',
-  pages: 'page',
+  笔记: 'blog',
+  文档: 'docs',
+  项目: 'project',
+  页面: 'page',
 };
 const STATUSES = new Set(['draft', 'review', 'ready', 'published']);
 const VISIBILITIES = new Set(['private', 'public']);
@@ -174,8 +173,8 @@ export function buildLinkIndex(notes) {
   for (const note of notes) {
     const relativeKey = note.relativePath.replace(/\.[^.]+$/, '');
     const keys = [note.data.title, note.data.slug, basename(note.file, extname(note.file)), relativeKey];
-    if (note.folder === 'notes' && relativeKey.startsWith('notes/')) {
-      keys.push(`blog/${relativeKey.slice('notes/'.length)}`);
+    if (note.folder === '笔记' && relativeKey.startsWith('笔记/')) {
+      keys.push(`blog/${relativeKey.slice('笔记/'.length)}`);
       keys.push(`blog/${note.data.slug}`);
     }
     for (const raw of keys) {

@@ -5,7 +5,7 @@ import { pathExists, relativePosix, walkFiles } from './lib/files.mjs';
 import { isInside, loadWorkspace } from './lib/workspace.mjs';
 
 const GENERATED_MARKER = 'GENERATED FROM THE PRIVATE KNOWLEDGE BASE';
-const { configPath, paths, websiteRoot, workspaceRoot } = await loadWorkspace();
+const { privateSourceAvailable, paths, websiteRoot, workspaceRoot } = await loadWorkspace();
 const errors = [];
 
 function normalizeRelative(value, label) {
@@ -45,12 +45,12 @@ const managedContentRoots = [
   paths.generatedPagesRoot,
   paths.generatedDocsRoot,
 ];
-const localContentPrefix = configPath
+const localContentPrefix = privateSourceAvailable
   ? `${relativePosix(workspaceRoot, paths.publishRoot).replace(/\/$/, '')}/`
-  : 'knowledge-base/80_Publish/';
-const localAssetPrefix = configPath
+  : 'knowledge_base/40_Publish/';
+const localAssetPrefix = privateSourceAvailable
   ? `${relativePosix(workspaceRoot, paths.assetsRoot).replace(/\/$/, '')}/`
-  : 'knowledge-base/_assets/';
+  : 'knowledge_base/_assets/';
 const outputs = new Set();
 const sources = new Set();
 const routes = new Set();

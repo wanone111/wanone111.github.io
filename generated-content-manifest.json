@@ -2,228 +2,143 @@
   "version": 1,
   "content": [
     {
-      "source": "knowledge-base/80_Publish/docs/嵌入式与通信学习路径.md",
+      "source": "knowledge_base/40_Publish/文档/嵌入式与通信学习路径.md",
       "output": "src/content/docs/knowledge/embedded/communication-path.md",
       "route": "/knowledge/embedded/communication-path/",
-      "sha256": "71ea44453bff467b6c7eb42ed4244f012b5b57d149df7c5877dcba05f16167a5"
+      "sha256": "8688bef98ca83cd1c31f4a3f711b69811a30994ee4c306fb00f3ca5372fda531"
     },
     {
-      "source": "knowledge-base/80_Publish/docs/FPGA、Verilog 与 HLS 学习路径.md",
+      "source": "knowledge_base/40_Publish/文档/FPGA、Verilog 与 HLS 学习路径.md",
       "output": "src/content/docs/knowledge/fpga-edge-ai/fpga-development.md",
       "route": "/knowledge/fpga-edge-ai/fpga-development/",
-      "sha256": "3b9cd4be741a45ee88f9ecbb07296852519e99e7ddf385cac65cdb19d8bb3083"
+      "sha256": "13844f38048bf58d09b324ef7224e0c0dc0547b24f3e314f28ebf59e8afaefca"
     },
     {
-      "source": "knowledge-base/80_Publish/docs/Linux 与工程编程学习路径.md",
+      "source": "knowledge_base/40_Publish/文档/Linux 与工程编程学习路径.md",
       "output": "src/content/docs/knowledge/linux-tools/linux-and-networking.md",
       "route": "/knowledge/linux-tools/linux-and-networking/",
-      "sha256": "d43c8b16c7648e768681de3abd312a060cb73b4dcea95f434231f7ca9069b350"
+      "sha256": "6516974297a6ca24440233134c6f4c18c447e6850a21c05c708fbb100d3706d5"
     },
     {
-      "source": "knowledge-base/80_Publish/docs/ROS 2 与机器人仿真学习路径.md",
+      "source": "knowledge_base/40_Publish/文档/ROS 2 与机器人仿真学习路径.md",
       "output": "src/content/docs/knowledge/robotics/ros2-and-simulation.md",
       "route": "/knowledge/robotics/ros2-and-simulation/",
-      "sha256": "2b49b68d98bac505c1c60ee8a7217773d00337f60a60f08c620f21f2db93db11"
+      "sha256": "4cd176907c8e53456f05968864c82481eea1c03ae51625066a00af3aa18db01a"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/各种滤波算法.md",
-      "output": "src/content/generated/blog/algorithms/filtering.md",
-      "route": "/notes/algorithms/filtering/",
-      "sha256": "e92a38881fa2935ca79511d4b506fa8d3182735ff49d6885cea44e1f5cbdaa21"
+      "source": "knowledge_base/40_Publish/笔记/算法/PID 控制基础.md",
+      "output": "src/content/generated/blog/algorithms/pid-control-basics.md",
+      "route": "/notes/algorithms/pid-control-basics/",
+      "sha256": "15b1600b860a6f564e43ffcd967bd8bf2bcd974acdf7d6ec36d4ccd5dea65cf1"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/PID.md",
-      "output": "src/content/generated/blog/algorithms/pid.md",
-      "route": "/notes/algorithms/pid/",
-      "sha256": "544a96a857c4853110a8eb62634fd30a5545a7bd57ba122d91532966695d1847"
-    },
-    {
-      "source": "knowledge-base/80_Publish/notes/嵌入式通信.md",
+      "source": "knowledge_base/40_Publish/笔记/嵌入式串行通信协议.md",
       "output": "src/content/generated/blog/embedded/communication-protocols.md",
       "route": "/notes/embedded/communication-protocols/",
-      "sha256": "318020b11ad08839f5a8ba7649f947788a200814d073cfa2164f451694022615"
+      "sha256": "1073403b7db72f69c2371853cdcd25641f41c313af98096e131adb7c06555068"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/电赛.md",
-      "output": "src/content/generated/blog/embedded/electronic-design-contest.md",
-      "route": "/notes/embedded/electronic-design-contest/",
-      "sha256": "92639115d19c2e78c448bb1c218cd09035f00ebf1e1de7b21e77baf34a6648b0"
+      "source": "knowledge_base/40_Publish/笔记/ESP-AT 基础联网.md",
+      "output": "src/content/generated/blog/embedded/esp-at-networking.md",
+      "route": "/notes/embedded/esp-at-networking/",
+      "sha256": "4cb272e0c504c3400ef707fb029907b8fe2492f83c92daf878b3ba8d56fe5aa9"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/STM32-通信.md",
-      "output": "src/content/generated/blog/embedded/stm32-communication.md",
-      "route": "/notes/embedded/stm32-communication/",
-      "sha256": "9e481874c7749a758fc903d35f8ecb289893dc2d628cf65449a51de6abcdf591"
+      "source": "knowledge_base/40_Publish/笔记/工程/远程开发与终端代理.md",
+      "output": "src/content/generated/blog/engineering/remote-development-and-terminal-proxy.md",
+      "route": "/notes/engineering/remote-development-and-terminal-proxy/",
+      "sha256": "89edbb967ccc3dfa5013e62e703f8056e2f44aa1b06abf531920f018b0f893e5"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/STM32 学习笔记.md",
-      "output": "src/content/generated/blog/embedded/stm32-notes.md",
-      "route": "/notes/embedded/stm32-notes/",
-      "sha256": "6469cb28ee6ba60009c1284ff3098d83f185a37b6cc3ba5831f7fe5558af541d"
-    },
-    {
-      "source": "knowledge-base/80_Publish/notes/FPGA.md",
+      "source": "knowledge_base/40_Publish/笔记/FPGA 开发流程与验证分层.md",
       "output": "src/content/generated/blog/fpga/fpga-overview.md",
       "route": "/notes/fpga/fpga-overview/",
-      "sha256": "d89fdbfc697d57f5557b470fb9f4d6854f817f4975ba06cb4ac5b159f92f4849"
+      "sha256": "42541f1d553a5364cfe8bdcda01ee79993f08708ce7fc7d06f3b57e7e8de700e"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/FPGA-RTL学习笔记.md",
+      "source": "knowledge_base/40_Publish/笔记/FPGA FIFO 与时钟域交叉.md",
       "output": "src/content/generated/blog/fpga/rtl-notes.md",
       "route": "/notes/fpga/rtl-notes/",
-      "sha256": "540841ecae1d9e1b010e7c23b65b2dcdd2e7aee61e601cb28bbf1c7d40168316"
+      "sha256": "35c30606456ce944d0637b41438a115b7e058597277258a8033866d4c0d7bd79"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/verilog学习笔记.md",
+      "source": "knowledge_base/40_Publish/笔记/Verilog RTL 基础.md",
       "output": "src/content/generated/blog/fpga/verilog-notes.md",
       "route": "/notes/fpga/verilog-notes/",
-      "sha256": "715414b52e07e4d635aa309002d17bd0c4a1041cd26379f5bbec9dc023ae1825"
+      "sha256": "0802d4383bd20184080ff040545190f11cc22572c65ae113e75e941a6fb7b0e4"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/fpga-hls-learning-notes.md",
+      "source": "knowledge_base/40_Publish/笔记/Vitis HLS 性能优化记录.md",
       "output": "src/content/generated/blog/fpga/vitis-hls-notes.md",
       "route": "/notes/fpga/vitis-hls-notes/",
-      "sha256": "f8f86c5d993aae16e9b6aa7339cc12e01fca594a54234d44787982888cd034f1"
+      "sha256": "a6b01894c046934726c124f4607deb2204fdd9d3278789c01d18ff1bc32593f8"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/linux-socket.md",
-      "output": "src/content/generated/blog/networking/linux-socket.md",
-      "route": "/notes/networking/linux-socket/",
-      "sha256": "56d650b09139211a15fa40a2835cde07c5a9c1021b2ca06eec73bedb90061df7"
+      "source": "knowledge_base/40_Publish/笔记/网络/Linux TCP Socket 基础.md",
+      "output": "src/content/generated/blog/networking/linux-tcp-socket-basics.md",
+      "route": "/notes/networking/linux-tcp-socket-basics/",
+      "sha256": "ea1e4fe0f028f8d5113d18c38e8e0ee688f1eda4830ccb0d432085458860bd41"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/C++学习笔记.md",
-      "output": "src/content/generated/blog/programming/cpp-notes.md",
-      "route": "/notes/programming/cpp-notes/",
-      "sha256": "50ae998cef6e7951643f352d389aa130e4c456d351b1d1e125452033be4fac97"
+      "source": "knowledge_base/40_Publish/笔记/编程/C++ 类与访问控制.md",
+      "output": "src/content/generated/blog/programming/cpp-class-access-control.md",
+      "route": "/notes/programming/cpp-class-access-control/",
+      "sha256": "0e412eb77f082562b8c5626f757d4f430648684d56b3757954fe7214c3ded7a4"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/Gazebo仿真.md",
-      "output": "src/content/generated/blog/robotics/gazebo-simulation.md",
-      "route": "/notes/robotics/gazebo-simulation/",
-      "sha256": "909d744cc8becd69cf41e5c77ae8a13979b1fdd7b4c97114c8efd5bfe19abfef"
+      "source": "knowledge_base/40_Publish/笔记/PX4 与 Gazebo 仿真环境复现.md",
+      "output": "src/content/generated/blog/robotics/gazebo-notes.md",
+      "route": "/notes/robotics/gazebo-notes/",
+      "sha256": "b1ed19295ae7bd8b42d4e7856004c0928eaeb4e23729e9e72c1e62bf760f63a4"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/ROS2学习笔记.md",
+      "source": "knowledge_base/40_Publish/笔记/ROS 2 节点通信基础.md",
       "output": "src/content/generated/blog/robotics/ros2-notes.md",
       "route": "/notes/robotics/ros2-notes/",
-      "sha256": "96fb9f45fb5be24655d8464782711efe102fefe462b5d24e70bc05940f644301"
+      "sha256": "dc3f9c63d03e1e24f2fa89aa2a4eb0beb217233fc17ca2dc8310530b541c1c0c"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/SLAM学习笔记.md",
-      "output": "src/content/generated/blog/robotics/slam-notes.md",
-      "route": "/notes/robotics/slam-notes/",
-      "sha256": "814c2fd2357b3262289ec319bf9f43c6bf90fa29a366f33f5e0eb81a3d7ffe54"
+      "source": "knowledge_base/40_Publish/笔记/ROS 2 工作空间编译与运行.md",
+      "output": "src/content/generated/blog/robotics/ros2-workspace-build-run.md",
+      "route": "/notes/robotics/ros2-workspace-build-run/",
+      "sha256": "cb8805224b39ff4ef393a5b0870c13cfc28bc06f25459355c4d56c12c725c074"
     },
     {
-      "source": "knowledge-base/80_Publish/notes/linux学习笔记.md",
-      "output": "src/content/generated/blog/tools/linux-notes.md",
-      "route": "/notes/tools/linux-notes/",
-      "sha256": "ce39e14eff7469c470c5c3b8509b3e923c006ca94e0b888b45977d8d6fb730ec"
-    },
-    {
-      "source": "knowledge-base/80_Publish/notes/matlab学习笔记.md",
-      "output": "src/content/generated/blog/vision/matlab-notes.md",
-      "route": "/notes/vision/matlab-notes/",
-      "sha256": "446e1293b942b87d914aa753862a8e7393ad32db05b9874ef9b907400d440dcc"
-    },
-    {
-      "source": "knowledge-base/80_Publish/notes/opencv学习笔记.md",
-      "output": "src/content/generated/blog/vision/opencv-notes.md",
-      "route": "/notes/vision/opencv-notes/",
-      "sha256": "04a077dc842b4ee93052c20e62bf576a1fc4db55327c90f05740ecf2f3ed566e"
-    },
-    {
-      "source": "knowledge-base/80_Publish/pages/about.md",
+      "source": "knowledge_base/40_Publish/页面/关于.md",
       "output": "src/content/generated/pages/about.md",
       "route": "/about/",
-      "sha256": "1f96b3eb96928478e37cc517e1d8272939e2d17ba3603eadab163ae68730e55a"
+      "sha256": "e33404e3a16451847d416c5aac61f9b79c7d52c7fbda48c8a74b8f66887323b5"
     },
     {
-      "source": "knowledge-base/80_Publish/pages/links.md",
+      "source": "knowledge_base/40_Publish/页面/友链.md",
       "output": "src/content/generated/pages/links.md",
       "route": "/links/",
-      "sha256": "73d5ccbbac203795c3fd9b38a65ab0f27d69814151055f8c43c0274ef98f676e"
+      "sha256": "d906ec851e6f70103202efe6d645a2380d999d0279f9696b001c285184518df6"
     },
     {
-      "source": "knowledge-base/80_Publish/pages/resume.md",
+      "source": "knowledge_base/40_Publish/页面/简历.md",
       "output": "src/content/generated/pages/resume.md",
       "route": "/resume/",
-      "sha256": "f814b1f06a90ee04987af93e75ed5d7ff3ce4c0cad1a136f5cfec54e2cda59d8"
+      "sha256": "ae3c0d985ab9353c4671e145e682e17f371ab1c47f4cc16f57622e43849133ff"
     },
     {
-      "source": "knowledge-base/80_Publish/projects/异构硬件视频图像.md",
+      "source": "knowledge_base/40_Publish/项目/异构硬件视频图像.md",
       "output": "src/content/generated/projects/heterogeneous-video-pipeline.md",
       "route": "/projects/heterogeneous-video-pipeline/",
-      "sha256": "aee94baf5c2d777442816bfb9107812312307caafd4d256c538b111ab4356db9"
+      "sha256": "eeb2236e7162e9776379bbe11fa6ba50a1410b01722e39ecb5afdb7661cc09ed"
     },
     {
-      "source": "knowledge-base/80_Publish/projects/室内无人机自主飞行控制系统.md",
+      "source": "knowledge_base/40_Publish/项目/室内无人机自主飞行控制系统.md",
       "output": "src/content/generated/projects/indoor-autonomous-drone.md",
       "route": "/projects/indoor-autonomous-drone/",
-      "sha256": "a05f4b551ba9023c7076b8e25a34565714cedb0e894a68c47779dba2c97d230a"
+      "sha256": "8823244bdf52d5fb41dec76944dfbd24dc9bcbdb1d1da9be2242ee5cbcc09c75"
     },
     {
-      "source": "knowledge-base/80_Publish/projects/obsidian-astro-publishing.md",
+      "source": "knowledge_base/40_Publish/项目/Obsidian 与 Astro 发布系统.md",
       "output": "src/content/generated/projects/obsidian-astro-publishing.md",
       "route": "/projects/obsidian-astro-publishing/",
-      "sha256": "3d4d246cf44847aea68aaace2c40c005d5cf82f672298921e7fb7a440257964f"
+      "sha256": "e8717821309e661ba6d5f0373bde26c4df8b1620344a37da4e5fb62471bc8f0d"
     }
   ],
-  "assets": [
-    {
-      "source": "knowledge-base/_assets/FPGA_1.png",
-      "output": "public/images/generated/fpga-1-5a013a812876.png",
-      "url": "/images/generated/fpga-1-5a013a812876.png",
-      "sha256": "5a013a8128766c32a743c0cd26306d8463e615268a3e7f65917a78dd4dd8927a"
-    },
-    {
-      "source": "knowledge-base/_assets/FPGA_2.png",
-      "output": "public/images/generated/fpga-2-b9c7f51ffb13.png",
-      "url": "/images/generated/fpga-2-b9c7f51ffb13.png",
-      "sha256": "b9c7f51ffb13d148eeb289a78c3f5c97ae4d9c55bedb43028d84066ccd72a346"
-    },
-    {
-      "source": "knowledge-base/_assets/FPGA_3.png",
-      "output": "public/images/generated/fpga-3-2a2d59ef3f5a.png",
-      "url": "/images/generated/fpga-3-2a2d59ef3f5a.png",
-      "sha256": "2a2d59ef3f5a743b356f91ade5845647078566898c54c8e772f4754ec0f6f5c7"
-    },
-    {
-      "source": "knowledge-base/_assets/PID_1.png",
-      "output": "public/images/generated/pid-1-13d5cb07ed9f.png",
-      "url": "/images/generated/pid-1-13d5cb07ed9f.png",
-      "sha256": "13d5cb07ed9f97c11eb0f60766faa4034be9ed98cc5dac9c75384797409f1d4a"
-    },
-    {
-      "source": "knowledge-base/_assets/PID_2.png",
-      "output": "public/images/generated/pid-2-30d8a9329567.png",
-      "url": "/images/generated/pid-2-30d8a9329567.png",
-      "sha256": "30d8a9329567820475bbe785d8274d94efced31a30196af662fe752e0a59e033"
-    },
-    {
-      "source": "knowledge-base/_assets/PID_3.png",
-      "output": "public/images/generated/pid-3-3469a929198a.png",
-      "url": "/images/generated/pid-3-3469a929198a.png",
-      "sha256": "3469a929198a34839d8fb4bb0f9f1df0ab76410de8f5f93ac481d8578aa3df31"
-    },
-    {
-      "source": "knowledge-base/_assets/PID_4.png",
-      "output": "public/images/generated/pid-4-afd9af800923.png",
-      "url": "/images/generated/pid-4-afd9af800923.png",
-      "sha256": "afd9af800923d2836ff4b49b037f35b1064f2e783976b3112397ba16d4ed7735"
-    },
-    {
-      "source": "knowledge-base/_assets/PID_5.png",
-      "output": "public/images/generated/pid-5-8cf911a22a07.png",
-      "url": "/images/generated/pid-5-8cf911a22a07.png",
-      "sha256": "8cf911a22a07cd2d9d0a827af398f2e13936e4863a868e3b2b4632ca7189a5f5"
-    },
-    {
-      "source": "knowledge-base/_assets/PID_6.png",
-      "output": "public/images/generated/pid-6-72e6c4d7999c.png",
-      "url": "/images/generated/pid-6-72e6c4d7999c.png",
-      "sha256": "72e6c4d7999c5ad8447551eaa08f92f9bf896971a039ec97efe229f11148bfa9"
-    }
-  ]
+  "assets": []
 }

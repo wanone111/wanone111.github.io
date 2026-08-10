@@ -1,17 +1,17 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { resolve } from 'node:path';
-import { isInside, standaloneWorkspaceConfig, validateWorkspacePaths } from '../tools/lib/workspace.mjs';
+import { isInside, localWorkspaceConfig, standaloneWorkspaceConfig, validateWorkspacePaths } from '../tools/lib/workspace.mjs';
 
 function validPaths() {
   const workspaceRoot = resolve('tests', 'fixtures', 'workspace-boundaries');
-  const knowledgeRoot = resolve(workspaceRoot, 'knowledge-base');
+  const knowledgeRoot = resolve(workspaceRoot, 'knowledge_base');
   const websiteRoot = resolve(workspaceRoot, 'website');
   const generatedContentRoot = resolve(websiteRoot, 'src', 'content', 'generated');
 
   return {
     knowledgeRoot,
-    publishRoot: resolve(knowledgeRoot, '80_Publish'),
+    publishRoot: resolve(knowledgeRoot, '40_Publish'),
     assetsRoot: resolve(knowledgeRoot, '_assets'),
     websiteRoot,
     generatedContentRoot,
@@ -41,6 +41,17 @@ test('keeps the standalone CI placeholder outside the public repository', () => 
   assert.doesNotThrow(() => validateWorkspacePaths(paths, websiteRoot));
 });
 
+test('keeps auto-detected local roots in separate sibling repositories', () => {
+  const workspaceRoot = resolve('tests', 'fixtures', 'local-workspace');
+  const paths = Object.fromEntries(
+    Object.entries(localWorkspaceConfig).map(([key, value]) => [key, resolve(workspaceRoot, value)]),
+  );
+
+  assert.equal(isInside(paths.knowledgeRoot, paths.websiteRoot), false);
+  assert.equal(isInside(paths.websiteRoot, paths.knowledgeRoot), false);
+  assert.doesNotThrow(() => validateWorkspacePaths(paths, paths.websiteRoot));
+});
+
 test('rejects a configured website root that is not the current repository', () => {
   const paths = validPaths();
   assert.throws(
@@ -52,7 +63,7 @@ test('rejects a configured website root that is not the current repository', () 
 test('rejects overlapping private and public directory trees', () => {
   const paths = validPaths();
   paths.knowledgeRoot = resolve(paths.websiteRoot, 'private-notes');
-  paths.publishRoot = resolve(paths.knowledgeRoot, '80_Publish');
+  paths.publishRoot = resolve(paths.knowledgeRoot, '40_Publish');
   paths.assetsRoot = resolve(paths.knowledgeRoot, '_assets');
 
   assert.throws(

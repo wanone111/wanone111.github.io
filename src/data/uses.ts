@@ -188,7 +188,7 @@ export const workflows = [
       {
         id: 'publishing-allowlist',
         label: '公开白名单',
-        protocol: '80_Publish',
+        protocol: '40_Publish',
         detail: '只同步明确批准公开的文章、项目、页面和资源。',
       },
       {
@@ -285,39 +285,27 @@ export const projects = [
 
 export const readings = [
   {
-    id: 'ros2-notes',
-    title: 'ROS 2 学习笔记',
-    href: '/notes/robotics/ros2-notes/',
-    topic: '节点、Topic、服务、参数、动作与构建流程。',
+    id: 'robotics-path',
+    title: 'ROS 2 与仿真验证',
+    href: '/knowledge/robotics/ros2-and-simulation/',
+    topic: 'ROS 2、Gazebo 与机器人系统的验证入口。',
   },
   {
-    id: 'gazebo-simulation',
-    title: 'Gazebo 仿真笔记',
-    href: '/notes/robotics/gazebo-simulation/',
-    topic: '机器人仿真环境与验证入口。',
+    id: 'fpga-path',
+    title: 'FPGA 开发与边缘计算',
+    href: '/knowledge/fpga-edge-ai/fpga-development/',
+    topic: 'RTL、HLS、实现与板级验证流程。',
   },
   {
-    id: 'fpga-overview',
-    title: 'FPGA 概览',
-    href: '/notes/fpga/fpga-overview/',
-    topic: '设计、仿真、综合、实现和板级调试流程。',
+    id: 'linux-path',
+    title: 'Linux 与网络工程',
+    href: '/knowledge/linux-tools/linux-and-networking/',
+    topic: '开发环境、网络通信、构建与诊断工具。',
   },
   {
-    id: 'vitis-hls-notes',
-    title: 'FPGA HLS 学习笔记',
-    href: '/notes/fpga/vitis-hls-notes/',
-    topic: 'HLS 仿真、综合、协同验证与 IP 交付。',
-  },
-  {
-    id: 'linux-notes',
-    title: 'Linux 学习笔记',
-    href: '/notes/tools/linux-notes/',
-    topic: '构建、命令行、日志和系统工具。',
-  },
-  {
-    id: 'linux-socket',
-    title: 'Linux Socket 学习笔记',
-    href: '/notes/networking/linux-socket/',
-    topic: '网络通信与 Socket 编程基础。',
+    id: 'embedded-path',
+    title: '嵌入式通信路径',
+    href: '/knowledge/embedded/communication-path/',
+    topic: 'STM32、接口协议与通信调试流程。',
   },
 ] as const;

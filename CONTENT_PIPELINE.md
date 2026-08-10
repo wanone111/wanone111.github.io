@@ -2,13 +2,13 @@
 
 ## 数据边界
 
-唯一内容源是相邻目录 `../knowledge-base/80_Publish/`。发布工具不会读取知识库的其他目录，也不会反向修改源笔记。
+唯一内容源是相邻目录 `../knowledge_base/40_Publish/`。发布工具不会读取知识库的其他目录，也不会反向修改源笔记。
 
 `workspace.config.json` 中的网站根目录必须解析到当前网站仓库，知识库与网站目录树不得互相嵌套，博客、项目和固定页输出也必须位于统一的生成内容根目录内。路径配置不满足这些边界时，发布工具会在读取或写入内容前失败。
 
 只有同时满足以下条件的文件会生成网站内容：
 
-- 文件位于 `80_Publish` 的类型目录中。
+- 文件位于 `40_Publish` 的类型目录中。
 - `visibility: public`。
 - `status: ready` 或 `status: published`。
 - Front Matter、链接、附件和敏感信息检查全部通过。
@@ -17,10 +17,10 @@
 
 | 源目录 | `content_type` | 路由 |
 |---|---|---|
-| `80_Publish/notes` | `blog` | `/blog/<slug>/` |
-| `80_Publish/docs` | `docs` | `/knowledge/<slug>/` |
-| `80_Publish/projects` | `project` | `/projects/<slug>/` |
-| `80_Publish/pages` | `page` | `/about/`、`/resume/` 或 `/links/` |
+| `40_Publish/笔记` | `blog` | `/notes/<slug>/` |
+| `40_Publish/文档` | `docs` | `/knowledge/<slug>/` |
+| `40_Publish/项目` | `project` | `/projects/<slug>/` |
+| `40_Publish/页面` | `page` | `/about/`、`/resume/` 或 `/links/` |
 
 Slug 只能使用小写 ASCII 字母、数字、连字符和 `/`。例如：`embedded/stm32/crc`。
 
@@ -34,7 +34,7 @@ Slug 只能使用小写 ASCII 字母、数字、连字符和 `/`。例如：`emb
 - 常见 Callout，例如 `> [!warning]`
 - 本地标准 Markdown 图片
 
-附件必须位于 `knowledge-base/_assets`。输出文件名由内容哈希生成，因此相同附件会去重，改名不会造成无意义副本。
+附件必须位于 `knowledge_base/_assets`。输出文件名由内容哈希生成，因此相同附件会去重，改名不会造成无意义副本。
 
 暂不支持 Dataview、Canvas、动态 JavaScript 查询、MDX 和笔记正文嵌入。发现这些语法会阻止对应内容发布，不会静默删除。
 

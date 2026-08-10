@@ -15,9 +15,9 @@ const paths = {
 
 function validNote(overrides = {}) {
   return {
-    file: 'C:/kb/80_Publish/docs/test.md',
-    relativePath: 'docs/test.md',
-    folder: 'docs',
+    file: 'C:/kb/40_Publish/文档/test.md',
+    relativePath: '文档/test.md',
+    folder: '文档',
     body: 'Body',
     data: {
       title: 'Test',
@@ -41,11 +41,11 @@ test('accepts a valid publishable note', async () => {
   assert.equal(result.publishable[0].route, '/knowledge/embedded/test/');
 });
 
-test('publishes blog content from the notes directory under the notes route', async () => {
+test('publishes blog content from the Chinese note directory under the notes route', async () => {
   const note = validNote({ content_type: 'blog', slug: 'embedded/test-note' });
-  note.file = 'C:/kb/80_Publish/notes/test-note.md';
-  note.relativePath = 'notes/test-note.md';
-  note.folder = 'notes';
+  note.file = 'C:/kb/40_Publish/笔记/test-note.md';
+  note.relativePath = '笔记/test-note.md';
+  note.folder = '笔记';
   const result = await validateNotes([note], [], paths, policy);
   assert.deepEqual(result.errors, []);
   assert.equal(result.publishable[0].route, '/notes/embedded/test-note/');
@@ -53,9 +53,9 @@ test('publishes blog content from the notes directory under the notes route', as
 
 test('indexes migrated notes under their legacy blog wikilink path', () => {
   const note = validNote({ content_type: 'blog', slug: 'embedded/test-note' });
-  note.file = 'C:/kb/80_Publish/notes/test-note.md';
-  note.relativePath = 'notes/test-note.md';
-  note.folder = 'notes';
+  note.file = 'C:/kb/40_Publish/笔记/test-note.md';
+  note.relativePath = '笔记/test-note.md';
+  note.folder = '笔记';
   note.route = '/notes/embedded/test-note/';
   const { index } = buildLinkIndex([note]);
   assert.equal(index.get('blog/test-note'), note);
@@ -70,9 +70,9 @@ test('rejects invalid slugs and directory/type mismatches', async () => {
 
 test('accepts the allowlisted fixed links page', async () => {
   const note = validNote({ content_type: 'page', slug: 'links' });
-  note.file = 'C:/kb/80_Publish/pages/links.md';
-  note.relativePath = 'pages/links.md';
-  note.folder = 'pages';
+  note.file = 'C:/kb/40_Publish/页面/links.md';
+  note.relativePath = '页面/links.md';
+  note.folder = '页面';
   const result = await validateNotes([note], [], paths, policy);
   assert.deepEqual(result.errors, []);
   assert.equal(result.publishable[0].route, '/links/');
@@ -97,9 +97,9 @@ test('accepts optional engineering report metadata', async () => {
     next_step: 'Add measured evidence.',
     validation: 'Automated QA',
   });
-  note.file = 'C:/kb/80_Publish/projects/test-system.md';
-  note.relativePath = 'projects/test-system.md';
-  note.folder = 'projects';
+  note.file = 'C:/kb/40_Publish/项目/test-system.md';
+  note.relativePath = '项目/test-system.md';
+  note.folder = '项目';
   const result = await validateNotes([note], [], paths, policy);
   assert.deepEqual(result.errors, []);
 });
@@ -110,9 +110,9 @@ test('requires complete evidence metadata for publishable featured projects', as
     slug: 'featured-system',
     featured: true,
   });
-  note.file = 'C:/kb/80_Publish/projects/featured-system.md';
-  note.relativePath = 'projects/featured-system.md';
-  note.folder = 'projects';
+  note.file = 'C:/kb/40_Publish/项目/featured-system.md';
+  note.relativePath = '项目/featured-system.md';
+  note.folder = '项目';
 
   const result = await validateNotes([note], [], paths, policy);
   for (const field of ['featured_order', 'role', 'result', 'validation']) {
@@ -131,9 +131,9 @@ test('accepts complete featured project metadata and rejects order collisions', 
       result: 'Verified result.',
       validation: 'Repeatable test.',
     });
-    note.file = `C:/kb/80_Publish/projects/${slug}.md`;
-    note.relativePath = `projects/${slug}.md`;
-    note.folder = 'projects';
+    note.file = `C:/kb/40_Publish/项目/${slug}.md`;
+    note.relativePath = `项目/${slug}.md`;
+    note.folder = '项目';
     return note;
   };
 
@@ -149,9 +149,9 @@ test('accepts complete featured project metadata and rejects order collisions', 
 
 test('rejects malformed featured project order metadata', async () => {
   const note = validNote({ content_type: 'project', slug: 'bad-order', featured_order: 0 });
-  note.file = 'C:/kb/80_Publish/projects/bad-order.md';
-  note.relativePath = 'projects/bad-order.md';
-  note.folder = 'projects';
+  note.file = 'C:/kb/40_Publish/项目/bad-order.md';
+  note.relativePath = '项目/bad-order.md';
+  note.folder = '项目';
   const result = await validateNotes([note], [], paths, policy);
   assert.ok(result.errors.some((error) => error.field === 'featured_order'));
 });

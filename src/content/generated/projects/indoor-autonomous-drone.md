@@ -6,7 +6,7 @@ status: published
 visibility: public
 slug: indoor-autonomous-drone
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-08-10
 published: 2026-07-15
 category: robotics
 tags:
@@ -93,6 +93,7 @@ validation: 通过 colcon 构建、ROS 2 Topic 数据检查、Gazebo 仿真、QG
 
 - 当前公开材料没有完整的真机自主飞行测试条件、任务成功率和稳定运行数据。
 - 因此项目页只陈述已验证的构建、仿真、飞控接入和调试流程，不扩展为未被证据支持的飞行成果。
+- ROS 2 Foxy 与 Gazebo Classic 已结束官方支持。它们在此作为已验证项目环境记录保留，不代表新项目的推荐版本；新环境需按 PX4 与 ROS 2 官方兼容矩阵重新选择。
 
 ## 下一步
 

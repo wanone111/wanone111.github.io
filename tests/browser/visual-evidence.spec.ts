@@ -25,7 +25,7 @@ for (const viewport of [
   });
 }
 
-test('capture mobile navigation, blog filter, and Starlight sidebar', async ({ page }) => {
+test('capture mobile navigation, note filter, and Starlight sidebar', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
 
   await page.goto('/');
@@ -36,23 +36,22 @@ test('capture mobile navigation, blog filter, and Starlight sidebar', async ({ p
   const categoryButtons = page.locator('[data-category]:not([data-category="all"])');
   expect(await categoryButtons.count()).toBeGreaterThan(0);
   await categoryButtons.first().click();
-  await page.screenshot({ path: resolve(outputDirectory, 'blog-filter.png'), fullPage: true });
+  await page.screenshot({ path: resolve(outputDirectory, 'notes-filter.png'), fullPage: true });
 
   await page.goto('/knowledge/');
   await page.locator('starlight-menu-button button').click();
   await page.screenshot({ path: resolve(outputDirectory, 'starlight-sidebar.png'), fullPage: false });
 });
 
-test('capture knowledge garden and PID experiment', async ({ page }) => {
+test('capture knowledge garden and robotics detail', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto('/knowledge/');
   await expect(page.locator('[data-knowledge-garden]')).toBeVisible();
   await page.screenshot({ path: resolve(outputDirectory, 'knowledge-garden-desktop.png'), fullPage: true });
 
-  await page.goto('/notes/algorithms/pid/');
-  await page.getByRole('slider', { name: 'Ki 积分参数' }).fill('1.5');
-  await expect(page.locator('[data-pid-metric="overshoot"]')).toHaveText('22.8%');
-  await page.screenshot({ path: resolve(outputDirectory, 'pid-lab-desktop.png'), fullPage: true });
+  await page.goto('/knowledge/robotics/ros2-and-simulation/');
+  await expect(page.getByRole('heading', { name: 'ROS 2 与 PX4 仿真学习路径', level: 1 })).toBeVisible();
+  await page.screenshot({ path: resolve(outputDirectory, 'robotics-knowledge-desktop.png'), fullPage: true });
 
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/knowledge/');
@@ -77,7 +76,7 @@ test('capture uses workflows and draggable 404 cards', async ({ page }) => {
   await page.screenshot({ path: resolve(outputDirectory, '404-scatter-desktop.png'), fullPage: true });
 });
 
-test('capture engineering project, article rail, tags, and Pagefind search', async ({ page }) => {
+test('capture engineering project, restored article, tags, and Pagefind search', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
 
   await page.goto('/projects/obsidian-astro-publishing/');
@@ -86,15 +85,15 @@ test('capture engineering project, article rail, tags, and Pagefind search', asy
 
   await page.goto('/notes/robotics/ros2-notes/');
   await expect(page.locator('.article-rail')).toBeVisible();
-  await page.screenshot({ path: resolve(outputDirectory, 'engineering-article-desktop.png'), fullPage: true });
+  await page.screenshot({ path: resolve(outputDirectory, 'robotics-article-detail.png'), fullPage: true });
 
   await page.goto('/tags/');
   await expect(page.locator('[data-tag-section]').first()).toBeVisible();
-  await page.screenshot({ path: resolve(outputDirectory, 'tag-browser-desktop.png'), fullPage: true });
+  await page.screenshot({ path: resolve(outputDirectory, 'tags-desktop.png'), fullPage: true });
 
   await page.goto('/');
   await page.locator('.header-search').click();
-  await page.locator('[data-command-search]').fill('ROS2');
+  await page.locator('[data-command-search]').fill('ROS');
   await expect(page.locator('[data-pagefind-results] a').first()).toBeVisible();
   await page.screenshot({ path: resolve(outputDirectory, 'pagefind-command-palette.png'), fullPage: false });
 });

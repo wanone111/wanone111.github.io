@@ -4,11 +4,11 @@ This directory contains the public Astro + Starlight site.
 
 ## Boundaries
 
-- Read workspace paths from `../workspace.config.json`.
-- Treat `../knowledge-base` as private.
-- Read publishable source only from `../knowledge-base/80_Publish`.
+- Auto-detect the sibling `../knowledge_base` repository when a workspace config is absent.
+- Treat `../knowledge_base` as private.
+- Read publishable source only from `../knowledge_base/40_Publish`.
 - Generated content and assets are outputs; never use them to overwrite source notes.
-- Never copy references, archives, or unapproved knowledge-base files into this repository.
+- Never copy inbox, engineering, debugging, private notes, archives, or unapproved knowledge-base files into this repository.
 
 ## Product Ownership
 

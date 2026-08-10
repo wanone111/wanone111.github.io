@@ -3,7 +3,6 @@ import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleRail from '../../components/ArticleRail.astro';
 import EngineeringSummary from '../../components/EngineeringSummary.astro';
-import PIDTuningLab from '../../components/PIDTuningLab.astro';
 import ReadingProgressPlant from '../../components/ReadingProgressPlant.astro';
 import { formatDate, isPublic } from '../../lib/content';
 
@@ -67,7 +66,6 @@ const articleJsonLd = {
     <div class="article-layout">
       <ArticleRail headings={headings} />
       <div class="article-shell prose">
-        {post.data.slug === 'algorithms/pid' && <PIDTuningLab />}
         <Content />
         <ReadingProgressPlant slug={post.data.slug} />
       </div>

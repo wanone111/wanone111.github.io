@@ -13,6 +13,8 @@ const categoryKey = (category: string) => {
   if (category.includes('FPGA')) return 'fpga';
   if (category.includes('视觉')) return 'vision';
   if (category.includes('编程')) return 'programming';
+  if (category.includes('算法') || category.includes('控制')) return 'algorithms';
+  if (category.includes('Linux') || category.includes('工程工具')) return 'tooling';
   if (category.includes('开发')) return 'tooling';
   return encodeURIComponent(category.toLocaleLowerCase('zh-CN'));
 };
