@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { pathExists, relativePosix, walkFiles } from './lib/files.mjs';
+import { normalizeLineEndings, pathExists, relativePosix, walkFiles } from './lib/files.mjs';
 import { isInside, loadWorkspace } from './lib/workspace.mjs';
 
 const GENERATED_MARKER = 'GENERATED FROM THE PRIVATE KNOWLEDGE BASE';
@@ -88,7 +88,7 @@ for (const [index, item] of content.entries()) {
   }
   const text = await readFile(outputPath, 'utf8');
   if (!text.includes(GENERATED_MARKER)) errors.push(`${label}.output lacks the generated marker: ${output}`);
-  if (sha256(text) !== item.sha256) errors.push(`${label}.output hash does not match the manifest: ${output}`);
+  if (sha256(normalizeLineEndings(text)) !== item.sha256) errors.push(`${label}.output hash does not match the manifest: ${output}`);
 }
 
 for (const [index, item] of assets.entries()) {

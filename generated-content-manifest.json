@@ -5,25 +5,25 @@
       "source": "knowledge_base/40_Publish/文档/嵌入式与通信学习路径.md",
       "output": "src/content/docs/knowledge/embedded/communication-path.md",
       "route": "/knowledge/embedded/communication-path/",
-      "sha256": "8688bef98ca83cd1c31f4a3f711b69811a30994ee4c306fb00f3ca5372fda531"
+      "sha256": "8ce213431f299a3256b91a9eaa7c709022876af6f0bcb33f8b4a5cf736063f81"
     },
     {
       "source": "knowledge_base/40_Publish/文档/FPGA、Verilog 与 HLS 学习路径.md",
       "output": "src/content/docs/knowledge/fpga-edge-ai/fpga-development.md",
       "route": "/knowledge/fpga-edge-ai/fpga-development/",
-      "sha256": "13844f38048bf58d09b324ef7224e0c0dc0547b24f3e314f28ebf59e8afaefca"
+      "sha256": "0fa376acf7ec5e8a975dceb3d89b72cdda6438efe0d1d6668ef7a4e0b949dfa7"
     },
     {
       "source": "knowledge_base/40_Publish/文档/Linux 与工程编程学习路径.md",
       "output": "src/content/docs/knowledge/linux-tools/linux-and-networking.md",
       "route": "/knowledge/linux-tools/linux-and-networking/",
-      "sha256": "6516974297a6ca24440233134c6f4c18c447e6850a21c05c708fbb100d3706d5"
+      "sha256": "acb2d4445f02a7e2811c1ac0edc7bf3aa58e09b9e69f5bf23fd4de062729560f"
     },
     {
       "source": "knowledge_base/40_Publish/文档/ROS 2 与机器人仿真学习路径.md",
       "output": "src/content/docs/knowledge/robotics/ros2-and-simulation.md",
       "route": "/knowledge/robotics/ros2-and-simulation/",
-      "sha256": "4cd176907c8e53456f05968864c82481eea1c03ae51625066a00af3aa18db01a"
+      "sha256": "2ebcc52028397429ccfc5fea9b3fea5990a4f3e4320a7c4dd4fa6ee4f46de061"
     },
     {
       "source": "knowledge_base/40_Publish/笔记/算法/PID 控制基础.md",
@@ -107,37 +107,37 @@
       "source": "knowledge_base/40_Publish/页面/关于.md",
       "output": "src/content/generated/pages/about.md",
       "route": "/about/",
-      "sha256": "e33404e3a16451847d416c5aac61f9b79c7d52c7fbda48c8a74b8f66887323b5"
+      "sha256": "34f999c09302fb1137ae0cdb560d705ea670b3e02a8aeb8462c5f7f5aa589855"
     },
     {
       "source": "knowledge_base/40_Publish/页面/友链.md",
       "output": "src/content/generated/pages/links.md",
       "route": "/links/",
-      "sha256": "d906ec851e6f70103202efe6d645a2380d999d0279f9696b001c285184518df6"
+      "sha256": "73d5ccbbac203795c3fd9b38a65ab0f27d69814151055f8c43c0274ef98f676e"
     },
     {
       "source": "knowledge_base/40_Publish/页面/简历.md",
       "output": "src/content/generated/pages/resume.md",
       "route": "/resume/",
-      "sha256": "ae3c0d985ab9353c4671e145e682e17f371ab1c47f4cc16f57622e43849133ff"
+      "sha256": "f814b1f06a90ee04987af93e75ed5d7ff3ce4c0cad1a136f5cfec54e2cda59d8"
     },
     {
       "source": "knowledge_base/40_Publish/项目/异构硬件视频图像.md",
       "output": "src/content/generated/projects/heterogeneous-video-pipeline.md",
       "route": "/projects/heterogeneous-video-pipeline/",
-      "sha256": "eeb2236e7162e9776379bbe11fa6ba50a1410b01722e39ecb5afdb7661cc09ed"
+      "sha256": "aee94baf5c2d777442816bfb9107812312307caafd4d256c538b111ab4356db9"
     },
     {
       "source": "knowledge_base/40_Publish/项目/室内无人机自主飞行控制系统.md",
       "output": "src/content/generated/projects/indoor-autonomous-drone.md",
       "route": "/projects/indoor-autonomous-drone/",
-      "sha256": "8823244bdf52d5fb41dec76944dfbd24dc9bcbdb1d1da9be2242ee5cbcc09c75"
+      "sha256": "8426bba93a90d7f1c2c8ea825d1c4081cb1b7e1655d60d0860a139aa7befa7f4"
     },
     {
       "source": "knowledge_base/40_Publish/项目/Obsidian 与 Astro 发布系统.md",
       "output": "src/content/generated/projects/obsidian-astro-publishing.md",
       "route": "/projects/obsidian-astro-publishing/",
-      "sha256": "e8717821309e661ba6d5f0373bde26c4df8b1620344a37da4e5fb62471bc8f0d"
+      "sha256": "a7160c7d29a0175806fabd77a3dd95c8eea9855c50c20446ef1b033393875be9"
     }
   ],
   "assets": []

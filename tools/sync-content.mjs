@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 import { createAssetManager } from './lib/assets.mjs';
 import { createWikiResolver, convertMarkdown } from './lib/convert.mjs';
 import { loadValidatedContent, printValidationErrors } from './lib/content.mjs';
-import { relativePosix, pathExists, writeBufferIfChanged, writeUtf8IfChanged } from './lib/files.mjs';
+import { normalizeLineEndings, relativePosix, pathExists, writeBufferIfChanged, writeUtf8IfChanged } from './lib/files.mjs';
 import { serializeMarkdown } from './lib/frontmatter.mjs';
 import { printSecurityFindings, scanNotes } from './lib/security.mjs';
 import { assertInside, isInside, loadWorkspace } from './lib/workspace.mjs';
@@ -84,7 +84,7 @@ function generatedFrontmatter(note) {
 
 for (const note of result.publishable) {
   const markdown = await convertMarkdown(note, { resolveWiki, resolveAsset: assetManager.resolveAsset });
-  const output = serializeMarkdown(generatedFrontmatter(note), markdown);
+  const output = normalizeLineEndings(serializeMarkdown(generatedFrontmatter(note), markdown));
   const outputRelative = relativePosix(websiteRoot, note.outputPath);
   const sourceRelative = relativePosix(workspaceRoot, note.file);
 

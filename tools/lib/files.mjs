@@ -39,6 +39,10 @@ export async function readUtf8(path) {
   return readFile(path, 'utf8');
 }
 
+export function normalizeLineEndings(content) {
+  return content.replace(/\r\n?/g, '\n');
+}
+
 export async function writeUtf8IfChanged(path, content) {
   let existing;
   try {
