@@ -13,7 +13,7 @@ tags:
   - Obsidian
   - Astro
   - GitHub-Actions
-featured: true
+featured: false
 time_range: 2026.07—至今
 role: 内容管线设计 / 网站工程 / 质量保证
 hardware: 本地工作站、GitHub-hosted runner

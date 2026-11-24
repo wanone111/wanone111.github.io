@@ -5,4 +5,4 @@ sidebar:
   order: 4
 ---
 
-本栏目已收录[FPGA、Verilog 与 HLS 学习路径](./fpga-development/)，覆盖旧博客已经记录的 FPGA 流程、RTL、Verilog、PYNQ 与 Vitis HLS 内容。
+从 RTL 仿真进入板测时，可以用一次高云小车的零速通信试验核对命令往返，也可以用 PYNQ-Z2 的固定视频源检查 HDMI 输入输出。实验条件、观测指标和相关笔记见 [FPGA、Verilog 与 HLS 学习路径](./fpga-development/)。

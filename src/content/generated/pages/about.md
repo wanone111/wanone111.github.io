@@ -6,7 +6,7 @@ status: published
 visibility: public
 slug: about
 created: 2026-07-13
-updated: 2026-08-10
+updated: 2026-11-24
 published: 2026-07-13
 category: profile
 tags:
@@ -32,7 +32,9 @@ featured: false
 
 ## 代表项目
 
-目前主要推进室内无人机自主飞行控制系统，以及 PC、PYNQ-Z2 与 Ascend 310B 组成的异构视频处理链路。项目档案只陈述已有公开记录支持的职责、实现和验证结果。
+在行阵项目里，我参与高云 BX72 小车的板端控制和 Jetson 联调。小车在地测中跑过多个航点，也在一次现场测试中收到了 ACG720 六足机器人的地图。[小车导航](/projects/fpga-robot-navigation/) · [双机协同建图](/projects/hexapod-robot-cooperative-mapping/)
+
+在 BoomBoomFly 无人机项目里，我用 ROS 2 写任务和飞控接口，做过任务进程中断后的仿真降落试验，也分析过视觉定位间断的飞控日志。视频项目则用 PYNQ-Z2 做 HDMI 直通，把视频转发到昇腾 310B 做目标检测。[室内无人机](/projects/indoor-autonomous-drone/) · [FPGA 视频处理](/projects/heterogeneous-video-pipeline/)
 
 [浏览项目](/projects/)
 

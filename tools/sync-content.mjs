@@ -65,6 +65,7 @@ function generatedFrontmatter(note) {
     tags: note.data.tags ?? [],
     cover: note.data.cover,
     featured: note.data.featured ?? false,
+    featured_order: note.data.featured_order,
     problem: note.data.problem,
     environment: note.data.environment,
     conclusion: note.data.conclusion,

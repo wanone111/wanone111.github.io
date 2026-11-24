@@ -63,7 +63,8 @@ test('blog category filter updates pressed state and visible posts', async ({ pa
 
   const posts = page.locator('[data-post-category]');
   const categoryButtons = page.locator('[data-category]:not([data-category="all"])');
-  await expect(posts).toHaveCount(13);
+  await expect(posts.first()).toBeVisible();
+  const totalPosts = await posts.count();
   expect(await categoryButtons.count()).toBeGreaterThan(0);
 
   const categoryButton = categoryButtons.first();
@@ -73,6 +74,8 @@ test('blog category filter updates pressed state and visible posts', async ({ pa
     (items, selected) => items.filter((item) => item.getAttribute('data-post-category') === selected).length,
     category,
   );
+  expect(expectedCount).toBeGreaterThan(0);
+  expect(expectedCount).toBeLessThan(totalPosts);
 
   await categoryButton.click();
   await expect(categoryButton).toHaveAttribute('aria-pressed', 'true');
@@ -87,7 +90,7 @@ test('blog category filter updates pressed state and visible posts', async ({ pa
   const allButton = page.locator('[data-category="all"]');
   await allButton.click();
   await expect(allButton).toHaveAttribute('aria-pressed', 'true');
-  await expect(page.locator('[data-post-category]:visible')).toHaveCount(13);
+  await expect(page.locator('[data-post-category]:visible')).toHaveCount(totalPosts);
 });
 
 test('homepage follows the portfolio-first 01–05 editorial sequence', async ({ page }) => {
@@ -100,9 +103,9 @@ test('homepage follows the portfolio-first 01–05 editorial sequence', async ({
   const projects = page.locator('.project-list .project-showcase');
   await expect(projects).toHaveCount(3);
   await expect(projects.locator('h2')).toHaveText([
+    '行阵 FPGA 轮式机器人自主导航',
     '室内无人机自主飞行控制系统',
     '异构硬件视频图像处理方案',
-    'Obsidian 与 Astro 内容发布系统',
   ]);
   await expect(page.locator('.featured-note')).toHaveCount(0);
   await expect(page.locator('.recent-notes .article-row')).toHaveCount(4);
