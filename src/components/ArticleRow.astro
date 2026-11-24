@@ -1,11 +1,15 @@
 ---
-interface Props { href: string; title: string; description: string; meta: string; category?: string; headingLevel?: 'h2' | 'h3'; }
-const { href, title, description, meta, category = '工程笔记', headingLevel = 'h3' } = Astro.props;
-const Heading = headingLevel;
+import type { CollectionEntry } from 'astro:content';
+import { formatDate } from '../lib/content';
+
+interface Props { post: CollectionEntry<'blog'>; headingLevel?: 'h2' | 'h3'; }
+const { post, headingLevel: Heading = 'h3' } = Astro.props;
+const { title, description, category = '工程笔记', slug, updated } = post.data;
+const href = `/notes/${slug}/`;
 ---
 
 <article class="article-row">
-  <p class="article-row__meta">{meta}</p>
+  <p class="article-row__meta">{formatDate(updated)}</p>
   <a class="article-row__body" href={href}>
     <span class="eyebrow">{category}</span>
     <Heading>{title}</Heading>

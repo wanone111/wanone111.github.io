@@ -1,7 +1,7 @@
-import { basename, extname, relative, resolve, sep } from 'node:path';
+import { extname, resolve } from 'node:path';
 import { readFile } from 'node:fs/promises';
-import { parseMarkdown } from './frontmatter.mjs';
-import { relativePosix, walkFiles } from './files.mjs';
+import { parseMarkdown } from './markdown.mjs';
+import { pathExists, relativePosix, sha256, walkFiles } from './files.mjs';
 
 const TYPE_BY_DIRECTORY = {
   笔记: 'blog',
@@ -11,9 +11,14 @@ const TYPE_BY_DIRECTORY = {
 };
 const STATUSES = new Set(['draft', 'review', 'ready', 'published']);
 const VISIBILITIES = new Set(['private', 'public']);
-const CONTENT_TYPES = new Set(Object.values(TYPE_BY_DIRECTORY));
+const ROUTES = {
+  blog: ['/notes/', 'generatedBlogRoot'],
+  docs: ['/knowledge/', 'generatedDocsRoot'],
+  project: ['/projects/', 'generatedProjectsRoot'],
+  page: ['/', 'generatedPagesRoot'],
+};
+const CONTENT_TYPES = new Set(Object.keys(ROUTES));
 const SLUG_PATTERN = /^[a-z0-9]+(?:[/-][a-z0-9]+)*$/;
-const IMAGE_EXTENSIONS = new Set(['.avif', '.gif', '.jpeg', '.jpg', '.png', '.svg', '.webp']);
 
 function addError(errors, note, message, field) {
   errors.push({ file: note.relativePath, field, message });
@@ -28,43 +33,25 @@ function isValidDate(value) {
   return (typeof value === 'string' || typeof value === 'number') && !Number.isNaN(new Date(value).getTime());
 }
 
-export function isPublishable(note) {
+function isPublishable(note) {
   return note.data.visibility === 'public' && ['ready', 'published'].includes(note.data.status);
 }
 
-export function routeFor(data) {
-  switch (data.content_type) {
-    case 'blog': return `/notes/${data.slug}/`;
-    case 'docs': return `/knowledge/${data.slug}/`;
-    case 'project': return `/projects/${data.slug}/`;
-    case 'page': return `/${data.slug}/`;
-    default: throw new Error(`Unsupported content type: ${data.content_type}`);
-  }
+async function loadPolicy({ contentPolicy, websiteRoot }) {
+  if (!contentPolicy) return {};
+  // Older workspace configs point to the former bundled policy.
+  if (contentPolicy === resolve(websiteRoot, 'tools/content-policy.json') && !await pathExists(contentPolicy)) return {};
+  return JSON.parse(await readFile(contentPolicy, 'utf8'));
 }
 
-export function outputPathFor(note, paths) {
-  const relativeFile = `${note.data.slug}.md`;
-  switch (note.data.content_type) {
-    case 'blog': return resolve(paths.generatedBlogRoot, relativeFile);
-    case 'docs': return resolve(paths.generatedDocsRoot, relativeFile);
-    case 'project': return resolve(paths.generatedProjectsRoot, relativeFile);
-    case 'page': return resolve(paths.generatedPagesRoot, relativeFile);
-    default: throw new Error(`Unsupported content type: ${note.data.content_type}`);
-  }
-}
-
-export async function loadPolicy(paths) {
-  return JSON.parse(await readFile(paths.contentPolicy, 'utf8'));
-}
-
-export async function discoverNotes(paths) {
+async function discoverNotes(paths) {
   const files = await walkFiles(paths.publishRoot, (path) => ['.md', '.mdx'].includes(extname(path).toLowerCase()));
   const notes = [];
   const errors = [];
 
   for (const file of files) {
     const relativePath = relativePosix(paths.publishRoot, file);
-    const folder = relative(paths.publishRoot, file).split(sep)[0];
+    const folder = relativePath.split('/')[0];
     if (extname(file).toLowerCase() === '.mdx') {
       errors.push({ file: relativePath, field: 'file', message: 'MDX is not supported by the publishing converter; use Markdown.' });
       continue;
@@ -79,7 +66,11 @@ export async function discoverNotes(paths) {
   return { notes, errors };
 }
 
-export async function validateNotes(notes, initialErrors, paths, policy) {
+export function validateNotes(notes, initialErrors, paths, policy = {}) {
+  const allowedPageSlugs = policy.allowedPageSlugs ?? ['about', 'resume', 'links'];
+  const reservedRoutes = policy.reservedRoutes ?? [
+    '/knowledge/embedded/', '/knowledge/robotics/', '/knowledge/fpga-edge-ai/', '/knowledge/linux-tools/',
+  ];
   const errors = [...initialErrors];
   const routes = new Map();
   const featuredProjectOrders = new Map();
@@ -133,7 +124,7 @@ export async function validateNotes(notes, initialErrors, paths, policy) {
       }
     }
     if (['ready', 'published'].includes(data.status) && data.visibility !== 'public') addError(errors, note, `${data.status} content must use visibility: public.`, 'visibility');
-    if (data.content_type === 'page' && hasSlug && !policy.allowedPageSlugs.includes(data.slug)) addError(errors, note, `Page slug must be one of: ${policy.allowedPageSlugs.join(', ')}.`, 'slug');
+    if (data.content_type === 'page' && hasSlug && !allowedPageSlugs.includes(data.slug)) addError(errors, note, `Page slug must be one of: ${allowedPageSlugs.join(', ')}.`, 'slug');
 
     const unsupported = [
       { pattern: /```dataview(?:js)?\b/i, message: 'Dataview blocks cannot be published.' },
@@ -145,15 +136,16 @@ export async function validateNotes(notes, initialErrors, paths, policy) {
     }
 
     if (isPublishable(note) && isNonEmptyString(data.slug) && CONTENT_TYPES.has(data.content_type)) {
-      const route = routeFor(data);
+      const [routePrefix, rootKey] = ROUTES[data.content_type];
+      const route = `${routePrefix}${data.slug}/`;
       const existing = routes.get(route);
       if (existing) addError(errors, note, `Route collides with ${existing}.`, 'slug');
       else routes.set(route, note.relativePath);
-      if (policy.reservedRoutes.includes(route) && data.content_type !== 'page') addError(errors, note, `Route is reserved by a hand-authored site page: ${route}`, 'slug');
+      if (reservedRoutes.includes(route) && data.content_type !== 'page') addError(errors, note, `Route is reserved by a hand-authored site page: ${route}`, 'slug');
 
-      const outputPath = outputPathFor(note, paths);
       note.route = route;
-      note.outputPath = outputPath;
+      note.outputRoot = paths[rootKey];
+      note.outputPath = resolve(note.outputRoot, `${data.slug}.md`);
     }
   }
 
@@ -163,35 +155,79 @@ export async function validateNotes(notes, initialErrors, paths, policy) {
 export async function loadValidatedContent(paths) {
   const policy = await loadPolicy(paths);
   const discovered = await discoverNotes(paths);
-  const validated = await validateNotes(discovered.notes, discovered.errors, paths, policy);
+  const validated = validateNotes(discovered.notes, discovered.errors, paths, policy);
   return { ...validated, policy };
-}
-
-export function buildLinkIndex(notes) {
-  const index = new Map();
-  const ambiguous = new Set();
-  for (const note of notes) {
-    const relativeKey = note.relativePath.replace(/\.[^.]+$/, '');
-    const keys = [note.data.title, note.data.slug, basename(note.file, extname(note.file)), relativeKey];
-    if (note.folder === '笔记' && relativeKey.startsWith('笔记/')) {
-      keys.push(`blog/${relativeKey.slice('笔记/'.length)}`);
-      keys.push(`blog/${note.data.slug}`);
-    }
-    for (const raw of keys) {
-      const key = String(raw).trim().toLocaleLowerCase('zh-CN').replace(/\\/g, '/');
-      if (!key) continue;
-      if (index.has(key) && index.get(key).route !== note.route) ambiguous.add(key);
-      else index.set(key, note);
-    }
-  }
-  return { index, ambiguous };
-}
-
-export function isImageTarget(target) {
-  return IMAGE_EXTENSIONS.has(extname(target.split('|')[0]).toLowerCase());
 }
 
 export function printValidationErrors(errors, heading = 'Content validation failed') {
   console.error(`${heading} (${errors.length}):`);
   for (const error of errors) console.error(`- ${error.file}${error.field ? ` [${error.field}]` : ''}: ${error.message}`);
+}
+
+const CREDENTIAL_RULES = [
+  { id: 'private-key', pattern: /-----BEGIN (?:RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----/g },
+  { id: 'github-token', pattern: /\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b/g },
+  { id: 'aws-access-key', pattern: /\bAKIA[0-9A-Z]{16}\b/g },
+  { id: 'credential-assignment', pattern: /\b(?:api[_-]?key|access[_-]?token|secret|password|passwd|pwd)\s*[:=]\s*["']?[^\s"'`]{8,}/gi },
+];
+
+const ALL_RULES = [
+  ...CREDENTIAL_RULES,
+  { id: 'windows-absolute-path', pattern: /\b[A-Za-z]:\\[^\r\n`"']+/g },
+  { id: 'linux-home-path', pattern: /\/home\/[a-zA-Z0-9._-]+(?:\/[^\s`"']*)?/g },
+  { id: 'email-address', pattern: /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi },
+  { id: 'private-ip', pattern: /\b(?:10(?:\.\d{1,3}){3}|192\.168(?:\.\d{1,3}){2}|172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2}|127\.0\.0\.1)\b/g },
+];
+
+function fingerprint(rule, value) {
+  return sha256(`${rule}\0${value}`).slice(0, 16);
+}
+
+function allowed(rule, value, policy, hash) {
+  const { allowedFindingFingerprints = ['81f37d06c2b49cf1'], allowedPrivateIps = ['127.0.0.1'] } = policy;
+  if (allowedFindingFingerprints.includes(hash)) return true;
+  if (rule === 'email-address' && policy.allowedEmails?.includes(value.toLowerCase())) return true;
+  if (rule === 'private-ip' && allowedPrivateIps.includes(value)) return true;
+  if ((rule === 'windows-absolute-path' || rule === 'linux-home-path') && policy.allowedAbsolutePaths?.includes(value)) return true;
+  return false;
+}
+
+function masked(rule, value) {
+  if (rule.includes('path')) return '[redacted absolute path]';
+  if (rule === 'email-address') return value.replace(/^(.).+(@.+)$/, '$1***$2');
+  if (rule === 'private-ip') return value.replace(/\.\d+$/, '.***');
+  if (value.length <= 8) return '[redacted]';
+  return `${value.slice(0, 3)}…${value.slice(-2)}`;
+}
+
+export function scanText(text, file, policy = {}, rules = ALL_RULES) {
+  const findings = [];
+  for (const rule of rules) {
+    rule.pattern.lastIndex = 0;
+    for (const match of text.matchAll(rule.pattern)) {
+      const value = match[0];
+      const hash = fingerprint(rule.id, value);
+      if (allowed(rule.id, value, policy, hash)) continue;
+      findings.push({
+        file,
+        line: text.slice(0, match.index).split(/\r?\n/).length,
+        rule: rule.id,
+        preview: masked(rule.id, value),
+        fingerprint: hash,
+      });
+    }
+  }
+  return findings;
+}
+
+export function scanNotes(notes, policy, { credentialsOnly = false } = {}) {
+  const rules = credentialsOnly ? CREDENTIAL_RULES : ALL_RULES;
+  return notes.flatMap((note) => scanText(note.raw, note.relativePath, policy, rules));
+}
+
+export function printSecurityFindings(findings) {
+  console.error(`Sensitive-information scan found ${findings.length} issue(s):`);
+  for (const item of findings) {
+    console.error(`- ${item.file}:${item.line} [${item.rule}] ${item.preview} (allowlist fingerprint: ${item.fingerprint})`);
+  }
 }

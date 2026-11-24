@@ -2,41 +2,15 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
-import ProjectShowcaseCard from '../../components/ProjectShowcaseCard.astro';
-import { byNewest, formatDate, isPublic } from '../../lib/content';
+import ProjectList from '../../components/ProjectList.astro';
+import { byFeaturedOrder, isPublic } from '../../lib/content';
 
-const projects = (await getCollection('projects')).filter(isPublic).sort((a, b) => {
-  const order = (a.data.featured_order ?? Number.MAX_SAFE_INTEGER) - (b.data.featured_order ?? Number.MAX_SAFE_INTEGER);
-  return order || byNewest(a, b);
-});
+const projects = (await getCollection('projects', isPublic)).sort(byFeaturedOrder);
 ---
 
 <BaseLayout title="项目" description="Wanone 的嵌入式、机器人、FPGA 与边缘 AI 项目。">
   <div class="stack-xl">
     <PageIntro eyebrow="Projects · systems" title="项目系统" />
-    {projects.length > 0 ? (
-      <div class="project-list">
-        {projects.map((project, index) => (
-          <ProjectShowcaseCard
-            index={index}
-            title={project.data.title}
-            description={project.data.description}
-            category={project.data.category}
-            updated={formatDate(project.data.updated)}
-            tags={project.data.tags}
-            href={`/projects/${project.data.slug}/`}
-            cover={project.data.cover}
-            status={project.data.status}
-            role={project.data.role}
-            result={project.data.result}
-            validation={project.data.validation}
-          />
-        ))}
-      </div>
-    ) : <div class="empty-state">暂无公开项目。</div>}
+    <ProjectList projects={projects} />
   </div>
 </BaseLayout>
-
-<style>
-  .project-list { display: grid; }
-</style>

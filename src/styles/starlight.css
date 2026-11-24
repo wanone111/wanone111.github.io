@@ -32,8 +32,6 @@ html { background: var(--color-bg); }
 body { color: var(--color-text); font-family: var(--font-sans); }
 header.header { border-bottom: 1px solid var(--color-border); box-shadow: none; backdrop-filter: blur(16px); }
 .site-title { color: var(--color-text); font-weight: 850; letter-spacing: -.035em; }
-.site-title::after { content: ' / Knowledge'; margin-left: .35rem; color: var(--color-accent); font: 700 .68rem/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; }
-.header .social-icons::before { content: 'PUBLIC NOTES'; align-self: center; color: var(--color-text-muted); font: 650 .62rem/1 var(--font-mono); letter-spacing: .08em; }
 
 .sidebar-pane { border-inline-end: 1px solid var(--color-border); background: var(--color-surface); }
 .sidebar-content { padding-block: var(--space-5); }
@@ -68,13 +66,6 @@ header.header { border-bottom: 1px solid var(--color-border); box-shadow: none; 
 .content-panel th { color: var(--color-text); }
 .content-panel :is(th, td) { border-color: var(--color-border); }
 
-.hero { border-bottom: 1px solid var(--color-border-strong); padding-bottom: var(--space-7); }
-.hero .tagline { max-width: 46rem; color: var(--color-text-muted); font-size: 1.1rem; }
-.card { border: 1px solid var(--color-border) !important; border-radius: var(--radius-lg) !important; background: var(--color-surface) !important; box-shadow: none !important; }
-.card:nth-child(4n + 1) { border-top-color: var(--color-yellow) !important; }
-.card:nth-child(4n + 2) { border-top-color: var(--color-blue) !important; }
-.card:nth-child(4n + 3) { border-top-color: var(--color-purple) !important; }
-.card:nth-child(4n + 4) { border-top-color: var(--color-green) !important; }
 .starlight-aside { border-radius: var(--radius-md); }
 .pagination-links a { border-color: var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
 
@@ -85,7 +76,6 @@ select { font-family: inherit; }
 ::selection { background: var(--color-accent-soft); }
 
 @media (max-width: 50rem) {
-  .site-title::after, .header .social-icons::before { display: none; }
   .content-panel h1 { font-size: clamp(2.4rem, 12vw, 4.2rem); }
 }
 

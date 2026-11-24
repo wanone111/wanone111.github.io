@@ -1,27 +1,38 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
-import { readFileSync } from 'node:fs';
 
-const legacyUrlMap = JSON.parse(
-  readFileSync(new URL('./legacy-url-map.json', import.meta.url), 'utf8'),
-);
-const legacyRedirects = legacyUrlMap.redirects.map(
-  ({ source, destination }) => [source, destination],
-);
-const retiredRouteRedirects = [
-  ['/blog/', '/notes/'],
-  ...legacyUrlMap.redirects.flatMap(({ retiredRoute, destination }) => [
-    ...(retiredRoute === destination ? [] : [[retiredRoute, destination]]),
-    [retiredRoute.replace(/^\/notes\//, '/blog/'), destination],
-  ]),
-];
-const redirects = Object.fromEntries([
-  ...legacyRedirects,
-  ...retiredRouteRedirects,
-]);
+const redirects = { '/blog/': '/notes/' };
+// Each article had a dated URL and a /blog/ slug. A third value moves its /notes/ URL as well.
+for (const [datedUrl, slug, movedTo] of [
+  ['/2025/09/16/ROS2学习笔记/', 'robotics/ros2-notes'],
+  ['/2025/09/18/FPGA-RTL学习笔记/', 'fpga/rtl-notes'],
+  ['/2025/09/18/linux学习笔记/', 'tools/linux-notes', '/knowledge/linux-tools/linux-and-networking/'],
+  ['/2025/09/18/PID/', 'algorithms/pid', '/notes/algorithms/pid-control-basics/'],
+  ['/2025/09/18/STM32学习笔记/', 'embedded/stm32-notes', '/notes/embedded/communication-protocols/'],
+  ['/2025/09/18/嵌入式通信/', 'embedded/communication-protocols'],
+  ['/2025/09/23/FPGA/', 'fpga/fpga-overview'],
+  ['/2025/09/23/STM32-通信/', 'embedded/stm32-communication', '/notes/embedded/communication-protocols/'],
+  ['/2025/10/16/FPGA-HLS学习笔记/', 'fpga/vitis-hls-notes'],
+  ['/2025/10/16/电赛/', 'embedded/electronic-design-contest', '/knowledge/embedded/communication-path/'],
+  ['/2025/10/17/Linux-socket/', 'networking/linux-socket', '/notes/networking/linux-tcp-socket-basics/'],
+  ['/2026/03/07/Gazebo仿真/', 'robotics/gazebo-simulation', '/notes/robotics/gazebo-notes/'],
+  ['/2026/04/07/C++学习笔记/', 'programming/cpp-notes', '/notes/programming/cpp-class-access-control/'],
+  ['/2026/04/07/SLAM学习笔记/', 'robotics/slam-notes', '/knowledge/robotics/'],
+  ['/2026/04/07/verilog学习笔记/', 'fpga/verilog-notes'],
+  ['/2026/04/08/matlab学习笔记/', 'vision/matlab-notes', '/knowledge/'],
+  ['/2026/04/08/opencv学习笔记/', 'vision/opencv-notes', '/knowledge/'],
+  ['/2026/04/08/各种滤波算法/', 'algorithms/filtering', '/knowledge/'],
+]) {
+  const notesUrl = `/notes/${slug}/`;
+  const destination = movedTo ?? notesUrl;
+  redirects[datedUrl] = destination;
+  redirects[`/blog/${slug}/`] = destination;
+  if (movedTo) redirects[notesUrl] = movedTo;
+}
 
 export default defineConfig({
   site: 'https://wanone111.github.io',
+  scopedStyleStrategy: 'where',
   redirects,
   integrations: [
     starlight({

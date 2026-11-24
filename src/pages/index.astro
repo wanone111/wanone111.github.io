@@ -2,21 +2,21 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ArticleRow from '../components/ArticleRow.astro';
-import ProjectShowcaseCard from '../components/ProjectShowcaseCard.astro';
+import ProjectList from '../components/ProjectList.astro';
+import { knowledgePaths } from '../data/knowledge';
 import SignalField from '../components/SignalField.astro';
-import { byNewest, formatDate, isPublic } from '../lib/content';
+import { byFeaturedOrder, byNewest, formatDate, isPublic } from '../lib/content';
 
-const posts = (await getCollection('blog')).filter(isPublic).sort(byNewest);
+const posts = (await getCollection('blog', isPublic)).sort(byNewest);
 const featuredPost = posts.find((entry) => entry.data.featured);
 const recentPosts = posts.filter((entry) => entry.id !== featuredPost?.id).slice(0, featuredPost ? 3 : 4);
-const projects = (await getCollection('projects')).filter(isPublic).sort(byNewest);
+const projects = (await getCollection('projects', isPublic)).sort(byNewest);
 const featuredProjects = projects
   .filter((entry) => entry.data.featured)
-  .sort((a, b) => {
-    const order = (a.data.featured_order ?? Number.MAX_SAFE_INTEGER) - (b.data.featured_order ?? Number.MAX_SAFE_INTEGER);
-    return order || byNewest(a, b);
-  });
+  .sort(byFeaturedOrder);
 const selectedProjects = (featuredProjects.length > 0 ? featuredProjects : projects).slice(0, 3);
+const otherProject = projects.find((project) => !selectedProjects.includes(project));
+const introduction = '我在轮式小车上调试航点导航，做过六足机器人与小车的地图对齐实验，也记录无人机视觉定位和 FPGA 视频处理的调试过程。';
 const siteUrl = Astro.site ?? new URL('https://wanone111.github.io');
 const homeJsonLd = [
   {
@@ -34,18 +34,18 @@ const homeJsonLd = [
     name: 'Wanone',
     url: siteUrl.href,
     inLanguage: 'zh-CN',
-    description: '个人工程档案、技术编辑部与数字知识花园。',
+    description: introduction,
   },
 ];
 ---
 
-<BaseLayout title="Wanone" description="万志成的个人工程档案，记录嵌入式、机器人、FPGA 与边缘 AI 实践。" contentType="首页" jsonLd={homeJsonLd}>
+<BaseLayout title="Wanone" description={introduction} contentType="首页" jsonLd={homeJsonLd}>
   <div class="home-flow">
     <section class="home-intro editorial-grid" aria-labelledby="intro-title">
       <div class="home-hero__copy">
         <p class="section-marker"><span>01</span> / INTRO</p>
         <h1 id="intro-title">你好，我是<strong>万志成</strong>。我构建嵌入式、机器人与边缘 AI 系统。</h1>
-        <p class="home-hero__summary">我关注 ROS 2 / PX4、FPGA 视频链路和端侧推理，并记录其中的工程判断与调试过程。</p>
+        <p class="home-hero__summary">{introduction}</p>
         <div class="home-hero__actions" aria-label="主要入口">
           <a class="button" href="/projects/">查看项目</a>
           <a class="button secondary" href="/resume/">阅读简历</a>
@@ -62,27 +62,9 @@ const homeJsonLd = [
     <section class="home-section systems-section" aria-labelledby="systems-title">
       <div class="home-section__heading">
         <div><p class="section-marker"><span>02</span> / SELECTED WORK</p><h2 id="systems-title">代表项目</h2></div>
+        {otherProject && <a class="text-link" href={`/projects/${otherProject.data.slug}/`}>另读 · {otherProject.data.title}</a>}
       </div>
-      {selectedProjects.length > 0 ? (
-        <div class="project-list">
-          {selectedProjects.map((project, index) => (
-            <ProjectShowcaseCard
-              index={index}
-              title={project.data.title}
-              description={project.data.description}
-              category={project.data.category}
-              updated={formatDate(project.data.updated)}
-              tags={project.data.tags}
-              href={`/projects/${project.data.slug}/`}
-              cover={project.data.cover}
-              status={project.data.status}
-              role={project.data.role}
-              result={project.data.result}
-              validation={project.data.validation}
-            />
-          ))}
-        </div>
-      ) : <div class="empty-state">暂无公开项目。</div>}
+      <ProjectList projects={selectedProjects} />
     </section>
 
     <section class="home-section" aria-labelledby="notes-title">
@@ -102,7 +84,7 @@ const homeJsonLd = [
           )}
           <div class="recent-notes">
             {recentPosts.map((post) => (
-              <ArticleRow href={`/notes/${post.data.slug}/`} title={post.data.title} description={post.data.description} category={post.data.category} meta={formatDate(post.data.updated)} />
+              <ArticleRow post={post} />
             ))}
           </div>
         </div>
@@ -114,10 +96,13 @@ const homeJsonLd = [
         <div><p class="section-marker"><span>04</span> / KNOWLEDGE</p><h2 id="knowledge-title">知识路径</h2></div>
       </div>
       <div class="knowledge-list">
-        <a class="knowledge-path knowledge-path--yellow" href="/knowledge/embedded/"><span>01</span><div><h3>嵌入式与通信</h3><p>STM32、总线协议、调试流程与工程实践。</p></div><b aria-hidden="true">→</b></a>
-        <a class="knowledge-path knowledge-path--blue" href="/knowledge/robotics/"><span>02</span><div><h3>机器人系统</h3><p>ROS 2、PX4、仿真与控制系统。</p></div><b aria-hidden="true">→</b></a>
-        <a class="knowledge-path knowledge-path--purple" href="/knowledge/fpga-edge-ai/"><span>03</span><div><h3>FPGA 与边缘 AI</h3><p>FPGA、PYNQ、视频链路与边缘推理。</p></div><b aria-hidden="true">→</b></a>
-        <a class="knowledge-path knowledge-path--green" href="/knowledge/linux-tools/"><span>04</span><div><h3>Linux 与工程工具</h3><p>开发环境、Git、WSL 和工程化流程。</p></div><b aria-hidden="true">→</b></a>
+        {knowledgePaths.map((path, index) => (
+          <a class="knowledge-path" href={path.href}>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <div><h3>{path.title}</h3><p>{path.description}</p></div>
+            <b aria-hidden="true">→</b>
+          </a>
+        ))}
       </div>
     </section>
 
@@ -153,7 +138,6 @@ const homeJsonLd = [
   .home-section__heading > p { color: var(--color-text-muted); }
   .section-marker { color: var(--color-text-muted); font: 750 .7rem/1 var(--font-mono); letter-spacing: .12em; }
   .section-marker span { color: var(--color-accent-strong); }
-  .project-list { display: grid; }
   .notes-layout { display: grid; grid-template-columns: minmax(18rem, 4fr) minmax(0, 6fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
   .featured-note { display: grid; gap: var(--space-4); border-top: .35rem solid var(--color-blog); border-bottom: 1px solid var(--color-border-strong); padding-block: var(--space-6); color: var(--color-text); text-decoration: none; }
   .featured-note h3 { max-width: 14ch; font-size: clamp(2rem, 4vw, 3.8rem); }
@@ -161,6 +145,7 @@ const homeJsonLd = [
   .featured-note > span { color: var(--color-blog-ink); font: 750 .72rem/1.5 var(--font-mono); }
   .featured-note:hover h3 { color: var(--color-blog-ink); }
   .recent-notes { min-width: 0; }
+  .recent-notes:only-child { grid-column: 1 / -1; }
   .knowledge-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--color-border-strong); }
   .knowledge-path { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) auto; gap: var(--space-4); align-items: start; border-bottom: 1px solid var(--color-border); padding: var(--space-6) var(--space-5) var(--space-6) 0; color: var(--color-text); text-decoration: none; }
   .knowledge-path:nth-child(odd) { border-right: 1px solid var(--color-border); }
@@ -170,10 +155,10 @@ const homeJsonLd = [
   .knowledge-path p { margin-top: var(--space-2); color: var(--color-text-muted); }
   .knowledge-path b { color: var(--path-color); transition: transform var(--transition-fast); }
   .knowledge-path:hover b { transform: translateX(.3rem); }
-  .knowledge-path--yellow { --path-color: #7f5200; }
-  .knowledge-path--blue { --path-color: var(--color-blog-ink); }
-  .knowledge-path--purple { --path-color: var(--color-experiment-ink); }
-  .knowledge-path--green { --path-color: var(--color-knowledge-ink); }
+  .knowledge-path:nth-child(1) { --path-color: #7f5200; }
+  .knowledge-path:nth-child(2) { --path-color: var(--color-blog-ink); }
+  .knowledge-path:nth-child(3) { --path-color: var(--color-experiment-ink); }
+  .knowledge-path:nth-child(4) { --path-color: var(--color-knowledge-ink); }
   .about-section__body { display: grid; grid-template-columns: minmax(0, 7fr) minmax(16rem, 3fr); gap: var(--space-7); align-items: start; }
   .about-section__body > p { max-width: 48rem; font-size: clamp(1.25rem, 2.4vw, 2rem); line-height: 1.5; }
   .about-section__links { justify-content: flex-start; }

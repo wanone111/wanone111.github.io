@@ -1,48 +1,48 @@
 ---
-interface Props {
-  index: number;
-  title: string;
-  description: string;
-  category?: string;
-  updated: string;
-  tags: string[];
-  href: string;
-  cover?: string;
-  status?: 'draft' | 'review' | 'ready' | 'published';
-  role?: string;
-  result?: string;
-  validation?: string;
-}
-const { index, title, description, category = 'system', updated, tags, href, cover, status = 'published', role, result, validation } = Astro.props;
-const statusLabels = { draft: '草稿', review: '复核中', ready: '待发布', published: '已公开' };
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, statusLabels } from '../lib/content';
+
+interface Props { projects: CollectionEntry<'projects'>[]; }
+const { projects } = Astro.props;
 const categoryLabels: Record<string, string> = {
   publishing: '内容工程', embedded: '嵌入式系统', robotics: '机器人系统', fpga: 'FPGA 与边缘 AI', system: '工程系统',
 };
-const categoryLabel = categoryLabels[category.toLowerCase()] ?? category;
 ---
 
-<article class="project-showcase">
-  <div class="project-showcase__index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</div>
+{projects.length ? (
+  <div class="project-list">
+    {projects.map(({ data }, index) => {
+      const { title, description, category = 'system', updated, tags, slug, cover, status, role, result, validation } = data;
+      const href = `/projects/${slug}/`;
+      const categoryLabel = categoryLabels[category.toLowerCase()] ?? category;
+      return (
+        <article class="project-showcase">
+          <div class="project-showcase__index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</div>
 
-  <div class="project-showcase__body stack">
-    <p class="eyebrow">{categoryLabel} · {statusLabels[status]} · {updated}</p>
-    <h2><a href={href}>{title}</a></h2>
-    <p class="lede">{description}</p>
-    {role && <p class="project-showcase__role"><span>本人职责</span>{role}</p>}
-    {cover && <img src={cover} alt={`${title} 的项目实物或验证素材`} loading="lazy" />}
-    <div class="tag-list">{tags.map((tag) => <span class="tag">{tag}</span>)}</div>
-    <a class="project-showcase__link" href={href}>打开工程档案 <span aria-hidden="true">→</span></a>
+          <div class="project-showcase__body stack">
+            <p class="eyebrow">{categoryLabel} · {statusLabels[status]} · {formatDate(updated)}</p>
+            <h2><a href={href}>{title}</a></h2>
+            <p class="lede">{description}</p>
+            {role && <p class="project-showcase__role"><span>本人职责</span>{role}</p>}
+            {cover && <img src={cover} alt={`${title} 的项目实物或验证素材`} loading="lazy" />}
+            <div class="tag-list">{tags.map((tag) => <span class="tag">{tag}</span>)}</div>
+            <a class="project-showcase__link" href={href}>打开工程档案 <span aria-hidden="true">→</span></a>
+          </div>
+
+          {(result || validation) && (
+            <dl class="project-showcase__evidence" aria-label={`${title} 的结果与验证`}>
+              {result && <div><dt>核心结果</dt><dd>{result}</dd></div>}
+              {validation && <div><dt>验证方式</dt><dd>{validation}</dd></div>}
+            </dl>
+          )}
+        </article>
+      );
+    })}
   </div>
-
-  {(result || validation) && (
-    <dl class="project-showcase__evidence" aria-label={`${title} 的结果与验证`}>
-      {result && <div><dt>核心结果</dt><dd>{result}</dd></div>}
-      {validation && <div><dt>验证方式</dt><dd>{validation}</dd></div>}
-    </dl>
-  )}
-</article>
+) : <div class="empty-state">暂无公开项目。</div>}
 
 <style>
+  .project-list { display: grid; }
   .project-showcase { display: grid; grid-template-columns: 4rem minmax(0, 1.5fr) minmax(16rem, 1fr); gap: clamp(1.5rem, 4vw, 4rem); align-items: start; border-top: 1px solid var(--color-border-strong); padding-block: clamp(2rem, 5vw, 4rem); }
   .project-showcase:last-child { border-bottom: 1px solid var(--color-border-strong); }
   .project-showcase__index { color: var(--color-accent-strong); font: 750 clamp(1.6rem, 3vw, 2.7rem)/1 var(--font-mono); }

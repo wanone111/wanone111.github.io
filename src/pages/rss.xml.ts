@@ -11,8 +11,8 @@ const escapeXml = (value: string) => value
 
 export async function GET() {
   const [posts, projects] = await Promise.all([
-    getCollection('blog').then((entries) => entries.filter(isPublic)),
-    getCollection('projects').then((entries) => entries.filter(isPublic)),
+    getCollection('blog', isPublic),
+    getCollection('projects', isPublic),
   ]);
   const items = [...posts, ...projects].sort(byNewest).map((entry) => {
     const section = entry.collection === 'projects' ? 'projects' : 'notes';

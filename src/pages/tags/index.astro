@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import { byNewest, formatDate, isPublic } from '../../lib/content';
 
-const posts = (await getCollection('blog')).filter(isPublic).sort(byNewest);
+const posts = (await getCollection('blog', isPublic)).sort(byNewest);
 const tags = [...new Set(posts.flatMap((post) => post.data.tags))]
   .map((tag) => ({ tag, posts: posts.filter((post) => post.data.tags.includes(tag)) }))
   .sort((a, b) => b.posts.length - a.posts.length || a.tag.localeCompare(b.tag, 'zh-CN'));

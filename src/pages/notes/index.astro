@@ -3,9 +3,9 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ArticleRow from '../../components/ArticleRow.astro';
 import PageIntro from '../../components/PageIntro.astro';
-import { byNewest, formatDate, isPublic } from '../../lib/content';
+import { byNewest, isPublic } from '../../lib/content';
 
-const posts = (await getCollection('blog')).filter(isPublic).sort(byNewest);
+const posts = (await getCollection('blog', isPublic)).sort(byNewest);
 const categories = [...new Set(posts.map((post) => post.data.category).filter(Boolean))] as string[];
 const categoryKey = (category: string) => {
   if (category.includes('机器人')) return 'robotics';
@@ -14,15 +14,17 @@ const categoryKey = (category: string) => {
   if (category.includes('视觉')) return 'vision';
   if (category.includes('编程')) return 'programming';
   if (category.includes('算法') || category.includes('控制')) return 'algorithms';
-  if (category.includes('Linux') || category.includes('工程工具')) return 'tooling';
-  if (category.includes('开发')) return 'tooling';
+  if (category.includes('Linux') || category.includes('工程工具') || category.includes('开发')) return 'tooling';
   return encodeURIComponent(category.toLocaleLowerCase('zh-CN'));
 };
-const categoryOptions = categories.map((category) => ({
-  label: category,
-  key: categoryKey(category),
-  count: posts.filter((post) => post.data.category === category).length,
-}));
+const categoryOptions = [...new Set(categories.map(categoryKey))].map((key) => {
+  const labels = categories.filter((category) => categoryKey(category) === key);
+  return {
+    key,
+    label: labels.join(' / '),
+    count: posts.filter((post) => post.data.category && labels.includes(post.data.category)).length,
+  };
+});
 ---
 
 <BaseLayout title="笔记" description="开发记录、完整教程、项目复盘和技术思考。">
@@ -43,7 +45,7 @@ const categoryOptions = categories.map((category) => ({
         <div class="article-list" aria-live="polite">
           {posts.map((post) => (
             <div data-post-category={post.data.category ? categoryKey(post.data.category) : ''}>
-              <ArticleRow href={`/notes/${post.data.slug}/`} title={post.data.title} description={post.data.description} category={post.data.category} meta={formatDate(post.data.updated)} headingLevel="h2" />
+              <ArticleRow post={post} headingLevel="h2" />
             </div>
           ))}
         </div>

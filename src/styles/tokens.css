@@ -30,10 +30,8 @@
   --color-blue: #337a8f;
   --color-blue-soft: #dceff1;
   --color-purple: #7654a6;
-  --color-purple-soft: #ebe3f5;
   --color-green: #557a5a;
   --color-green-soft: #e0ebdf;
-  --color-pink: #d66f87;
   --color-focus: #337a8f;
 
   --space-1: 0.25rem;
@@ -60,13 +58,8 @@
   --page-width: 88rem;
   --article-width: 46rem;
   --header-height: 5.5rem;
-  --duration-instant: 120ms;
-  --duration-fast: 180ms;
-  --duration-smooth: 320ms;
-  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
-  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
-  --transition-fast: var(--duration-fast) var(--ease-out);
-  --transition-smooth: var(--duration-smooth) var(--ease-soft);
+  --transition-fast: 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  --transition-smooth: 320ms cubic-bezier(0.22, 1, 0.36, 1);
   --transition-medium: var(--transition-smooth);
 }
 
@@ -86,10 +79,8 @@
   --color-blue: #6bb1c1;
   --color-blue-soft: #233f46;
   --color-purple: #b69ad8;
-  --color-purple-soft: #3d304c;
   --color-green: #8fb596;
   --color-green-soft: #2d4432;
-  --color-pink: #ef9caf;
   --color-project: #ff8368;
   --color-status: #f6c950;
   --color-knowledge: #8fb596;

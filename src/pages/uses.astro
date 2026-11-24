@@ -1,169 +1,138 @@
 ---
+import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import UsesSectionNav from '../components/UsesSectionNav.astro';
-import UsesWorkflowMap from '../components/UsesWorkflowMap.astro';
-import {
-  constraints,
-  hardwareGroups,
-  overview,
-  principles,
-  projects,
-  readings,
-  sections,
-  softwareGroups,
-  workflows,
-} from '../data/uses';
-import '../styles/uses.css';
+import { isPublic } from '../lib/content';
+
+const sections = [
+  ['overview', '概览'], ['hardware', '硬件'], ['software', '软件'], ['workflows', '工作流'],
+  ['principles', '排障原则'], ['constraints', '验证范围'], ['projects', '项目与笔记'],
+];
+
+const workflows = [
+  {
+    title: '视频链路',
+    slug: 'heterogeneous-video-pipeline',
+    steps: [
+      ['HDMI 输入', '用已知分辨率和刷新率的 PC 信号检查直通显示，再换摄像头对照。'],
+      ['FPGA 处理', '在 Vivado 中核对 TMDS 引脚、I/O 标准、像素时钟和 MMCM 锁定状态。'],
+      ['UDP 转发', '连接 PC、PYNQ-Z2 和昇腾 310B，保存三端通信记录。'],
+      ['YOLO 推理', '对照 pipeline、backend 和 player 的日志，定位异常帧停在哪一段。'],
+    ],
+  },
+  {
+    title: '机器人控制',
+    slug: 'indoor-autonomous-drone',
+    steps: [
+      ['功能包构建', '用 ament_cmake 和 colcon 编译 ROS 2 C++ 节点，核对依赖与启动配置。'],
+      ['节点数据流', '检查控制话题和飞控回报的状态，分别记录命令、应答与实际模式。'],
+      ['飞控与定位', 'MAVROS 和 DDS 每次选用一种。检查 OpenVINS 里程计的坐标系、时间戳与视觉观测是否仍有效。'],
+      ['仿真与联调', '在 Gazebo 与 QGroundControl 查看模式切换和异常恢复，再对照台架记录与飞控日志。'],
+    ],
+  },
+  {
+    title: '内容发布',
+    slug: 'obsidian-astro-publishing',
+    steps: [
+      ['Obsidian 编辑', '在私有知识库维护笔记和附件。'],
+      ['公开白名单', '从 40_Publish 选取标记为公开且状态为 ready 或 published 的稿件。'],
+      ['本地构建', '运行 npm run content:publish，同步正文和引用的图片，再用 Astro 与 Starlight 构建静态站点。'],
+      ['部署', 'GitHub Actions 按 package.json 的版本范围安装依赖，用已提交的内容构建并部署到 GitHub Pages。'],
+    ],
+  },
+];
+
+const projects = await getCollection('projects', isPublic);
+const relatedProjects = workflows.flatMap(({ slug }) => projects.filter(({ data }) => data.slug === slug));
 ---
 
-<BaseLayout
-  title="使用的工具"
-  description="Wanone 在嵌入式、机器人、FPGA、边缘 AI 与内容发布中的真实工具、验证路径和当前边界。"
->
-  <div class="uses-page">
-    <header class="uses-hero" id="overview">
-      <div class="uses-hero__content">
-        <p class="eyebrow">{overview.eyebrow}</p>
-        <h1>{overview.title}</h1>
-        <p class="lede">{overview.intro}</p>
-      </div>
-      <aside class="uses-hero__meta" aria-label="页面范围">
-        <p>{overview.note}</p>
-        <dl>
-          <div><dt>工作流</dt><dd>{workflows.length}</dd></div>
-          <div><dt>公开项目</dt><dd>{projects.length}</dd></div>
-          <div><dt>延伸阅读</dt><dd>{readings.length}</dd></div>
-        </dl>
-      </aside>
+<BaseLayout title="使用的工具" description="嵌入式与视频硬件、机器人软件和静态网站的工具与验证记录。">
+  <div class="workbench stack-lg">
+    <header class="stack" id="overview">
+      <h1>工具与验证工作台</h1>
+      <p class="lede">我用这些设备和软件调试视频链路、机器人控制与内容发布。每条工作流都能在公开项目中找到相应记录。</p>
+      <nav aria-label="本页章节">
+        {sections.map(([id, label]) => <a href={`#${id}`}>{label}</a>)}
+      </nav>
     </header>
 
-    <UsesSectionNav sections={sections} />
-
-    <section class="uses-section" id="hardware" aria-labelledby="uses-hardware-title">
-      <header class="uses-section__heading">
-        <p class="uses-section__index">01 / Hardware</p>
-        <h2 id="uses-hardware-title">硬件按验证角色组织</h2>
-        <p class="uses-section__intro">这里记录设备在公开工程中的作用，不把缺少证据的品牌、型号和配置补成完整清单。</p>
-      </header>
-      <div class="uses-hardware-grid">
-        {hardwareGroups.map((group) => (
-          <article class="uses-hardware-group">
-            <header>
-              <p class="eyebrow">{group.id}</p>
-              <h3>{group.title}</h3>
-              <p>{group.summary}</p>
-            </header>
-            <ul class="uses-device-list">
-              {group.items.map((item) => (
-                <li class="uses-device-card">
-                  <h4>{item.label}</h4>
-                  <p>{item.role}</p>
-                  <p class="uses-device-card__limit"><strong>边界：</strong>{item.limit}</p>
-                </li>
-              ))}
-            </ul>
-          </article>
-        ))}
-      </div>
+    <section id="hardware" aria-labelledby="uses-hardware-title">
+      <h2 id="uses-hardware-title">硬件</h2>
+      <dl>
+        <dt>工作站与嵌入式实验台</dt><dd>工作站负责编译、仿真和日志分析。STM32、飞控及通信外设用于核对收发数据、时序与状态反馈。</dd>
+        <dt>视频与边缘推理设备</dt><dd>PC 或摄像头提供 HDMI 输入，PYNQ-Z2 处理视频，昇腾 310B 运行 YOLO 后端。</dd>
+        <dt>BX72 麦轮小车与 ACG720 六足</dt><dd>小车的 BX72 采集激光雷达、IMU 和四轮编码器数据。六足上的雷达和相机数据经树莓派转给 Jetson。</dd>
+      </dl>
     </section>
 
-    <section class="uses-section" id="software" aria-labelledby="uses-software-title">
-      <header class="uses-section__heading">
-        <p class="uses-section__index">02 / Software</p>
-        <h2 id="uses-software-title">软件跟着系统问题进入工作流</h2>
-        <p class="uses-section__intro">语言、框架和工具只有在减少不确定性、保留证据或降低重复劳动时才有意义。</p>
-      </header>
-      <div class="uses-software-grid">
-        {softwareGroups.map((group) => (
-          <article class="uses-software-card">
-            <p class="eyebrow">{group.id}</p>
-            <h3>{group.title}</h3>
-            <p>{group.summary}</p>
-            <ul>
-              {group.items.map((item) => (
-                <li><strong>{item.label}</strong><span>{item.detail}</span></li>
-              ))}
-            </ul>
-          </article>
-        ))}
-      </div>
+    <section id="software" aria-labelledby="uses-software-title">
+      <h2 id="uses-software-title">软件</h2>
+      <dl>
+        <dt>Linux、C/C++、Python、Git 与 Shell</dt><dd>编写嵌入式模块和端侧程序，复现构建命令，处理视频与日志。</dd>
+        <dt>ROS 2、OpenVINS 与 PX4</dt><dd>组织节点、启动文件和控制接口，以 MAVROS 或 DDS 接入飞控。</dd>
+        <dt>Nav2 与 SLAM Toolbox</dt><dd>小车用 Nav2 在已建图区域跟踪路径，Jetson 用 SLAM Toolbox 建立六足的激光地图。<a href="/projects/fpga-robot-navigation/">小车导航与板测记录</a></dd>
+        <dt>Vivado、Verilog 与 HLS</dt><dd>调试 FPGA 视频接口、处理模块和时钟约束。</dd>
+        <dt>Obsidian、Node.js 与 Astro</dt><dd>编辑源稿，用 TypeScript 实现站点页面，使用 Starlight 生成知识库。</dd>
+      </dl>
     </section>
 
-    <section class="uses-section" id="workflows" aria-labelledby="uses-workflows-title">
-      <header class="uses-section__heading">
-        <p class="uses-section__index">03 / Workflows</p>
-        <h2 id="uses-workflows-title">沿数据流逐段缩短排障路径</h2>
-        <p class="uses-section__intro">指向节点可查看对应步骤；每条链路同时保留已验证结果和不能越过的结论边界。</p>
-      </header>
-      <UsesWorkflowMap workflows={workflows} />
+    <section id="workflows" aria-labelledby="uses-workflows-title">
+      <h2 id="uses-workflows-title">工作流</h2>
+      {workflows.map(({ title, steps }, index) => (
+        <article>
+          <h3 id={`uses-workflow-${index + 1}-title`}>{title}</h3>
+          <ol>
+            {steps.map(([label, detail], step) => (
+              <li id={`uses-workflow-${index + 1}-node-${step + 1}`}>
+                <strong>{label}</strong> {detail}
+              </li>
+            ))}
+          </ol>
+        </article>
+      ))}
     </section>
 
-    <section class="uses-section" id="principles" aria-labelledby="uses-principles-title">
-      <header class="uses-section__heading">
-        <p class="uses-section__index">04 / Principles</p>
-        <h2 id="uses-principles-title">工具选择服从四条工作原则</h2>
-        <p class="uses-section__intro">这些原则同时约束工程验证、知识整理与公开发布。</p>
-      </header>
-      <div class="uses-principles">
-        {principles.map((principle, index) => (
-          <article class="uses-principle">
-            <p class="uses-card-index">{String(index + 1).padStart(2, '0')}</p>
-            <h3>{principle.title}</h3>
-            <p>{principle.detail}</p>
-          </article>
-        ))}
-      </div>
+    <section id="principles" aria-labelledby="uses-principles-title">
+      <h2 id="uses-principles-title">排障原则</h2>
+      <p>先固定输入和环境，沿数据流逐段查看日志。复现后只改变一个条件，再记录结果、适用范围和仍需验证的问题。</p>
     </section>
 
-    <section class="uses-section" id="constraints" aria-labelledby="uses-constraints-title">
-      <header class="uses-section__heading">
-        <p class="uses-section__index">05 / Constraints</p>
-        <h2 id="uses-constraints-title">公开记录不替代尚未完成的验证</h2>
-        <p class="uses-section__intro">页面主动保留空白，避免把设备清单、性能指标或阶段性结果写成已经完成的成果。</p>
-      </header>
-      <div class="uses-constraints">
-        {constraints.map((constraint, index) => (
-          <article class="uses-constraint">
-            <p class="uses-card-index">{String(index + 1).padStart(2, '0')}</p>
-            <h3>{constraint.title}</h3>
-            <p>{constraint.detail}</p>
-          </article>
-        ))}
-      </div>
+    <section id="constraints" aria-labelledby="uses-constraints-title">
+      <h2 id="uses-constraints-title">验证范围</h2>
+      <p>PYNQ-Z2 在 PC 输入下实现了 1920×1080、60 Hz 的 HDMI 直通。摄像头输入偶有不稳，包含 UDP、推理与播放的整条链路仍缺少统一条件下的帧率、延迟和丢包率测量。</p>
+      <p>无人机旧版在 MAVROS 仿真中完成了 1 米起飞、10 秒悬停与降落。该次仿真使用仿真定位。当前版本默认只读，视觉回传关闭，飞控持续融合视觉观测和实机自主任务仍待验证。</p>
+      <p>2026 年 11 月 17 日，小车和人工操控的六足用同一块 AprilTag 标定板对齐地图，两台实机生成了 296 × 274 格的共同地图。两机移动时的长期对齐误差仍待测量。<a href="/projects/hexapod-robot-cooperative-mapping/">双机建图现场记录</a></p>
     </section>
 
-    <section class="uses-section" id="projects" aria-labelledby="uses-projects-title">
-      <header class="uses-section__heading">
-        <p class="uses-section__index">06 / Evidence</p>
-        <h2 id="uses-projects-title">从项目记录继续核对证据</h2>
-        <p class="uses-section__intro">工具和流程最终都回到公开项目、文章与知识路径，而不是停留在孤立名称上。</p>
-      </header>
-      <div class="uses-project-grid">
-        {projects.map((project) => (
-          <article class="uses-project-card">
-            <div>
-              <p class="eyebrow">{project.role}</p>
-              <h3><a href={project.href}>{project.title}</a></h3>
-              <p>{project.result}</p>
-            </div>
-            <p><strong>当前边界</strong>{project.limit}</p>
-          </article>
-        ))}
-      </div>
-      <div class="uses-readings">
-        <header>
-          <p class="eyebrow">Related notes</p>
-          <h3>延伸阅读</h3>
-        </header>
-        <ol class="uses-reading-list">
-          {readings.map((reading) => (
-            <li>
-              <a href={reading.href}>{reading.title}</a>
-              <p>{reading.topic}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
+    <section id="projects" aria-labelledby="uses-projects-title">
+      <h2 id="uses-projects-title">项目与笔记</h2>
+      {relatedProjects.length > 0 && (
+        <ul>
+          {relatedProjects.map(({ data }) => <li><a href={`/projects/${data.slug}/`}>{data.title}</a></li>)}
+        </ul>
+      )}
+      <nav aria-label="延伸阅读">
+        <a href="/knowledge/robotics/ros2-and-simulation/">ROS 2 与仿真验证</a>
+        <a href="/knowledge/fpga-edge-ai/fpga-development/">FPGA 开发与板级验证</a>
+        <a href="/knowledge/linux-tools/linux-and-networking/">Linux 与网络工程</a>
+        <a href="/knowledge/embedded/communication-path/">嵌入式通信路径</a>
+      </nav>
     </section>
   </div>
 </BaseLayout>
+
+<style>
+  .workbench { max-width: var(--article-width); margin-inline: auto; overflow-wrap: anywhere; }
+  header { padding-block: var(--space-6); }
+  section { display: grid; gap: var(--space-4); border-top: 1px solid var(--color-border); padding-top: var(--space-5); }
+  section, header, li { scroll-margin-top: var(--header-height); }
+  h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); }
+  h3, dt, strong { color: var(--color-text); }
+  nav { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; }
+  a { color: var(--color-accent-strong); }
+  dl, ol, ul, dd { margin: 0; }
+  dt { font-weight: 700; }
+  dd + dt, li + li { margin-top: var(--space-2); }
+  ol, ul { padding-inline-start: var(--space-5); }
+  p, dd, li { color: var(--color-text-muted); }
+  article { display: grid; gap: var(--space-3); }
+</style>

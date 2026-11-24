@@ -38,6 +38,7 @@ SSH 远程开发适合在本地编辑器中直接使用远端终端、文件系�
 ```bash
 export http_proxy="http://<proxy-host>:<proxy-port>"
 export https_proxy="http://<proxy-host>:<proxy-port>"
+
 export HTTP_PROXY="$http_proxy"
 export HTTPS_PROXY="$https_proxy"
 ```
@@ -52,20 +53,20 @@ unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY
 
 ## Git 代理优先限定到仓库
 
-只有确实需要代理访问远程仓库时，优先在当前仓库设置：
+只有确实需要代理访问远程仓库时才配置。以下示例设置当前用户的全局代理；只想影响当前仓库时，去掉命令中的 `--global`：
 
 ```bash
-git config http.proxy "http://<proxy-host>:<proxy-port>"
-git config https.proxy "http://<proxy-host>:<proxy-port>"
+git config --global http.proxy "http://<proxy-host>:<proxy-port>"
+git config --global https.proxy "http://<proxy-host>:<proxy-port>"
 ```
 
-可以分别查看和取消配置：
+查看和取消上述全局配置：
 
 ```bash
-git config --get http.proxy
-git config --get https.proxy
-git config --unset http.proxy
-git config --unset https.proxy
+git config --global --get http.proxy
+git config --global --get https.proxy
+git config --global --unset http.proxy
+git config --global --unset https.proxy
 ```
 
 `--global` 会影响当前用户下的全部仓库。使用前应确认影响范围，并在不再需要时移除；不要在公开仓库中提交包含凭据的代理 URL。

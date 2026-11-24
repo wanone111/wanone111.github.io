@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import { byNewest, formatDate, isPublic } from '../../lib/content';
 
-const posts = (await getCollection('blog')).filter(isPublic).sort(byNewest);
+const posts = (await getCollection('blog', isPublic)).sort(byNewest);
 ---
 
 <BaseLayout title="文章归档" description="按更新时间排列的全部笔记。">
@@ -14,7 +14,7 @@ const posts = (await getCollection('blog')).filter(isPublic).sort(byNewest);
       <ol class="archive-list">
         {posts.map((post) => <li><time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time><a href={`/notes/${post.data.slug}/`}>{post.data.title}</a></li>)}
       </ol>
-    ) : <div class="empty-state">暂无已迁移文章。</div>}
+    ) : <div class="empty-state">暂无公开笔记。</div>}
   </div>
 </BaseLayout>
 
