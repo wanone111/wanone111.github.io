@@ -1,24 +1,26 @@
 <dialog class="command-palette" data-command-palette aria-labelledby="command-palette-title">
   <div class="command-palette__topbar">
     <div>
-      <p class="eyebrow">SEARCH / QUICK JUMP</p>
+      <p class="eyebrow">SEARCH · QUICK JUMP</p>
       <h2 id="command-palette-title">搜索工程档案</h2>
     </div>
-    <form method="dialog"><button type="submit" aria-label="关闭搜索面板">Esc</button></form>
+    <form method="dialog"><button type="submit" class="command-palette__close" aria-label="关闭搜索面板">✕</button></form>
   </div>
   <label class="command-palette__search">
-    <span>搜索文章、项目和知识库</span>
-    <input type="search" placeholder="例如：ROS 2、STM32、PYNQ……" autocomplete="off" data-command-search aria-controls="command-search-results" />
+    <span class="sr-only">搜索文章、项目和知识库</span>
+    <input type="search" placeholder="搜索项目、笔记或知识库（例如：ROS 2、STM32、PYNQ）…" autocomplete="off" data-command-search aria-controls="command-search-results" />
   </label>
 
   <section class="command-palette__quick" data-command-quick>
     <p class="command-palette__section-label">快速导航</p>
     <nav aria-label="快速导航入口">
-      <a href="/projects/" data-command-item data-command="项目 project software"><strong>项目</strong><span>查看公开工程档案</span></a>
-      <a href="/notes/" data-command-item data-command="笔记 博客 notes blog writing"><strong>笔记</strong><span>阅读工程笔记与实验文章</span></a>
-      <a href="/knowledge/" data-command-item data-command="知识 knowledge garden"><strong>知识库</strong><span>沿公开知识路径继续探索</span></a>
-      <a href="/uses/" data-command-item data-command="工具 uses setup device"><strong>/uses</strong><span>打开工作区与工具说明</span></a>
-      <a href="/about/" data-command-item data-command="关于 about wanone"><strong>关于</strong><span>了解这个站点与作者</span></a>
+      <a href="/" data-command-item data-command="首页 画廊 home gallery"><strong>首页画廊</strong><span>返回瀑布流作品与笔记总览</span></a>
+      <a href="/projects/" data-command-item data-command="项目 project software"><strong>项目档案</strong><span>查看全部公开工程项目</span></a>
+      <a href="/notes/" data-command-item data-command="笔记 博客 notes blog writing"><strong>工程笔记</strong><span>阅读开发记录与实验文章</span></a>
+      <a href="/knowledge/" data-command-item data-command="知识 knowledge garden starlight"><strong>Starlight 知识库</strong><span>沿公开技术路径继续探索</span></a>
+      <a href="/uses/" data-command-item data-command="工具 uses setup device"><strong>工作区 /uses</strong><span>硬件设备、软件栈与排障工作流</span></a>
+      <a href="/resume/" data-command-item data-command="简历 resume cv"><strong>个人简历 / CV</strong><span>教育背景、专业技能与项目经历</span></a>
+      <a href="/about/" data-command-item data-command="关于 about wanone"><strong>关于我</strong><span>了解作者与工程方法</span></a>
     </nav>
   </section>
 
@@ -34,6 +36,8 @@
 </dialog>
 
 <script>
+  import { playSound } from '../lib/sound';
+
   interface PagefindData { url: string; excerpt?: string; meta?: Record<string, string>; }
   interface PagefindResult { data: () => Promise<PagefindData>; }
   interface PagefindModule { init?: () => Promise<void>; search: (query: string) => Promise<{ results: PagefindResult[] }>; }
@@ -57,13 +61,16 @@
       .filter((item) => !item.hidden && item.offsetParent !== null);
     const open = (trigger?: HTMLElement | null) => {
       restoreTarget = trigger ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
-      if (!dialog.open) dialog.showModal();
+      if (!dialog.open) {
+        dialog.showModal();
+        playSound('pop');
+      }
       search?.focus();
     };
     const inferType = (url: string, declared?: string) => {
       if (declared && declared !== '页面') return declared;
       if (url.startsWith('/projects/')) return '项目';
-      if (url.startsWith('/notes/')) return '文章';
+      if (url.startsWith('/notes/')) return '笔记';
       if (url.startsWith('/knowledge/')) return '知识库';
       return '页面';
     };
@@ -154,6 +161,7 @@
     dialog.addEventListener('close', () => {
       if (search) search.value = '';
       filter();
+      playSound('close');
       restoreTarget?.focus();
       restoreTarget = null;
     });
@@ -164,26 +172,180 @@
 </script>
 
 <style>
-  .command-palette { width: min(48rem, calc(100% - 2rem)); max-height: min(46rem, calc(100dvh - 2rem)); overflow: auto; border: 1px solid var(--color-border-strong); border-radius: var(--radius-xl); padding: var(--space-5); background: var(--color-surface); color: var(--color-text); box-shadow: var(--shadow-float); }
-  .command-palette::backdrop { background: rgb(48 37 31 / .48); backdrop-filter: blur(5px); }
-  .command-palette__topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
-  .command-palette h2 { margin-top: .2rem; font-size: clamp(1.55rem, 4vw, 2.5rem); }
-  .command-palette form button { min-width: 3rem; min-height: 2.5rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); background: var(--color-bg); color: var(--color-text-muted); font: 700 .72rem/1 var(--font-mono); cursor: pointer; }
-  .command-palette__search { display: grid; gap: var(--space-2); margin-top: var(--space-5); color: var(--color-text-muted); font: 700 .68rem/1 var(--font-mono); text-transform: uppercase; }
-  .command-palette__search input { width: 100%; border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); padding: .9rem 1rem; background: var(--color-bg); color: var(--color-text); font: 650 1rem/1.3 var(--font-sans); }
-  .command-palette__section-label { color: var(--color-accent-strong); font: 750 .65rem/1.3 var(--font-mono); letter-spacing: .08em; }
-  .command-palette__quick, .command-palette__results { margin-top: var(--space-4); }
-  .command-palette__quick[data-querying] nav a[hidden] { display: none; }
-  .command-palette nav, .command-palette__result-list { display: grid; gap: var(--space-2); margin-top: var(--space-2); }
-  .command-palette nav a, .command-palette__result-list a { display: grid; grid-template-columns: minmax(6rem, .3fr) minmax(0, 1fr); gap: .2rem var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: .8rem 1rem; color: var(--color-text); text-decoration: none; }
-  .command-palette nav a:hover, .command-palette nav a:focus-visible, .command-palette__result-list a:hover, .command-palette__result-list a:focus-visible { border-color: var(--color-blog); background: color-mix(in srgb, var(--color-blog) 9%, var(--color-surface)); }
-  .command-palette nav span, .command-palette__result-list small { color: var(--color-text-muted); font-size: .84rem; }
-  .command-palette__result-list small { grid-column: 2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .command-palette__results-heading { display: flex; justify-content: space-between; gap: var(--space-4); }
-  .command-palette__results-heading [role='status'] { color: var(--color-text-muted); font: 650 .66rem/1.3 var(--font-mono); }
-  .command-result__type { color: var(--color-blog-ink); font: 750 .66rem/1.3 var(--font-mono); }
-  .command-palette__empty { margin-block: var(--space-6); color: var(--color-text-muted); text-align: center; }
-  .command-palette__hint { margin: var(--space-4) 0 0; color: var(--color-text-muted); font: 650 .7rem/1.4 var(--font-mono); text-align: center; }
-  .command-palette kbd { border: 1px solid var(--color-border); border-radius: .3rem; padding: .12rem .3rem; background: var(--color-bg); }
-  @media (max-width: 32rem) { .command-palette nav a, .command-palette__result-list a { grid-template-columns: 1fr; } .command-palette__result-list small { grid-column: 1; } }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+  .command-palette {
+    width: min(38rem, calc(100% - 24px));
+    max-height: min(42rem, calc(100dvh - 24px));
+    overflow: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    background: var(--color-bg);
+    color: var(--color-text);
+    box-shadow: var(--shadow-float);
+  }
+  .command-palette::backdrop {
+    background: rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(4px);
+  }
+  .command-palette__topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .command-palette h2 {
+    margin-top: 2px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .command-palette__close {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background: transparent;
+    color: var(--color-text);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background var(--transition-fast);
+  }
+  .command-palette__close:hover {
+    background: var(--color-surface);
+  }
+  .command-palette__search {
+    display: block;
+    margin-top: 14px;
+  }
+  .command-palette__search input {
+    width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 11px 14px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 14px;
+    transition: border-color var(--transition-fast), background var(--transition-fast);
+  }
+  .command-palette__search input:focus {
+    outline: none;
+    border-color: var(--color-text);
+    background: var(--color-bg);
+  }
+  .command-palette__section-label {
+    color: var(--color-text-subtle);
+    font: 600 11px/1.3 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .command-palette__quick,
+  .command-palette__results {
+    margin-top: 16px;
+  }
+  .command-palette__quick[data-querying] nav a[hidden] {
+    display: none;
+  }
+  .command-palette nav,
+  .command-palette__result-list {
+    display: grid;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .command-palette nav a,
+  .command-palette__result-list a {
+    display: grid;
+    grid-template-columns: minmax(7.5rem, 0.36fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 2px 12px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 9px 12px;
+    color: var(--color-text);
+    font-size: 13.5px;
+    text-decoration: none;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+  }
+  .command-palette nav a:hover,
+  .command-palette nav a:focus-visible,
+  .command-palette__result-list a:hover,
+  .command-palette__result-list a:focus-visible {
+    border-color: var(--color-border);
+    background: var(--color-surface);
+    outline: none;
+  }
+  .command-palette nav strong,
+  .command-palette__result-list strong {
+    font-weight: 600;
+  }
+  .command-palette nav span,
+  .command-palette__result-list small {
+    color: var(--color-text-muted);
+    font-size: 12.5px;
+  }
+  .command-palette__result-list small {
+    grid-column: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .command-palette__results-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .command-palette__results-heading [role='status'] {
+    color: var(--color-text-muted);
+    font: 500 11px/1.3 var(--font-mono);
+  }
+  :global(.command-result__type) {
+    display: inline-flex;
+    width: fit-content;
+    padding: 2px 8px;
+    border-radius: var(--radius-pill);
+    background: var(--color-tag-bg);
+    color: var(--color-tag-text);
+    font: 600 11px/1.3 var(--font-mono);
+  }
+  .command-palette__empty {
+    margin-block: 24px;
+    color: var(--color-text-muted);
+    font-size: 13.5px;
+    text-align: center;
+  }
+  .command-palette__hint {
+    margin: 16px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-subtle);
+    font: 500 11px/1.4 var(--font-mono);
+    text-align: center;
+  }
+  .command-palette kbd {
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+    padding: 1px 5px;
+    margin-inline: 2px;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+  }
+  @media (max-width: 32rem) {
+    .command-palette nav a,
+    .command-palette__result-list a {
+      grid-template-columns: 1fr;
+    }
+    .command-palette__result-list small {
+      grid-column: 1;
+    }
+  }
 </style>

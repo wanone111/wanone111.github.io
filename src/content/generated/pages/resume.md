@@ -27,14 +27,14 @@ featured: false
 
 ## 项目经历
 
-### 行阵高云 FPGA 小车与六足协同建图
+### 高云 FPGA 小车与六足协同建图
 
 2026 年 10 月起 · FPGA 机器人开发与软硬件联调
 
 - 参与 BX72 小车的板端控制与 Jetson 联调。FPGA 采集雷达、IMU 和轮编码器，执行轮速闭环和近障检查。Jetson 用 ROS 2 做激光建图、路线规划和航点调度。一次地面测试中，小车绕过静态障碍，完成了多个航点。
 - 调试 BX72 小车和 ACG720 六足的地图对齐。修正六足相机倒装造成的方向误差后，两台机器在现场用同一块标定板对齐坐标，各自采集的栅格出现在一张共享地图上。当天由操作员移动六足，小车接收共享图。长时间移动时的定位连续性仍需复测。
 
-[小车导航](/projects/fpga-robot-navigation/) · [双机协同建图](/projects/hexapod-robot-cooperative-mapping/)
+[双机协同建图](/projects/hexapod-robot-cooperative-mapping/)
 
 ### 室内无人机自主飞行控制系统
 

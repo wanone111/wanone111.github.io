@@ -24,13 +24,13 @@ const eyebrow = slug.charAt(0).toUpperCase() + slug.slice(1);
 const Content = page && (await render(page)).Content;
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} sectionLabel={title}>
   <div class="stack-lg">
     <PageIntro eyebrow={eyebrow} title={title} description={description} />
     {Content ? (
-      <section class="article-shell prose"><Content /></section>
+      <section class="article-shell prose page-card"><Content /></section>
     ) : slug === 'about' ? (
-      <section class="article-shell stack">
+      <section class="article-shell stack page-card">
         <h2>关于我</h2>
         <p class="lede">我是万志成，主要实践方向包括嵌入式软件、机器人系统、FPGA 视频链路和边缘 AI 部署。</p>
         <h2>工程方法</h2>
@@ -39,3 +39,17 @@ const Content = page && (await render(page)).Content;
     ) : <div class="empty-state">暂无公开{title}。</div>}
   </div>
 </BaseLayout>
+
+<style>
+  .page-card {
+    padding: 28px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+  }
+  @media (max-width: 36rem) {
+    .page-card {
+      padding: 20px;
+    }
+  }
+</style>

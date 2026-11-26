@@ -1,180 +1,1343 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ArticleRow from '../components/ArticleRow.astro';
-import ProjectList from '../components/ProjectList.astro';
+import LidarSandbox from '../components/LidarSandbox.astro';
 import { knowledgePaths } from '../data/knowledge';
-import SignalField from '../components/SignalField.astro';
 import { byFeaturedOrder, byNewest, formatDate, isPublic } from '../lib/content';
 
+const projects = (await getCollection('projects', isPublic)).sort(byFeaturedOrder);
 const posts = (await getCollection('blog', isPublic)).sort(byNewest);
-const featuredPost = posts.find((entry) => entry.data.featured);
-const recentPosts = posts.filter((entry) => entry.id !== featuredPost?.id).slice(0, featuredPost ? 3 : 4);
-const projects = (await getCollection('projects', isPublic)).sort(byNewest);
-const featuredProjects = projects
-  .filter((entry) => entry.data.featured)
-  .sort(byFeaturedOrder);
-const selectedProjects = (featuredProjects.length > 0 ? featuredProjects : projects).slice(0, 3);
-const otherProject = projects.find((project) => !selectedProjects.includes(project));
-const introduction = '我在轮式小车上调试航点导航，做过六足机器人与小车的地图对齐实验，也记录无人机视觉定位和 FPGA 视频处理的调试过程。';
+
+const introduction = '集美大学微电子科学与技术本科生。做嵌入式软件、ROS 2 机器人、FPGA 视频链路和边缘 AI 部署。';
 const siteUrl = Astro.site ?? new URL('https://wanone111.github.io');
-const homeJsonLd = [
+const homeJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: '万志成',
+  alternateName: 'Wanone',
+  url: siteUrl.href,
+  sameAs: ['https://github.com/wanone111'],
+  knowsAbout: ['嵌入式系统', '机器人系统', 'ROS 2', 'PX4', 'FPGA', 'PYNQ', '边缘 AI'],
+};
+
+const hardwareSlides = [
   {
-    '@context': 'https://schema.org',
-    '@type': 'Person',
-    name: '万志成',
-    alternateName: 'Wanone',
-    url: siteUrl.href,
-    sameAs: ['https://github.com/wanone111'],
-    knowsAbout: ['嵌入式系统', '机器人系统', 'ROS 2', 'PX4', 'FPGA', 'PYNQ', '边缘 AI'],
+    id: 'trio',
+    label: '三机合照',
+    src: '/images/showcase/cluster-trio.jpg',
+    caption: '左：Tang Primer 20K 六足 · 中：BX72 麦轮小车 · 右：Tang Primer 25K 四足',
   },
   {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: 'Wanone',
-    url: siteUrl.href,
-    inLanguage: 'zh-CN',
-    description: introduction,
+    id: 'hexapod',
+    label: '六足 18 路',
+    src: '/images/showcase/hexapod-front.jpg',
+    caption: '六足机器人正面：RealSense 深度相机 + Orange Pi + Tang Primer 20K',
+  },
+  {
+    id: 'wheeled',
+    label: 'BX72 轮式',
+    src: '/images/showcase/wheeled-front.jpg',
+    caption: 'BX72 全向麦轮平台：OV5647 相机支架、N10 雷达与四轮编码器闭环',
+  },
+  {
+    id: 'quadruped',
+    label: '四足 8 路',
+    src: '/images/showcase/quadruped.jpg',
+    caption: 'Tang Primer 25K 四足样机：3D 打印结构件 + 8 路舵机 PWM + LD19 雷达接口',
   },
 ];
+
+const domainColorClass = (cat = '') => {
+  const c = cat.toLowerCase();
+  if (c.includes('fpga') || c.includes('hls') || c.includes('verilog')) return 'd-fpga';
+  if (c.includes('robot') || c.includes('机器人') || c.includes('算法')) return 'd-robot';
+  if (c.includes('embed') || c.includes('嵌入式')) return 'd-embed';
+  return 'd-tool';
+};
 ---
 
-<BaseLayout title="Wanone" description={introduction} contentType="首页" jsonLd={homeJsonLd}>
-  <div class="home-flow">
-    <section class="home-intro editorial-grid" aria-labelledby="intro-title">
-      <div class="home-hero__copy">
-        <p class="section-marker"><span>01</span> / INTRO</p>
-        <h1 id="intro-title">你好，我是<strong>万志成</strong>。我构建嵌入式、机器人与边缘 AI 系统。</h1>
-        <p class="home-hero__summary">{introduction}</p>
-        <div class="home-hero__actions" aria-label="主要入口">
-          <a class="button" href="/projects/">查看项目</a>
-          <a class="button secondary" href="/resume/">阅读简历</a>
-        </div>
-        <div class="home-hero__secondary" aria-label="更多个人信息">
-          <a href="https://github.com/wanone111" rel="me">联系我</a>
-          <a href="/notes/">工程笔记</a>
-          <a href="/about/">关于</a>
-        </div>
+<BaseLayout
+  title="Wanone · 万志成的工程实验台"
+  description={introduction}
+  canonicalPath="/"
+  contentType="首页"
+  image="/images/showcase/cluster-trio.jpg"
+  jsonLd={homeJsonLd}
+  isHome
+>
+  <section class="hero">
+    <div class="hero__copy">
+      <span class="status-pill">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        BX72 轮式 · 六足 · 无人机
+      </span>
+      <h1>
+        你好，我是万志成。<br />
+        我构建<span class="hero-hl">嵌入式、机器人</span><br />
+        <span class="hero-hl">与边缘 AI</span> 系统。
+      </h1>
+      <p class="hero__lead">{introduction}</p>
+      <div class="hero__actions">
+        <a class="btn" href="/projects/" data-sound="pop">全部项目 →</a>
+        <a class="btn btn--ghost" href="#pid-lab" data-sound="tick">PID 实验</a>
       </div>
-      <SignalField variant="hero" />
-    </section>
+      <div class="hero__stats">
+        <div><strong>{projects.length}</strong><span>项目</span></div>
+        <div><strong>{posts.length}</strong><span>笔记</span></div>
+        <div><strong>{knowledgePaths.length}</strong><span>知识路径</span></div>
+        <div><strong>42.4×</strong><span>时序裕量优化</span></div>
+      </div>
+    </div>
 
-    <section class="home-section systems-section" aria-labelledby="systems-title">
-      <div class="home-section__heading">
-        <div><p class="section-marker"><span>02</span> / SELECTED WORK</p><h2 id="systems-title">代表项目</h2></div>
-        {otherProject && <a class="text-link" href={`/projects/${otherProject.data.slug}/`}>另读 · {otherProject.data.title}</a>}
-      </div>
-      <ProjectList projects={selectedProjects} />
-    </section>
+    <div class="hero__visual">
+      <LidarSandbox />
+    </div>
+  </section>
 
-    <section class="home-section" aria-labelledby="notes-title">
-      <div class="home-section__heading">
-        <div><p class="section-marker"><span>03</span> / FIELD NOTES</p><h2 id="notes-title">工程笔记</h2></div>
-        <a class="text-link" href="/notes/">浏览全部 {posts.length} 篇</a>
+  <div class="section-head">
+    <h2>作品与实验</h2>
+    <a class="text-link" href="/projects/" data-sound="tick">全部项目 →</a>
+  </div>
+
+  <section class="bento">
+    <article class="tile d-robot span-2 row-2 gallery-tile" data-photo-gallery>
+      <div class="tile__top">
+        <span class="tile__label"><span class="dot"></span>FPGA 异构机器人集群</span>
       </div>
-      {posts.length > 0 ? (
-        <div class="notes-layout">
-          {featuredPost && (
-            <a class="featured-note" href={`/notes/${featuredPost.data.slug}/`}>
-              <p class="eyebrow">FEATURED · {featuredPost.data.category}</p>
-              <h3>{featuredPost.data.title}</h3>
-              <p>{featuredPost.data.description}</p>
-              <span>{formatDate(featuredPost.data.updated)} · 阅读精选笔记 →</span>
-            </a>
-          )}
-          <div class="recent-notes">
-            {recentPosts.map((post) => (
-              <ArticleRow post={post} />
-            ))}
+      <div class="photo-frame">
+        {hardwareSlides.map((slide, i) => (
+          <img
+            src={slide.src}
+            alt={slide.caption}
+            class:list={['photo-frame__img', i === 0 && 'is-active']}
+            data-slide={slide.id}
+            loading={i === 0 ? 'eager' : 'lazy'}
+          />
+        ))}
+        <div class="photo-tabs" role="tablist" aria-label="切换样机实物图">
+          {hardwareSlides.map((slide, i) => (
+            <button
+              type="button"
+              class:list={['photo-tab', i === 0 && 'is-active']}
+              data-slide-btn={slide.id}
+              data-caption={slide.caption}
+              data-sound="tick"
+            >
+              {slide.label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div class="tile__body-row">
+        <div>
+          <h3>轮式、六足与四足实机</h3>
+          <p class="photo-caption" data-slide-caption>{hardwareSlides[0].caption}</p>
+        </div>
+        <a class="circle-arrow" href="/projects/hexapod-robot-cooperative-mapping/" aria-label="查看项目详情" data-sound="pop">↗</a>
+      </div>
+    </article>
+
+    <article class="tile d-fpga metric-tile">
+      <div class="tile__top">
+        <span class="tile__label"><span class="dot"></span>BX72 · PnR 时序优化</span>
+      </div>
+      <div class="metric-tile__val">
+        <strong>42.4×</strong>
+        <span>setup 裕量提升</span>
+      </div>
+      <p>Logic -4.65%（-2,296），Register -2.61%。</p>
+    </article>
+
+    <article class="tile d-embed metric-tile">
+      <div class="tile__top">
+        <span class="tile__label"><span class="dot"></span>PYNQ-Z2 · HDMI 直通</span>
+      </div>
+      <div class="metric-tile__val">
+        <strong>1080p<small>@60Hz</small></strong>
+        <span>PC 信号稳定直通</span>
+      </div>
+      <p>OV5647 RAW10 经 Bayer 处理与 DDR3 双缓冲输出。</p>
+    </article>
+
+    <article class="tile d-robot span-2 hexapod-tile" data-hexapod-toy>
+      <div class="tile__top">
+        <span class="tile__label"><span class="dot"></span>六足 18 路 PWM 步态</span>
+      </div>
+      <div class="hexapod-wrap">
+        <div class="hexapod-ctrl">
+          <h3>六足三角步态遥控</h3>
+          <p>Tang Primer 20K + PCA9685 预设动作。</p>
+          <div class="gait-btns">
+            <button type="button" class="gait-btn is-active" data-gait="forward" data-sound="tick">前进</button>
+            <button type="button" class="gait-btn" data-gait="backward" data-sound="tick">后退</button>
+            <button type="button" class="gait-btn" data-gait="left" data-sound="tick">左转</button>
+            <button type="button" class="gait-btn" data-gait="right" data-sound="tick">右转</button>
+            <button type="button" class="gait-btn" data-gait="strafe" data-sound="tick">平移</button>
+            <button type="button" class="gait-btn gait-btn--stop" data-gait="stop" data-sound="thud">急停</button>
+          </div>
+          <p class="gait-status mono" data-gait-status>CMD: FORWARD · 18 CH PWM</p>
+        </div>
+        <div class="hexapod-stage">
+          <canvas data-hexapod-canvas aria-label="六足机器人三角步态俯视动画"></canvas>
+        </div>
+      </div>
+    </article>
+
+    <article class="tile d-fpga span-2 row-2 compare-tile" data-map-compare>
+      <div class="tile__top">
+        <span class="tile__label"><span class="dot"></span>全局 SLAM / FPGA 局部栅格</span>
+      </div>
+      <h3>两级实时建图对比</h3>
+      <div class="compare-stage" data-compare-stage>
+        <img src="/images/showcase/slam-global.jpg" alt="Jetson 全局 SLAM 地图" class="compare-img compare-img--base" loading="lazy" />
+        <div class="compare-overlay" data-compare-overlay style="clip-path: inset(0 50% 0 0);">
+          <img src="/images/showcase/slam-local.jpg" alt="FPGA 64×64 局部滚动栅格" class="compare-img" loading="lazy" />
+        </div>
+        <div class="compare-handle" data-compare-handle style="left: 50%;" aria-hidden="true">
+          <span>⇄</span>
+        </div>
+        <span class="compare-badge compare-badge--left mono">FPGA 64×64</span>
+        <span class="compare-badge compare-badge--right mono">Jetson SLAM</span>
+        <input
+          type="range"
+          class="compare-range"
+          min="5"
+          max="95"
+          value="50"
+          aria-label="拖动对比 FPGA 局部栅格与 Jetson 全局地图"
+          data-compare-input
+        />
+      </div>
+      <div class="tile__foot-bar">
+        <span class="mono">64×64 格 · 50 mm/格</span>
+        <a class="text-link" href="/projects/hexapod-robot-cooperative-mapping/" data-sound="pop">项目详情 ↗</a>
+      </div>
+    </article>
+
+    <article class="tile d-embed span-2 drone-tile" data-drone-toggle>
+      <div class="tile__top">
+        <span class="tile__label"><span class="dot"></span>室内无人机</span>
+        <div class="mini-switch">
+          <button type="button" class="mini-pill is-active" data-drone-src="/images/showcase/drone-front.jpg" data-sound="tick">正面</button>
+          <button type="button" class="mini-pill" data-drone-src="/images/showcase/drone-top.jpg" data-sound="tick">机载硬件</button>
+        </div>
+      </div>
+      <div class="drone-grid">
+        <div class="drone-photo">
+          <img src="/images/showcase/drone-front.jpg" alt="室内无人机实物" data-drone-img loading="lazy" />
+        </div>
+        <div class="drone-info">
+          <h3>室内无人机自主飞行控制</h3>
+          <p>前置深度相机 + 机载计算 + PX4 / MAVROS，仿真完成 1 m 起飞与 10 s 悬停。</p>
+          <div class="tile__foot-bar">
+            <span class="tag">PX4 / ROS 2</span>
+            <a class="circle-arrow" href="/projects/indoor-autonomous-drone/" aria-label="查看无人机项目" data-sound="pop">↗</a>
           </div>
         </div>
-      ) : <div class="empty-state">暂无公开文章。</div>}
-    </section>
-
-    <section class="home-section" aria-labelledby="knowledge-title">
-      <div class="home-section__heading">
-        <div><p class="section-marker"><span>04</span> / KNOWLEDGE</p><h2 id="knowledge-title">知识路径</h2></div>
       </div>
-      <div class="knowledge-list">
-        {knowledgePaths.map((path, index) => (
-          <a class="knowledge-path" href={path.href}>
-            <span>{String(index + 1).padStart(2, '0')}</span>
-            <div><h3>{path.title}</h3><p>{path.description}</p></div>
-            <b aria-hidden="true">→</b>
+    </article>
+
+    <article class="tile d-fpga span-2 pipe-tile">
+      <div class="tile__top">
+        <span class="tile__label"><span class="dot"></span>异构硬件视频链路</span>
+        <a class="text-link" href="/projects/heterogeneous-video-pipeline/" data-sound="pop">详情 ↗</a>
+      </div>
+      <div class="pipe">
+        <div class="pipe-node"><strong>HDMI</strong><small>输入</small></div>
+        <div class="pipe-link"></div>
+        <div class="pipe-node"><strong>PYNQ-Z2</strong><small>TMDS</small></div>
+        <div class="pipe-link"></div>
+        <div class="pipe-node"><strong>UDP</strong><small>转发</small></div>
+        <div class="pipe-link"></div>
+        <div class="pipe-node"><strong>310B</strong><small>YOLO</small></div>
+        <div class="pipe-link"></div>
+        <div class="pipe-node"><strong>Player</strong><small>输出</small></div>
+      </div>
+    </article>
+
+    <article class="tile d-robot span-2 row-2 pid-tile" id="pid-lab" data-pid-lab>
+      <div class="tile__top">
+        <span class="tile__label"><span class="dot"></span>PID 阶跃响应</span>
+      </div>
+      <div class="pid-layout">
+        <div class="pid-controls">
+          <label><span>Kp <b data-kp-val>2.0</b></span><input type="range" min="0" max="12" step="0.1" value="2" data-kp /></label>
+          <label><span>Ki <b data-ki-val>0.50</b></span><input type="range" min="0" max="6" step="0.05" value="0.5" data-ki /></label>
+          <label><span>Kd <b data-kd-val>0.30</b></span><input type="range" min="0" max="4" step="0.05" value="0.3" data-kd /></label>
+          <div class="pid-presets">
+            <button type="button" data-preset="2,0,0" data-sound="tick">只有 P</button>
+            <button type="button" data-preset="8,0.4,0.1" data-sound="tick">振荡</button>
+            <button type="button" data-preset="4,1.6,1.4" data-sound="tick">较好</button>
+          </div>
+          <div class="pid-readout">
+            <div><small>超调</small><strong data-pid-os>–</strong></div>
+            <div><small>调节时间</small><strong data-pid-ts>–</strong></div>
+          </div>
+        </div>
+        <div class="pid-canvas-wrap">
+          <canvas data-pid-canvas aria-label="PID 阶跃响应曲线"></canvas>
+        </div>
+      </div>
+      <div class="tile__foot-bar">
+        <span class="mono">±2% 稳态带</span>
+        <a class="text-link" href="/notes/algorithms/pid-control-basics/" data-sound="pop">PID 笔记 →</a>
+      </div>
+    </article>
+
+    <article class="tile d-embed board-tile">
+      <div class="tile__top">
+        <span class="tile__label"><span class="dot"></span>Tang Primer 20K</span>
+      </div>
+      <div class="board-photo">
+        <img src="/images/showcase/tang-20k.jpg" alt="Tang Primer 20K 六足控制板" loading="lazy" />
+      </div>
+      <div class="tile__body-row">
+        <h3>硬件工作台 /uses</h3>
+        <a class="circle-arrow" href="/uses/" aria-label="打开工作台" data-sound="pop">↗</a>
+      </div>
+    </article>
+
+    <article class="tile d-tool stack-tile">
+      <div class="tile__top">
+        <span class="tile__label"><span class="dot"></span>技术栈</span>
+        <a class="text-link" href="/knowledge/" data-sound="tick">知识库 ↗</a>
+      </div>
+      <div class="stack-chips">
+        <span class="schip d-robot">ROS 2</span>
+        <span class="schip d-robot">Nav2 / SLAM</span>
+        <span class="schip d-robot">PX4 / MAVROS</span>
+        <span class="schip d-fpga">Verilog RTL</span>
+        <span class="schip d-fpga">Vitis HLS</span>
+        <span class="schip d-fpga">Ascend 310B</span>
+        <span class="schip d-embed">STM32</span>
+        <span class="schip d-embed">Tang Primer</span>
+        <span class="schip d-tool">C++ / Linux</span>
+        <span class="schip d-tool">Astro</span>
+      </div>
+    </article>
+
+    <article class="tile d-tool span-2 notes-tile">
+      <div class="tile__top">
+        <span class="tile__label"><span class="dot"></span>最新笔记</span>
+        <a class="text-link" href="/notes/" data-sound="tick">全部 {posts.length} 篇 →</a>
+      </div>
+      <div class="notes-mini-list">
+        {posts.slice(0, 4).map((post) => (
+          <a class:list={['note-mini-row', domainColorClass(post.data.category)]} href={`/notes/${post.data.slug}/`} data-sound="pop">
+            <span class="note-mini-row__title">
+              <span class="dot"></span>
+              {post.data.title}
+            </span>
+            <time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time>
           </a>
         ))}
       </div>
-    </section>
-
-    <section class="home-section about-section" aria-labelledby="about-title">
-      <div class="home-section__heading">
-        <div><p class="section-marker"><span>05</span> / ABOUT</p><h2 id="about-title">关于我</h2></div>
-      </div>
-      <div class="about-section__body">
-        <p>我重视可复现测试、日志记录和文档沉淀，并通过构建状态、运行日志、通信记录和对照实验逐步定位复杂软硬件系统中的问题。</p>
-        <div class="about-section__links">
-          <a class="text-link" href="/about/">完整介绍</a>
-          <a class="text-link" href="/resume/">个人简历</a>
-          <a class="text-link" href="https://github.com/wanone111" rel="me">GitHub</a>
-        </div>
-      </div>
-    </section>
-  </div>
+    </article>
+  </section>
 </BaseLayout>
 
+<script>
+  import { playSound } from '../lib/sound';
+
+  // 1. Bento 卡片鼠标聚光效果
+  document.querySelectorAll<HTMLElement>('.tile').forEach((tile) => {
+    tile.addEventListener('pointermove', (e) => {
+      const r = tile.getBoundingClientRect();
+      tile.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      tile.style.setProperty('--my', `${e.clientY - r.top}px`);
+    });
+  });
+
+  // 2. 实物图集切换
+  document.querySelectorAll<HTMLElement>('[data-photo-gallery]').forEach((root) => {
+    const imgs = [...root.querySelectorAll<HTMLImageElement>('[data-slide]')];
+    const btns = [...root.querySelectorAll<HTMLButtonElement>('[data-slide-btn]')];
+    const caption = root.querySelector<HTMLElement>('[data-slide-caption]');
+    btns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.slideBtn;
+        btns.forEach((b) => b.classList.toggle('is-active', b === btn));
+        imgs.forEach((img) => img.classList.toggle('is-active', img.dataset.slide === id));
+        if (caption && btn.dataset.caption) caption.textContent = btn.dataset.caption;
+      });
+    });
+  });
+
+  // 3. 无人机正/斜视图切换
+  document.querySelectorAll<HTMLElement>('[data-drone-toggle]').forEach((root) => {
+    const img = root.querySelector<HTMLImageElement>('[data-drone-img]');
+    const btns = [...root.querySelectorAll<HTMLButtonElement>('[data-drone-src]')];
+    btns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (!img || !btn.dataset.droneSrc) return;
+        img.src = btn.dataset.droneSrc;
+        btns.forEach((b) => b.classList.toggle('is-active', b === btn));
+      });
+    });
+  });
+
+  // 4. 全局 SLAM vs FPGA 局部栅格滑块对比
+  document.querySelectorAll<HTMLElement>('[data-map-compare]').forEach((root) => {
+    const input = root.querySelector<HTMLInputElement>('[data-compare-input]');
+    const overlay = root.querySelector<HTMLElement>('[data-compare-overlay]');
+    const handle = root.querySelector<HTMLElement>('[data-compare-handle]');
+    if (!input || !overlay || !handle) return;
+    const sync = () => {
+      const pct = Number(input.value);
+      overlay.style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
+      handle.style.left = `${pct}%`;
+    };
+    input.addEventListener('input', sync);
+    sync();
+  });
+
+  // 5. 六足 18 路舵机三角步态动画
+  document.querySelectorAll<HTMLElement>('[data-hexapod-toy]').forEach((root) => {
+    const canvas = root.querySelector<HTMLCanvasElement>('[data-hexapod-canvas]');
+    const statusEl = root.querySelector<HTMLElement>('[data-gait-status]');
+    const btns = [...root.querySelectorAll<HTMLButtonElement>('[data-gait]')];
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let mode = 'forward';
+    let phase = 0;
+    const labels: Record<string, string> = {
+      forward: 'CMD: FORWARD · 18 CH PWM ACTIVE',
+      backward: 'CMD: BACKWARD · 18 CH PWM ACTIVE',
+      left: 'CMD: TURN_LEFT · 18 CH PWM ACTIVE',
+      right: 'CMD: TURN_RIGHT · 18 CH PWM ACTIVE',
+      strafe: 'CMD: STRAFE · 18 CH PWM ACTIVE',
+      stop: 'CMD: E-STOP · PWM OUTPUT DISABLED',
+    };
+
+    btns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        mode = btn.dataset.gait ?? 'forward';
+        btns.forEach((b) => b.classList.toggle('is-active', b === btn));
+        if (statusEl) statusEl.textContent = labels[mode] ?? '';
+      });
+    });
+
+    let w = 1, h = 1;
+    const fit = () => {
+      const r = canvas.getBoundingClientRect();
+      w = Math.max(1, r.width); h = Math.max(1, r.height);
+      const d = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(w * d); canvas.height = Math.round(h * d);
+      ctx.setTransform(d, 0, 0, d, 0, 0);
+    };
+    fit();
+    new ResizeObserver(fit).observe(canvas);
+
+    // 六条腿：左前/左中/左后，右前/右中/右后；tripod 组 0 或 1
+    const legs = [
+      { side: -1, y: -22, baseAngle: -2.45, group: 0 },
+      { side: -1, y: 0, baseAngle: Math.PI, group: 1 },
+      { side: -1, y: 22, baseAngle: 2.45, group: 0 },
+      { side: 1, y: -22, baseAngle: -0.68, group: 1 },
+      { side: 1, y: 0, baseAngle: 0, group: 0 },
+      { side: 1, y: 22, baseAngle: 0.68, group: 1 },
+    ];
+
+    const drawHex = () => {
+      const s = getComputedStyle(document.documentElement);
+      const colRobot = s.getPropertyValue('--color-robot').trim() || '#0d9488';
+      const colEmbed = s.getPropertyValue('--color-embed').trim() || '#ea580c';
+      const colText = s.getPropertyValue('--color-text').trim() || '#181715';
+      const colMuted = s.getPropertyValue('--color-text-muted').trim() || '#6c675e';
+      const colSurf = s.getPropertyValue('--color-surface').trim() || '#ffffff';
+
+      if (mode !== 'stop') phase += 0.085;
+      ctx.clearRect(0, 0, w, h);
+
+      const cx = w / 2;
+      const cy = h / 2;
+      const bodySwayX = mode === 'strafe' ? Math.sin(phase) * 4 : 0;
+      const bodySwayY = (mode === 'forward' || mode === 'backward') ? Math.sin(phase * 2) * 1.5 : 0;
+      const bodyRot = mode === 'left' ? -Math.sin(phase) * 0.08 : mode === 'right' ? Math.sin(phase) * 0.08 : 0;
+
+      ctx.save();
+      ctx.translate(cx + bodySwayX, cy + bodySwayY);
+      ctx.rotate(bodyRot);
+
+      // 绘制 6 条机械腿
+      legs.forEach((leg) => {
+        const p = phase + leg.group * Math.PI;
+        let swing = 0;
+        let lift = 0;
+        if (mode !== 'stop') {
+          const dir = mode === 'backward' ? -1 : 1;
+          if (mode === 'left') swing = Math.sin(p) * 0.34;
+          else if (mode === 'right') swing = -Math.sin(p) * 0.34;
+          else if (mode === 'strafe') swing = Math.sin(p) * 0.25 * leg.side;
+          else swing = Math.sin(p) * 0.32 * leg.side * dir;
+          lift = Math.max(0, Math.cos(p));
+        }
+
+        const hipX = leg.side * 19;
+        const hipY = leg.y;
+        const a = leg.baseAngle + swing;
+        const kneeLen = 22 + lift * 4;
+        const footLen = 40 + lift * 6;
+        const kx = hipX + Math.cos(a) * kneeLen;
+        const ky = hipY + Math.sin(a) * kneeLen;
+        const fx = hipX + Math.cos(a) * footLen;
+        const fy = hipY + Math.sin(a) * footLen;
+
+        ctx.strokeStyle = lift > 0.3 ? colRobot : colMuted;
+        ctx.lineWidth = lift > 0.3 ? 3 : 2.2;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(hipX, hipY);
+        ctx.lineTo(kx, ky);
+        ctx.lineTo(fx, fy);
+        ctx.stroke();
+
+        // 关节圆点
+        ctx.fillStyle = lift > 0.3 ? colRobot : colSurf;
+        ctx.strokeStyle = colText;
+        ctx.lineWidth = 1.3;
+        ctx.beginPath(); ctx.arc(kx, ky, 3, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+        // 足端触地光圈
+        ctx.fillStyle = mode === 'stop' ? colEmbed : (lift > 0.3 ? colRobot : colText);
+        ctx.beginPath(); ctx.arc(fx, fy, lift > 0.3 ? 4 : 3, 0, Math.PI * 2); ctx.fill();
+      });
+
+      // 六边形机身
+      ctx.fillStyle = colSurf;
+      ctx.strokeStyle = colText;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(-20, -30, 40, 60, 12);
+      ctx.fill();
+      ctx.stroke();
+
+      // 前置深度相机条
+      ctx.fillStyle = mode === 'stop' ? colEmbed : colRobot;
+      ctx.beginPath();
+      ctx.roundRect(-13, -34, 26, 6, 3);
+      ctx.fill();
+
+      // 中心核心 LED
+      ctx.fillStyle = mode === 'stop' ? colEmbed : colRobot;
+      ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI * 2); ctx.fill();
+
+      ctx.restore();
+      requestAnimationFrame(drawHex);
+    };
+    requestAnimationFrame(drawHex);
+  });
+
+  // 6. PID 阶跃响应交互实验室
+  document.querySelectorAll<HTMLElement>('[data-pid-lab]').forEach((root) => {
+    const canvas = root.querySelector<HTMLCanvasElement>('[data-pid-canvas]');
+    const kp = root.querySelector<HTMLInputElement>('[data-kp]');
+    const ki = root.querySelector<HTMLInputElement>('[data-ki]');
+    const kd = root.querySelector<HTMLInputElement>('[data-kd]');
+    const kpVal = root.querySelector<HTMLElement>('[data-kp-val]');
+    const kiVal = root.querySelector<HTMLElement>('[data-ki-val]');
+    const kdVal = root.querySelector<HTMLElement>('[data-kd-val]');
+    const osEl = root.querySelector<HTMLElement>('[data-pid-os]');
+    const tsEl = root.querySelector<HTMLElement>('[data-pid-ts]');
+    if (!canvas || !kp || !ki || !kd) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const simulate = (Kp: number, Ki: number, Kd: number) => {
+      const dt = 0.01, T = 12;
+      let x = 0, v = 0, I = 0, prevE = 1;
+      const ys: number[] = [];
+      for (let s = 0; s <= T / dt; s++) {
+        const e = 1 - x;
+        I += e * dt;
+        const D = (e - prevE) / dt;
+        prevE = e;
+        const u = Math.max(-60, Math.min(60, Kp * e + Ki * I + Kd * D));
+        const a = u - 1.2 * v - x;
+        v += a * dt;
+        x += v * dt;
+        if (!Number.isFinite(x)) x = 3;
+        ys.push(x);
+      }
+      return { ys, dt, T };
+    };
+
+    const drawPid = () => {
+      const r = canvas.getBoundingClientRect();
+      const w = Math.max(1, r.width);
+      const h = Math.max(1, r.height);
+      const d = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(w * d);
+      canvas.height = Math.round(h * d);
+      ctx.setTransform(d, 0, 0, d, 0, 0);
+
+      const s = getComputedStyle(document.documentElement);
+      const colRobot = s.getPropertyValue('--color-robot').trim() || '#0d9488';
+      const colMuted = s.getPropertyValue('--color-text-muted').trim() || '#6c675e';
+
+      const Kp = Number(kp.value), Ki = Number(ki.value), Kd = Number(kd.value);
+      if (kpVal) kpVal.textContent = Kp.toFixed(1);
+      if (kiVal) kiVal.textContent = Ki.toFixed(2);
+      if (kdVal) kdVal.textContent = Kd.toFixed(2);
+
+      const { ys, dt, T } = simulate(Kp, Ki, Kd);
+      const max = Math.max(...ys);
+      const top = Math.min(3, Math.max(1.5, max + 0.15));
+      const pad = { l: 30, r: 22, t: 14, b: 24 };
+      const X = (t: number) => pad.l + (t / T) * (w - pad.l - pad.r);
+      const Y = (val: number) => h - pad.b - (Math.max(-0.2, Math.min(top, val)) / top) * (h - pad.t - pad.b);
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.strokeStyle = colMuted + '2a';
+      ctx.lineWidth = 1;
+      for (let t = 0; t <= T; t += 2) {
+        ctx.beginPath(); ctx.moveTo(X(t), pad.t); ctx.lineTo(X(t), h - pad.b); ctx.stroke();
+      }
+      ctx.fillStyle = colMuted;
+      ctx.font = '11px ui-monospace, Menlo, Consolas, monospace';
+      for (let t = 0; t <= T; t += 4) ctx.fillText(`${t}s`, X(t) - 6, h - 7);
+      ctx.fillText('1.0', 4, Y(1) + 4);
+
+      ctx.fillStyle = colRobot + '1c';
+      ctx.fillRect(pad.l, Y(1.02), w - pad.l - pad.r, Y(0.98) - Y(1.02));
+      ctx.strokeStyle = colMuted;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath(); ctx.moveTo(pad.l, Y(1)); ctx.lineTo(w - pad.r, Y(1)); ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.strokeStyle = colRobot;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ys.forEach((y, i) => {
+        const x = X(i * dt);
+        i ? ctx.lineTo(x, Y(y)) : ctx.moveTo(x, Y(y));
+      });
+      ctx.stroke();
+
+      const final = ys[ys.length - 1];
+      let last = -1;
+      ys.forEach((y, i) => { if (Math.abs(y - 1) > 0.02) last = i; });
+      const os = Math.max(0, (max - 1) * 100);
+      if (osEl) osEl.textContent = `${os.toFixed(1)}%`;
+      if (tsEl) {
+        tsEl.textContent = last >= ys.length - 1 || Math.abs(final - 1) > 0.02
+          ? (Math.abs(final - 1) > 0.02 && Math.abs(final - 1) < 0.5 ? `稳态差 ${(Math.abs(1 - final) * 100).toFixed(0)}%` : '未收敛')
+          : `${((last + 1) * dt).toFixed(1)} s`;
+      }
+    };
+
+    [kp, ki, kd].forEach((el) => el.addEventListener('input', drawPid));
+    root.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const [a, b, c] = (btn.dataset.preset ?? '2,0.5,0.3').split(',');
+        kp.value = a; ki.value = b; kd.value = c;
+        drawPid();
+        playSound('tick');
+      });
+    });
+
+    new ResizeObserver(drawPid).observe(canvas);
+    window.addEventListener('wanone:themechange', drawPid);
+    drawPid();
+  });
+</script>
+
 <style>
-  .home-flow { display: grid; }
-  .home-intro { min-height: min(38rem, calc(100vh - var(--header-height))); align-items: center; padding-block: clamp(3rem, 7vw, 6rem); }
-  .home-hero__copy { grid-column: 1 / span 8; grid-row: 1; display: grid; gap: clamp(1rem, 2.4vw, 1.8rem); position: relative; z-index: 1; }
-  .home-intro :global(.signal-field--hero) { grid-column: 8 / -1; grid-row: 1; align-self: stretch; margin-left: clamp(-1rem, -1.2vw, 0rem); }
-  .home-intro h1 { max-width: 20ch; font-size: clamp(2.4rem, 5.8vw, 5.8rem); font-weight: 520; line-height: 1.12; letter-spacing: -.055em; }
-  .home-intro h1 strong { color: var(--color-accent-strong); font-weight: 850; }
-  .home-hero__summary { max-width: 46rem; color: var(--color-text-muted); font-size: clamp(1rem, 1.5vw, 1.2rem); }
-  .home-hero__actions, .home-hero__secondary, .about-section__links { display: flex; flex-wrap: wrap; gap: var(--space-4); align-items: center; }
-  .home-hero__secondary a { color: var(--color-text-muted); font-size: .86rem; font-weight: 750; text-underline-offset: .3rem; }
-  .home-section { display: grid; gap: var(--space-7); border-top: 1px solid var(--color-border-strong); padding-block: var(--space-section); }
-  .home-section__heading { display: grid; grid-template-columns: minmax(0, 7fr) minmax(16rem, 3fr); gap: var(--space-7); align-items: end; }
-  .home-section__heading h2 { margin-top: var(--space-3); }
-  .home-section__heading > p { color: var(--color-text-muted); }
-  .section-marker { color: var(--color-text-muted); font: 750 .7rem/1 var(--font-mono); letter-spacing: .12em; }
-  .section-marker span { color: var(--color-accent-strong); }
-  .notes-layout { display: grid; grid-template-columns: minmax(18rem, 4fr) minmax(0, 6fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
-  .featured-note { display: grid; gap: var(--space-4); border-top: .35rem solid var(--color-blog); border-bottom: 1px solid var(--color-border-strong); padding-block: var(--space-6); color: var(--color-text); text-decoration: none; }
-  .featured-note h3 { max-width: 14ch; font-size: clamp(2rem, 4vw, 3.8rem); }
-  .featured-note > p:not(.eyebrow) { color: var(--color-text-muted); }
-  .featured-note > span { color: var(--color-blog-ink); font: 750 .72rem/1.5 var(--font-mono); }
-  .featured-note:hover h3 { color: var(--color-blog-ink); }
-  .recent-notes { min-width: 0; }
-  .recent-notes:only-child { grid-column: 1 / -1; }
-  .knowledge-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--color-border-strong); }
-  .knowledge-path { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) auto; gap: var(--space-4); align-items: start; border-bottom: 1px solid var(--color-border); padding: var(--space-6) var(--space-5) var(--space-6) 0; color: var(--color-text); text-decoration: none; }
-  .knowledge-path:nth-child(odd) { border-right: 1px solid var(--color-border); }
-  .knowledge-path:nth-child(even) { padding-left: var(--space-5); }
-  .knowledge-path > span { color: var(--path-color); font: 750 .72rem/1.4 var(--font-mono); }
-  .knowledge-path h3 { font-size: clamp(1.3rem, 2.4vw, 2rem); }
-  .knowledge-path p { margin-top: var(--space-2); color: var(--color-text-muted); }
-  .knowledge-path b { color: var(--path-color); transition: transform var(--transition-fast); }
-  .knowledge-path:hover b { transform: translateX(.3rem); }
-  .knowledge-path:nth-child(1) { --path-color: #7f5200; }
-  .knowledge-path:nth-child(2) { --path-color: var(--color-blog-ink); }
-  .knowledge-path:nth-child(3) { --path-color: var(--color-experiment-ink); }
-  .knowledge-path:nth-child(4) { --path-color: var(--color-knowledge-ink); }
-  .about-section__body { display: grid; grid-template-columns: minmax(0, 7fr) minmax(16rem, 3fr); gap: var(--space-7); align-items: start; }
-  .about-section__body > p { max-width: 48rem; font-size: clamp(1.25rem, 2.4vw, 2rem); line-height: 1.5; }
-  .about-section__links { justify-content: flex-start; }
-  @media (max-width: 64rem) {
-    .home-hero__copy { grid-column: 1 / -1; }
-    .home-intro :global(.signal-field--hero) { display: none; }
-    .notes-layout { grid-template-columns: 1fr; }
-    .featured-note h3 { max-width: 22ch; }
+  /* 首屏 */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 36px;
+    align-items: center;
+    padding: 18px 0 42px;
   }
-  @media (max-width: 48rem) {
-    .home-intro { min-height: auto; padding-block: clamp(2.5rem, 10vw, 4.5rem); }
-    .home-intro h1 { max-width: 24ch; font-size: clamp(2.3rem, 11vw, 3.8rem); line-height: 1.15; }
-    .home-section { gap: var(--space-6); }
-    .home-section__heading, .about-section__body { grid-template-columns: 1fr; gap: var(--space-4); }
-    .knowledge-list { grid-template-columns: 1fr; }
-    .knowledge-path:nth-child(odd) { border-right: 0; }
-    .knowledge-path:nth-child(even) { padding-left: 0; }
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 13px;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: 13px;
+    box-shadow: var(--shadow-soft);
+  }
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-robot);
+    position: relative;
+  }
+  .pulse-dot::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--color-robot);
+    animation: ping 1.8s ease-out infinite;
+  }
+  @keyframes ping {
+    0% { transform: scale(0.4); opacity: 0.85; }
+    100% { transform: scale(1.7); opacity: 0; }
+  }
+
+  .hero h1 {
+    margin: 18px 0 14px;
+    font-size: clamp(2rem, 4.2vw, 3.15rem);
+    line-height: 1.16;
+    letter-spacing: -0.035em;
+  }
+  .hero-hl {
+    background: linear-gradient(95deg, var(--color-robot), var(--color-fpga) 55%, var(--color-embed));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero__lead {
+    color: var(--color-text-muted);
+    font-size: 15.5px;
+    line-height: 1.7;
+    max-width: 36em;
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 22px;
+  }
+  .hero__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--color-border);
+  }
+  .hero__stats div {
+    display: grid;
+    gap: 2px;
+  }
+  .hero__stats strong {
+    font-size: 20px;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .hero__stats span {
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+
+  /* 区块标题 */
+  .section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 10px 0 18px;
+  }
+  .section-head h2 {
+    margin-top: 4px;
+  }
+
+  /* Bento 网格 */
+  .d-robot { --d: var(--color-robot); }
+  .d-fpga { --d: var(--color-fpga); }
+  .d-embed { --d: var(--color-embed); }
+  .d-tool { --d: var(--color-tool); }
+
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: minmax(195px, auto);
+    gap: 16px;
+  }
+  .span-2 { grid-column: span 2; }
+  .row-2 { grid-row: span 2; }
+
+  .tile {
+    --d: var(--color-accent-strong);
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    background: color-mix(in srgb, var(--d) 3.5%, var(--color-surface));
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.24s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.24s ease, border-color 0.24s ease;
+  }
+  .tile::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--d) 14%, transparent), transparent 68%);
+    opacity: 0;
+    transition: opacity 0.28s ease;
+  }
+  .tile:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--d) 38%, var(--color-border));
+    box-shadow: var(--shadow-hover);
+  }
+  .tile:hover::before {
+    opacity: 1;
+  }
+  .tile:hover .circle-arrow {
+    background: var(--d);
+    color: #ffffff;
+    transform: translate(2px, -2px);
+  }
+
+  .tile__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+  .tile__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-weight: 550;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--d);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--d) 18%, transparent);
+    flex-shrink: 0;
+  }
+  .fig {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-text-subtle);
+    letter-spacing: 0.04em;
+  }
+  .tile h3 {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .tile p {
+    font-size: 13.5px;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+  .tile__body-row {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .tile__foot-bar {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+  .mono { font-family: var(--font-mono); }
+
+  /* 1. 实物图集卡片 */
+  .photo-frame {
+    position: relative;
+    flex: 1;
+    min-height: 240px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-surface-soft);
+    border: 1px solid var(--color-border);
+  }
+  .photo-frame__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.03);
+    transition: opacity 0.35s ease, transform 0.5s ease;
+  }
+  .photo-frame__img.is-active {
+    opacity: 1;
+    transform: scale(1);
+  }
+  .photo-tabs {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 4px;
+    border-radius: var(--radius-pill);
+    background: rgba(18, 20, 26, 0.72);
+    backdrop-filter: blur(10px);
+  }
+  .photo-tab {
+    padding: 4px 11px;
+    border-radius: var(--radius-pill);
+    border: 0;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 12px;
+    font-weight: 550;
+    cursor: pointer;
+    transition: background 0.18s ease, color 0.18s ease;
+  }
+  .photo-tab.is-active {
+    background: #ffffff;
+    color: #111111;
+  }
+  .photo-caption {
+    margin-top: 3px;
+    font-size: 12.5px !important;
+  }
+
+  /* 2-3. 大字数据卡 */
+  .metric-tile__val {
+    margin-top: auto;
+    display: grid;
+    gap: 3px;
+  }
+  .metric-tile__val strong {
+    font-size: clamp(1.9rem, 2.8vw, 2.35rem);
+    font-weight: 780;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: var(--d);
+    font-variant-numeric: tabular-nums;
+  }
+  .metric-tile__val small {
+    font-size: 0.48em;
+    font-weight: 650;
+    margin-left: 3px;
+    color: var(--color-text-muted);
+  }
+  .metric-tile__val span {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  /* 4. 六足步态互动卡 */
+  .hexapod-wrap {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 14px;
+    align-items: center;
+    flex: 1;
+  }
+  .hexapod-ctrl {
+    display: grid;
+    gap: 8px;
+  }
+  .gait-btns {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .gait-btn {
+    padding: 5px 11px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  }
+  .gait-btn:hover {
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+  }
+  .gait-btn.is-active {
+    background: var(--d);
+    border-color: var(--d);
+    color: #ffffff;
+  }
+  .gait-btn--stop.is-active {
+    background: var(--color-embed);
+    border-color: var(--color-embed);
+  }
+  .gait-status {
+    font-size: 11px !important;
+    color: var(--color-text-subtle) !important;
+  }
+  .hexapod-stage {
+    height: 150px;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-soft);
+    border: 1px solid var(--color-border);
+  }
+  .hexapod-stage canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 5. 两级建图滑块对比卡 */
+  .compare-stage {
+    position: relative;
+    flex: 1;
+    min-height: 250px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    background: #dce3ec;
+    user-select: none;
+  }
+  .compare-img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .compare-img--base {
+    position: absolute;
+    inset: 0;
+  }
+  .compare-overlay {
+    position: absolute;
+    inset: 0;
+  }
+  .compare-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-fpga);
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .compare-handle span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--color-fpga);
+    color: #ffffff;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.38);
+  }
+  .compare-badge {
+    position: absolute;
+    top: 10px;
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    background: rgba(18, 20, 26, 0.74);
+    color: #ffffff;
+    font-size: 11px;
+    pointer-events: none;
+  }
+  .compare-badge--left { left: 10px; }
+  .compare-badge--right { right: 10px; }
+  .compare-range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: ew-resize;
+    margin: 0;
+  }
+
+  /* 6. 无人机实拍卡 */
+  .mini-switch {
+    display: flex;
+    gap: 4px;
+    padding: 2px;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-soft);
+    border: 1px solid var(--color-border);
+  }
+  .mini-pill {
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    border: 0;
+    background: transparent;
+    color: var(--color-text-muted);
+    font-size: 11.5px;
+    font-weight: 550;
+    cursor: pointer;
+  }
+  .mini-pill.is-active {
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  }
+  .drone-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 16px;
+    align-items: center;
+    flex: 1;
+  }
+  .drone-photo {
+    height: 168px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+  }
+  .drone-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .drone-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+  }
+
+  /* 7. 视频流水线 */
+  .pipe {
+    display: flex;
+    align-items: center;
+    margin-top: auto;
+    padding: 8px 0 2px;
+  }
+  .pipe-node {
+    flex-shrink: 0;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: var(--color-surface);
+    border: 1px solid color-mix(in srgb, var(--d) 32%, var(--color-border));
+    font-size: 12px;
+    line-height: 1.3;
+  }
+  .pipe-node strong { display: block; color: var(--color-text); font-weight: 650; }
+  .pipe-node small { color: var(--color-text-muted); font-size: 10.5px; }
+  .pipe-link {
+    position: relative;
+    flex: 1;
+    min-width: 16px;
+    height: 2px;
+    background: color-mix(in srgb, var(--d) 28%, transparent);
+  }
+  .pipe-link::after {
+    content: '';
+    position: absolute;
+    top: -3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--d);
+    box-shadow: 0 0 8px var(--d);
+    animation: flowx 1.6s linear infinite;
+  }
+  .pipe-link:nth-of-type(4)::after { animation-delay: 0.4s; }
+  .pipe-link:nth-of-type(6)::after { animation-delay: 0.8s; }
+  .pipe-link:nth-of-type(8)::after { animation-delay: 1.2s; }
+  @keyframes flowx {
+    from { left: 0; opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    to { left: calc(100% - 7px); opacity: 0; }
+  }
+
+  /* 8. PID 实验室 */
+  .pid-layout {
+    display: grid;
+    grid-template-columns: 185px minmax(0, 1fr);
+    gap: 16px;
+    flex: 1;
+  }
+  .pid-controls {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+  }
+  .pid-controls label {
+    display: grid;
+    gap: 3px;
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+  .pid-controls label span {
+    display: flex;
+    justify-content: space-between;
+  }
+  .pid-controls label b {
+    color: var(--color-text);
+    font-family: var(--font-mono);
+  }
+  .pid-controls input[type='range'] {
+    width: 100%;
+    accent-color: var(--d);
+  }
+  .pid-presets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .pid-presets button {
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in srgb, var(--d) 34%, var(--color-border));
+    background: var(--color-surface);
+    color: var(--color-text);
+    font-size: 11.5px;
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .pid-presets button:hover {
+    background: var(--d);
+    color: #ffffff;
+  }
+  .pid-readout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .pid-readout div {
+    padding: 7px 9px;
+    border-radius: 10px;
+    background: var(--color-surface-soft);
+  }
+  .pid-readout small { display: block; font-size: 10.5px; color: var(--color-text-muted); }
+  .pid-readout strong { font-size: 13.5px; font-family: var(--font-mono); }
+  .pid-canvas-wrap {
+    min-height: 210px;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-soft);
+    border: 1px solid var(--color-border);
+  }
+  .pid-canvas-wrap canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* 9. 开发板实拍卡 */
+  .board-photo {
+    height: 120px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+  }
+  .board-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* 10. 彩色技术栈 */
+  .stack-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .schip {
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 550;
+    background: color-mix(in srgb, var(--d) 12%, var(--color-surface));
+    color: color-mix(in srgb, var(--d) 82%, var(--color-text));
+    border: 1px solid color-mix(in srgb, var(--d) 24%, transparent);
+  }
+
+  /* 11. 最新笔记列表 */
+  .notes-mini-list {
+    display: grid;
+    gap: 4px;
+  }
+  .note-mini-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 10px;
+    margin-inline: -10px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: background var(--transition-fast);
+  }
+  .note-mini-row:hover {
+    background: var(--color-surface-soft);
+  }
+  .note-mini-row__title {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 13.5px;
+    font-weight: 550;
+    color: var(--color-text);
+  }
+  .note-mini-row time {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--color-text-subtle);
+    white-space: nowrap;
+  }
+
+  /* 响应式 */
+  @media (max-width: 1020px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+    .bento {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 640px) {
+    .bento {
+      grid-template-columns: 1fr;
+    }
+    .span-2, .row-2 {
+      grid-column: auto;
+      grid-row: auto;
+    }
+    .hexapod-wrap,
+    .drone-grid,
+    .pid-layout {
+      grid-template-columns: 1fr;
+    }
+    .pipe {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .pipe-node { text-align: center; }
+    .pipe-link {
+      flex: none;
+      width: 2px;
+      height: 18px;
+      min-width: 0;
+      margin: 0 auto;
+    }
+    .pipe-link::after {
+      left: -2.5px;
+      animation-name: flowy;
+    }
+  }
+  @keyframes flowy {
+    from { top: 0; opacity: 0; }
+    15% { opacity: 1; }
+    85% { opacity: 1; }
+    to { top: calc(100% - 7px); opacity: 0; }
   }
 </style>

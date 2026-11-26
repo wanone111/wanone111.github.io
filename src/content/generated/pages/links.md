@@ -1,12 +1,12 @@
 ---
 title: 友链
-description: 经确认后公开的朋友站点与独立网站链接。
+description: 朋友的独立网站与博客。
 content_type: page
 status: published
 visibility: public
 slug: links
 created: 2026-07-13
-updated: 2026-07-14
+updated: 2026-11-26
 published: 2026-07-13
 category: site
 tags:
@@ -18,6 +18,4 @@ featured: false
 
 ## 友链
 
-### [panjie9284.github.io](https://panjie9284.github.io/)
-
-朋友的个人网站。由本人于 2026-07-14 确认加入友链。
+- [panjie9284.github.io](https://panjie9284.github.io/) — 朋友的个人网站。

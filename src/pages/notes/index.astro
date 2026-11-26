@@ -27,24 +27,31 @@ const categoryOptions = [...new Set(categories.map(categoryKey))].map((key) => {
 });
 ---
 
-<BaseLayout title="笔记" description="开发记录、完整教程、项目复盘和技术思考。">
-  <div class="stack-xl">
+<BaseLayout title="笔记" description="开发记录、完整教程、项目复盘和技术思考。" sectionLabel="工程笔记">
+  <div class="stack-lg">
     <PageIntro eyebrow={`Notes · ${posts.length}`} title="工程笔记" />
     {posts.length > 0 ? (
-      <section data-blog-filter>
+      <section class="stack" data-blog-filter>
         <div class="blog-toolbar">
           <div class="filter-list" aria-label="按分类筛选" data-filter-list>
-            <button type="button" aria-pressed="true" data-category="all">全部 · {posts.length}</button>
-            {categoryOptions.map((category) => <button type="button" aria-pressed="false" data-category={category.key}>{category.label} · {category.count}</button>)}
+            <button type="button" class="filter-pill" aria-pressed="true" data-category="all">全部 · {posts.length}</button>
+            {categoryOptions.map((category) => (
+              <button type="button" class="filter-pill" aria-pressed="false" data-category={category.key}>
+                {category.label} · {category.count}
+              </button>
+            ))}
           </div>
           <div class="blog-toolbar__meta">
             <p aria-live="polite"><strong data-visible-count>{posts.length}</strong> 篇可见</p>
-            <div class="blog-toolbar__links"><a href="/archive/">时间归档</a><a href="/tags/">技术标签</a></div>
+            <div class="blog-toolbar__links">
+              <a href="/archive/" data-sound="tick">时间归档</a>
+              <a href="/tags/" data-sound="tick">技术标签</a>
+            </div>
           </div>
         </div>
-        <div class="article-list" aria-live="polite">
+        <div class="article-grid" aria-live="polite">
           {posts.map((post) => (
-            <div data-post-category={post.data.category ? categoryKey(post.data.category) : ''}>
+            <div class="article-grid__item" data-post-category={post.data.category ? categoryKey(post.data.category) : ''}>
               <ArticleRow post={post} headingLevel="h2" />
             </div>
           ))}
@@ -55,6 +62,8 @@ const categoryOptions = [...new Set(categories.map(categoryKey))].map((key) => {
 </BaseLayout>
 
 <script>
+  import { playSound } from '../../lib/sound';
+
   document.querySelectorAll<HTMLElement>('[data-blog-filter]').forEach((root) => {
     const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-category]')];
     const posts = [...root.querySelectorAll<HTMLElement>('[data-post-category]')];
@@ -78,21 +87,85 @@ const categoryOptions = [...new Set(categories.map(categoryKey))].map((key) => {
       }
     };
 
-    buttons.forEach((button) => button.addEventListener('click', () => applyCategory(button.dataset.category ?? 'all', true)));
+    buttons.forEach((button) => button.addEventListener('click', () => {
+      applyCategory(button.dataset.category ?? 'all', true);
+      playSound('tick');
+    }));
     window.addEventListener('popstate', () => applyCategory(new URL(window.location.href).searchParams.get('category')));
     applyCategory(new URL(window.location.href).searchParams.get('category'));
   });
 </script>
 
 <style>
-  .blog-toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-5); margin-bottom: var(--space-6); }
-  .filter-list { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-  .filter-list button { min-height: 2.7rem; border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: .5rem .85rem; background: var(--color-surface); color: var(--color-text-muted); font-weight: 700; cursor: pointer; }
-  .filter-list button[aria-pressed='true'] { border-color: var(--color-text); background: var(--color-text); color: var(--color-bg); }
-  .blog-toolbar__meta { display: grid; flex: 0 0 auto; gap: var(--space-3); justify-items: end; color: var(--color-text-muted); font: 650 .72rem/1.4 var(--font-mono); }
-  .blog-toolbar__meta p { margin: 0; }
-  .blog-toolbar__meta strong { color: var(--color-accent-strong); }
-  .blog-toolbar__links { display: flex; gap: var(--space-4); }
-  .blog-toolbar__links a { color: var(--color-text); font: 700 .76rem/1 var(--font-mono); }
-  @media (max-width: 48rem) { .blog-toolbar { align-items: flex-start; flex-direction: column; } .blog-toolbar__meta { justify-items: start; } }
+  .blog-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .filter-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .filter-pill {
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    border: 1px solid transparent;
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .filter-pill:hover {
+    color: var(--color-text);
+    background: var(--color-surface-hover);
+  }
+  .filter-pill[aria-pressed='true'] {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+  .blog-toolbar__meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--color-text-muted);
+    font: 500 12px/1.4 var(--font-mono);
+  }
+  .blog-toolbar__meta strong {
+    color: var(--color-text);
+  }
+  .blog-toolbar__links {
+    display: flex;
+    gap: 8px;
+  }
+  .blog-toolbar__links a {
+    padding: 5px 11px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-size: 12px;
+    font-weight: 550;
+    text-decoration: none;
+    transition: background var(--transition-fast);
+  }
+  .blog-toolbar__links a:hover {
+    background: var(--color-surface);
+  }
+  .article-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .article-grid__item {
+    display: grid;
+  }
+  @media (max-width: 60rem) {
+    .article-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

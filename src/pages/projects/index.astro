@@ -8,9 +8,9 @@ import { byFeaturedOrder, isPublic } from '../../lib/content';
 const projects = (await getCollection('projects', isPublic)).sort(byFeaturedOrder);
 ---
 
-<BaseLayout title="项目" description="Wanone 的嵌入式、机器人、FPGA 与边缘 AI 项目。">
-  <div class="stack-xl">
-    <PageIntro eyebrow="Projects · systems" title="项目系统" />
+<BaseLayout title="项目" description="Wanone 的嵌入式、机器人、FPGA 与边缘 AI 项目。" sectionLabel="项目档案">
+  <div class="stack-lg">
+    <PageIntro eyebrow={`Projects · ${projects.length}`} title="项目" />
     <ProjectList projects={projects} />
   </div>
 </BaseLayout>

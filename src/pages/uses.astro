@@ -1,11 +1,16 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageIntro from '../components/PageIntro.astro';
 import { isPublic } from '../lib/content';
 
 const sections = [
-  ['overview', '概览'], ['hardware', '硬件'], ['software', '软件'], ['workflows', '工作流'],
-  ['principles', '排障原则'], ['constraints', '验证范围'], ['projects', '项目与笔记'],
+  ['hardware', '硬件'],
+  ['software', '软件'],
+  ['workflows', '工作流'],
+  ['principles', '排障原则'],
+  ['constraints', '验证范围'],
+  ['projects', '项目与笔记'],
 ];
 
 const workflows = [
@@ -45,94 +50,333 @@ const projects = await getCollection('projects', isPublic);
 const relatedProjects = workflows.flatMap(({ slug }) => projects.filter(({ data }) => data.slug === slug));
 ---
 
-<BaseLayout title="使用的工具" description="嵌入式与视频硬件、机器人软件和静态网站的工具与验证记录。">
-  <div class="workbench stack-lg">
-    <header class="stack" id="overview">
-      <h1>工具与验证工作台</h1>
-      <p class="lede">我用这些设备和软件调试视频链路、机器人控制与内容发布。每条工作流都能在公开项目中找到相应记录。</p>
-      <nav aria-label="本页章节">
-        {sections.map(([id, label]) => <a href={`#${id}`}>{label}</a>)}
-      </nav>
-    </header>
+<BaseLayout title="使用的工具" description="嵌入式与视频硬件、机器人软件和静态网站的工具与验证记录。" sectionLabel="工作台 /uses">
+  <div class="workbench stack-lg" id="overview">
+    <PageIntro
+      eyebrow="Uses · Workbench"
+      title="工具与验证工作台"
+      description="我用这些设备和软件调试视频链路、机器人控制与内容发布。每条工作流都能在公开项目中找到相应记录。"
+    />
 
-    <section id="hardware" aria-labelledby="uses-hardware-title">
-      <h2 id="uses-hardware-title">硬件</h2>
-      <dl>
-        <dt>工作站与嵌入式实验台</dt><dd>工作站负责编译、仿真和日志分析。STM32、飞控及通信外设用于核对收发数据、时序与状态反馈。</dd>
-        <dt>视频与边缘推理设备</dt><dd>PC 或摄像头提供 HDMI 输入，PYNQ-Z2 处理视频，昇腾 310B 运行 YOLO 后端。</dd>
-        <dt>BX72 麦轮小车与 ACG720 六足</dt><dd>小车的 BX72 采集激光雷达、IMU 和四轮编码器数据。六足上的雷达和相机数据经树莓派转给 Jetson。</dd>
+    <nav class="jump-pills" aria-label="本页章节">
+      {sections.map(([id, label]) => <a class="jump-pill" href={`#${id}`} data-sound="tick">{label}</a>)}
+    </nav>
+
+    <section class="spec-section" id="hardware" aria-labelledby="uses-hardware-title">
+      <div class="spec-section__head">
+        <p class="eyebrow">01 · Hardware</p>
+        <h2 id="uses-hardware-title">硬件</h2>
+      </div>
+      <dl class="spec-grid">
+        <div class="spec-card">
+          <dt>工作站与嵌入式实验台</dt>
+          <dd>工作站负责编译、仿真和日志分析。STM32、飞控及通信外设用于核对收发数据、时序与状态反馈。</dd>
+        </div>
+        <div class="spec-card">
+          <dt>视频与边缘推理设备</dt>
+          <dd>PC 或摄像头提供 HDMI 输入，PYNQ-Z2 处理视频，昇腾 310B 运行 YOLO 后端。</dd>
+        </div>
+        <div class="spec-card">
+          <dt>BX72 麦轮小车与 ACG720 六足</dt>
+          <dd>小车的 BX72 采集激光雷达、IMU 和四轮编码器数据。六足上的雷达和相机数据经树莓派转给 Jetson。</dd>
+        </div>
       </dl>
     </section>
 
-    <section id="software" aria-labelledby="uses-software-title">
-      <h2 id="uses-software-title">软件</h2>
-      <dl>
-        <dt>Linux、C/C++、Python、Git 与 Shell</dt><dd>编写嵌入式模块和端侧程序，复现构建命令，处理视频与日志。</dd>
-        <dt>ROS 2、OpenVINS 与 PX4</dt><dd>组织节点、启动文件和控制接口，以 MAVROS 或 DDS 接入飞控。</dd>
-        <dt>Nav2 与 SLAM Toolbox</dt><dd>小车用 Nav2 在已建图区域跟踪路径，Jetson 用 SLAM Toolbox 建立六足的激光地图。<a href="/projects/fpga-robot-navigation/">小车导航与板测记录</a></dd>
-        <dt>Vivado、Verilog 与 HLS</dt><dd>调试 FPGA 视频接口、处理模块和时钟约束。</dd>
-        <dt>Obsidian、Node.js 与 Astro</dt><dd>编辑源稿，用 TypeScript 实现站点页面，使用 Starlight 生成知识库。</dd>
+    <section class="spec-section" id="software" aria-labelledby="uses-software-title">
+      <div class="spec-section__head">
+        <p class="eyebrow">02 · Software</p>
+        <h2 id="uses-software-title">软件</h2>
+      </div>
+      <dl class="spec-grid">
+        <div class="spec-card">
+          <dt>Linux、C/C++、Python、Git 与 Shell</dt>
+          <dd>编写嵌入式模块和端侧程序，复现构建命令，处理视频与日志。</dd>
+        </div>
+        <div class="spec-card">
+          <dt>ROS 2、OpenVINS 与 PX4</dt>
+          <dd>组织节点、启动文件和控制接口，以 MAVROS 或 DDS 接入飞控。</dd>
+        </div>
+        <div class="spec-card">
+          <dt>Nav2 与 SLAM Toolbox</dt>
+          <dd>小车用 Nav2 在已建图区域跟踪路径，Jetson 用 SLAM Toolbox 建立六足的激光地图。<a href="/projects/hexapod-robot-cooperative-mapping/">双机建图与联调记录 ↗</a></dd>
+        </div>
+        <div class="spec-card">
+          <dt>Vivado、Verilog 与 HLS</dt>
+          <dd>调试 FPGA 视频接口、处理模块和时钟约束。</dd>
+        </div>
+        <div class="spec-card">
+          <dt>Obsidian、Node.js 与 Astro</dt>
+          <dd>编辑源稿，用 TypeScript 实现站点页面，使用 Starlight 生成知识库。</dd>
+        </div>
       </dl>
     </section>
 
-    <section id="workflows" aria-labelledby="uses-workflows-title">
-      <h2 id="uses-workflows-title">工作流</h2>
-      {workflows.map(({ title, steps }, index) => (
-        <article>
-          <h3 id={`uses-workflow-${index + 1}-title`}>{title}</h3>
-          <ol>
-            {steps.map(([label, detail], step) => (
-              <li id={`uses-workflow-${index + 1}-node-${step + 1}`}>
-                <strong>{label}</strong> {detail}
-              </li>
-            ))}
-          </ol>
-        </article>
-      ))}
+    <section class="spec-section" id="workflows" aria-labelledby="uses-workflows-title">
+      <div class="spec-section__head">
+        <p class="eyebrow">03 · Workflows</p>
+        <h2 id="uses-workflows-title">工作流</h2>
+      </div>
+      <div class="workflow-grid">
+        {workflows.map(({ title, steps }, index) => (
+          <article class="workflow-card">
+            <div class="workflow-card__head">
+              <span class="eyebrow">FLOW 0{index + 1}</span>
+              <h3 id={`uses-workflow-${index + 1}-title`}>{title}</h3>
+            </div>
+            <ol class="workflow-steps">
+              {steps.map(([label, detail], step) => (
+                <li id={`uses-workflow-${index + 1}-node-${step + 1}`}>
+                  <span class="step-num">0{step + 1}</span>
+                  <div>
+                    <strong>{label}</strong>
+                    <p>{detail}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </article>
+        ))}
+      </div>
     </section>
 
-    <section id="principles" aria-labelledby="uses-principles-title">
-      <h2 id="uses-principles-title">排障原则</h2>
-      <p>先固定输入和环境，沿数据流逐段查看日志。复现后只改变一个条件，再记录结果、适用范围和仍需验证的问题。</p>
+    <section class="spec-section" id="principles" aria-labelledby="uses-principles-title">
+      <div class="spec-section__head">
+        <p class="eyebrow">04 · Principles</p>
+        <h2 id="uses-principles-title">排障原则</h2>
+      </div>
+      <div class="note-box">
+        <p>先固定输入和环境，沿数据流逐段查看日志。复现后只改变一个条件，再记录结果、适用范围和仍需验证的问题。</p>
+      </div>
     </section>
 
-    <section id="constraints" aria-labelledby="uses-constraints-title">
-      <h2 id="uses-constraints-title">验证范围</h2>
-      <p>PYNQ-Z2 在 PC 输入下实现了 1920×1080、60 Hz 的 HDMI 直通。摄像头输入偶有不稳，包含 UDP、推理与播放的整条链路仍缺少统一条件下的帧率、延迟和丢包率测量。</p>
-      <p>无人机旧版在 MAVROS 仿真中完成了 1 米起飞、10 秒悬停与降落。该次仿真使用仿真定位。当前版本默认只读，视觉回传关闭，飞控持续融合视觉观测和实机自主任务仍待验证。</p>
-      <p>2026 年 11 月 17 日，小车和人工操控的六足用同一块 AprilTag 标定板对齐地图，两台实机生成了 296 × 274 格的共同地图。两机移动时的长期对齐误差仍待测量。<a href="/projects/hexapod-robot-cooperative-mapping/">双机建图现场记录</a></p>
+    <section class="spec-section" id="constraints" aria-labelledby="uses-constraints-title">
+      <div class="spec-section__head">
+        <p class="eyebrow">05 · Validation Scope</p>
+        <h2 id="uses-constraints-title">验证范围</h2>
+      </div>
+      <div class="note-box stack">
+        <p>PYNQ-Z2 在 PC 输入下实现了 1920×1080、60 Hz 的 HDMI 直通。摄像头输入偶有不稳，包含 UDP、推理与播放的整条链路仍缺少统一条件下的帧率、延迟和丢包率测量。</p>
+        <p>无人机旧版在 MAVROS 仿真中完成了 1 米起飞、10 秒悬停与降落。该次仿真使用仿真定位。当前版本默认只读，视觉回传关闭，飞控持续融合视觉观测和实机自主任务仍待验证。</p>
+        <p>2026 年 11 月 17 日，小车和人工操控的六足用同一块 AprilTag 标定板对齐地图，两台实机生成了 296 × 274 格的共同地图。两机移动时的长期对齐误差仍待测量。<a href="/projects/hexapod-robot-cooperative-mapping/">双机建图现场记录 ↗</a></p>
+      </div>
     </section>
 
-    <section id="projects" aria-labelledby="uses-projects-title">
-      <h2 id="uses-projects-title">项目与笔记</h2>
-      {relatedProjects.length > 0 && (
-        <ul>
-          {relatedProjects.map(({ data }) => <li><a href={`/projects/${data.slug}/`}>{data.title}</a></li>)}
-        </ul>
-      )}
-      <nav aria-label="延伸阅读">
-        <a href="/knowledge/robotics/ros2-and-simulation/">ROS 2 与仿真验证</a>
-        <a href="/knowledge/fpga-edge-ai/fpga-development/">FPGA 开发与板级验证</a>
-        <a href="/knowledge/linux-tools/linux-and-networking/">Linux 与网络工程</a>
-        <a href="/knowledge/embedded/communication-path/">嵌入式通信路径</a>
-      </nav>
+    <section class="spec-section" id="projects" aria-labelledby="uses-projects-title">
+      <div class="spec-section__head">
+        <p class="eyebrow">06 · References</p>
+        <h2 id="uses-projects-title">项目与笔记</h2>
+      </div>
+      <div class="link-grid">
+        {relatedProjects.map(({ data }) => (
+          <a class="ref-card" href={`/projects/${data.slug}/`} data-sound="pop">
+            <span class="eyebrow">项目档案</span>
+            <strong>{data.title}</strong>
+            <span class="circle-arrow" aria-hidden="true">↗</span>
+          </a>
+        ))}
+        <a class="ref-card ref-card--soft" href="/knowledge/robotics/ros2-and-simulation/" data-sound="pop">
+          <span class="eyebrow">知识路径</span>
+          <strong>ROS 2 与仿真验证</strong>
+          <span class="circle-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="ref-card ref-card--soft" href="/knowledge/fpga-edge-ai/fpga-development/" data-sound="pop">
+          <span class="eyebrow">知识路径</span>
+          <strong>FPGA 开发与板级验证</strong>
+          <span class="circle-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="ref-card ref-card--soft" href="/knowledge/linux-tools/linux-and-networking/" data-sound="pop">
+          <span class="eyebrow">知识路径</span>
+          <strong>Linux 与网络工程</strong>
+          <span class="circle-arrow" aria-hidden="true">↗</span>
+        </a>
+        <a class="ref-card ref-card--soft" href="/knowledge/embedded/communication-path/" data-sound="pop">
+          <span class="eyebrow">知识路径</span>
+          <strong>嵌入式通信路径</strong>
+          <span class="circle-arrow" aria-hidden="true">↗</span>
+        </a>
+      </div>
     </section>
   </div>
 </BaseLayout>
 
 <style>
-  .workbench { max-width: var(--article-width); margin-inline: auto; overflow-wrap: anywhere; }
-  header { padding-block: var(--space-6); }
-  section { display: grid; gap: var(--space-4); border-top: 1px solid var(--color-border); padding-top: var(--space-5); }
-  section, header, li { scroll-margin-top: var(--header-height); }
-  h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); }
-  h3, dt, strong { color: var(--color-text); }
-  nav { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; }
-  a { color: var(--color-accent-strong); }
-  dl, ol, ul, dd { margin: 0; }
-  dt { font-weight: 700; }
-  dd + dt, li + li { margin-top: var(--space-2); }
-  ol, ul { padding-inline-start: var(--space-5); }
-  p, dd, li { color: var(--color-text-muted); }
-  article { display: grid; gap: var(--space-3); }
+  .workbench {
+    overflow-wrap: anywhere;
+  }
+  .jump-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .jump-pill {
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .jump-pill:hover {
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
+
+  .spec-section {
+    display: grid;
+    gap: 16px;
+    scroll-margin-top: calc(var(--topbar-height) + 20px);
+  }
+  .spec-section__head {
+    display: grid;
+    gap: 4px;
+  }
+
+  .spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr));
+    gap: 14px;
+    margin: 0;
+  }
+  .spec-card {
+    display: grid;
+    align-content: start;
+    gap: 8px;
+    padding: 18px 20px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+  }
+  .spec-card dt {
+    font-size: 14.5px;
+    font-weight: 650;
+    color: var(--color-text);
+  }
+  .spec-card dd {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--color-text-muted);
+    line-height: 1.65;
+  }
+  .spec-card a,
+  .note-box a {
+    color: var(--color-text);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--color-border-strong);
+    text-underline-offset: 3px;
+    margin-left: 4px;
+  }
+
+  .workflow-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+    gap: 16px;
+  }
+  .workflow-card {
+    display: grid;
+    align-content: start;
+    gap: 14px;
+    padding: 20px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .workflow-card__head {
+    display: grid;
+    gap: 4px;
+  }
+  .workflow-steps {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .workflow-steps li {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+  }
+  .step-num {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font: 600 10.5px/1 var(--font-mono);
+    margin-top: 2px;
+  }
+  .workflow-steps strong {
+    display: block;
+    font-size: 13.5px;
+    font-weight: 650;
+    color: var(--color-text);
+    margin-bottom: 2px;
+  }
+  .workflow-steps p {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    line-height: 1.55;
+  }
+
+  .note-box {
+    padding: 20px 22px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+
+  .link-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+    gap: 12px;
+  }
+  .ref-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 4px 12px;
+    padding: 16px 18px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    text-decoration: none;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .ref-card--soft {
+    background: var(--color-surface);
+  }
+  .ref-card .eyebrow {
+    grid-column: 1;
+  }
+  .ref-card strong {
+    grid-column: 1;
+    font-size: 14px;
+    font-weight: 650;
+    color: var(--color-text);
+  }
+  .ref-card .circle-arrow {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+  .ref-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-soft);
+  }
+  .ref-card:hover .circle-arrow {
+    transform: translate(2px, -2px);
+    background: var(--color-accent);
+    color: var(--color-accent-ink);
+  }
 </style>

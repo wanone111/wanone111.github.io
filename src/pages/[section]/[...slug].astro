@@ -30,7 +30,7 @@ function readingMinutes(body = '') {
   return Math.max(1, Math.ceil(chineseCharacters / 350 + latinWords / 220));
 }
 
-const summaryItems = (project ? [
+const compactSummary = (project ? [
   { label: '项目状态', value: statusLabels[data.status] },
   { label: '时间范围', value: project.time_range ?? (data.created.getTime() === data.updated.getTime()
     ? formatDate(data.created)
@@ -38,20 +38,24 @@ const summaryItems = (project ? [
   { label: '作者角色', value: project.role },
   { label: '硬件平台', value: project.hardware },
   { label: '软件环境', value: project.software },
-  { label: '技术栈', value: (project.stack.length ? project.stack : data.tags).join(' · '), wide: true },
-  { label: '核心结果', value: project.result, wide: true },
-  { label: '验证方式', value: project.validation, wide: true },
-  { label: '当前限制', value: project.limitations, wide: true },
-  { label: '下一步', value: project.next_step, wide: true },
+  { label: '技术栈', value: (project.stack.length ? project.stack : data.tags).join(' · ') },
 ] : [
-  { label: '问题', value: data.problem ?? data.description, wide: true },
-  { label: '环境', value: data.environment ?? data.tags.join(' · '), wide: true },
-  { label: '结论', value: data.conclusion, wide: true },
   { label: '状态', value: statusLabels[data.status] },
   { label: '适用版本', value: data.applicable_version },
   { label: '首次发布', value: formatDate(published) },
   { label: data.verified ? '最后验证' : '最后更新', value: formatDate(data.verified ?? data.updated) },
   { label: '预计阅读', value: `${readingMinutes(entry.body)} 分钟` },
+]).filter(({ value }) => value?.trim());
+
+const wideSummary = (project ? [
+  { label: '核心结果', value: project.result },
+  { label: '验证方式', value: project.validation },
+  { label: '当前限制', value: project.limitations },
+  { label: '下一步', value: project.next_step },
+] : [
+  { label: '问题', value: data.problem ?? data.description },
+  { label: '环境', value: data.environment ?? data.tags.join(' · ') },
+  { label: '结论', value: data.conclusion },
 ]).filter(({ value }) => value?.trim());
 
 const origin = Astro.site ?? Astro.url.origin;
@@ -70,70 +74,105 @@ const jsonLd = {
 };
 ---
 
-<BaseLayout title={data.title} description={data.description} contentType={contentType} image={data.cover} socialType="article" published={published} updated={data.updated} jsonLd={jsonLd}>
-  <article class:list={['stack-xl', project ? 'project-detail' : 'article-detail']}>
-    <header class={project ? 'stack-xl' : 'article-header'}>
-      <div class={project ? 'project-header' : 'editorial-grid'}>
-        {!project && (
-          <div class="article-header__meta stack">
-            <a href="/notes/">笔记 / 返回列表</a>
-            <p>{data.category ?? '工程笔记'}</p>
-            <time datetime={data.updated.toISOString()}>{formatDate(data.updated)}</time>
-          </div>
-        )}
-        <div class:list={['stack-lg', { 'article-header__body': !project }]}>
-          {project && <p class="eyebrow">PROJECT · 工程档案 · 更新于 {formatDate(data.updated)}</p>}
-          <h1>{data.title}</h1>
-          <p class="lede">{data.description}</p>
-          <div class="tag-list">{data.tags.map((tag) => project
-            ? <span class="tag">{tag}</span>
-            : <a class="tag" href={`/tags/#${encodeURIComponent(tag)}`}>{tag}</a>)}</div>
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  contentType={contentType}
+  image={data.cover}
+  socialType="article"
+  published={published}
+  updated={data.updated}
+  jsonLd={jsonLd}
+  sectionLabel={project ? '项目档案' : '工程笔记'}
+>
+  <article class:list={['detail-page', project ? 'project-detail' : 'article-detail']}>
+    <header class="detail-header">
+      <div class="detail-header__bar">
+        <a class="back-pill" href={project ? '/projects/' : '/notes/'} data-sound="tick">
+          ← {project ? '返回项目列表' : '返回笔记列表'}
+        </a>
+        <div class="detail-header__meta">
+          <span>{project ? 'PROJECT · 工程档案' : (data.category ?? '工程笔记')}</span>
+          <span>·</span>
+          <time datetime={data.updated.toISOString()}>更新于 {formatDate(data.updated)}</time>
         </div>
-        {project && <a class="project-back" href="/projects/">返回项目</a>}
       </div>
-      <dl class="engineering-summary" aria-label={`${contentType}工程摘要`}>
-        {summaryItems.map((item) => (
-          <div class:list={{ 'engineering-summary__wide': item.wide }}>
-            <dt>{item.label}</dt>
-            <dd>{item.value}</dd>
-          </div>
-        ))}
-      </dl>
-    </header>
-    <div class="article-layout">
-      <aside class="article-rail" aria-label={tocLabel} data-article-rail>
-        <div>
-          <strong>{tocLabel}</strong>
+
+      <div class="detail-header__copy">
+        <h1>{data.title}</h1>
+        <p class="lede">{data.description}</p>
+        <div class="tag-row">
+          {data.tags.map((tag) => project
+            ? <span class="tag">{tag}</span>
+            : <a class="tag" href={`/tags/#${encodeURIComponent(tag)}`}>{tag}</a>)}
         </div>
-        {visibleHeadings.length > 0 ? (
-          <nav aria-label={tocLabel}>
-            <ol>
-              {visibleHeadings.map((heading) => (
-                <li data-depth={heading.depth}><a href={`#${heading.slug}`} data-heading-link={heading.slug}>{heading.text}</a></li>
+      </div>
+
+      {(compactSummary.length > 0 || wideSummary.length > 0) && (
+        <div class="summary-stack" aria-label={`${contentType}工程摘要`}>
+          {compactSummary.length > 0 && (
+            <dl class="engineering-summary engineering-summary--compact">
+              {compactSummary.map((item) => (
+                <div class="summary-cell">
+                  <dt>{item.label}</dt>
+                  <dd>{item.value}</dd>
+                </div>
               ))}
-            </ol>
-          </nav>
-        ) : <p class="article-rail__empty">这篇内容暂时没有分节标题。</p>}
-        <div class="article-rail__progress">
-          <div><span>阅读进度</span><output data-reading-percent>0%</output></div>
-          <progress max="100" value="0" data-reading-progress>0%</progress>
+            </dl>
+          )}
+          {wideSummary.length > 0 && (
+            <dl class="engineering-summary engineering-summary--wide">
+              {wideSummary.map((item) => (
+                <div class="summary-cell">
+                  <dt>{item.label}</dt>
+                  <dd>{item.value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
         </div>
-        <button type="button" data-back-to-top>返回顶部</button>
-      </aside>
+      )}
+    </header>
+
+    <div class="article-layout">
       <div class="article-shell prose">
         {project?.slug === 'obsidian-astro-publishing' && (
-          <aside aria-label="当前发布方式">
+          <aside class="publish-notice" aria-label="当前发布方式">
             <strong>当前发布方式</strong>
             <p>下文记录初版流程。现在本地运行 <code>npm run content:publish</code> 同步并构建，推送至 main 后由 GitHub Actions 构建并部署到 GitHub Pages。</p>
           </aside>
         )}
         <Content />
       </div>
+
+      <aside class="article-rail" aria-label={tocLabel} data-article-rail>
+        <div class="rail-card">
+          <div class="rail-card__head">
+            <strong>{tocLabel}</strong>
+            <output class="rail-card__percent" data-reading-percent>0%</output>
+          </div>
+          <progress max="100" value="0" data-reading-progress>0%</progress>
+          {visibleHeadings.length > 0 ? (
+            <nav aria-label={tocLabel}>
+              <ol>
+                {visibleHeadings.map((heading) => (
+                  <li data-depth={heading.depth}>
+                    <a href={`#${heading.slug}`} data-heading-link={heading.slug}>{heading.text}</a>
+                  </li>
+                ))}
+              </ol>
+            </nav>
+          ) : <p class="article-rail__empty">这篇内容暂时没有分节标题。</p>}
+          <button type="button" class="rail-top-btn" data-back-to-top>返回顶部 ↑</button>
+        </div>
+      </aside>
     </div>
   </article>
 </BaseLayout>
 
 <script>
+  import { playSound } from '../../lib/sound';
+
   document.querySelectorAll<HTMLElement>('[data-article-rail]').forEach((rail) => {
     const progress = rail.querySelector<HTMLProgressElement>('[data-reading-progress]');
     const output = rail.querySelector<HTMLOutputElement>('[data-reading-percent]');
@@ -170,13 +209,16 @@ const jsonLd = {
       });
     }
 
-    topButton?.addEventListener('click', () => window.scrollTo({
-      top: 0,
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-    }));
+    topButton?.addEventListener('click', () => {
+      playSound('tick');
+      window.scrollTo({
+        top: 0,
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      });
+    });
   });
 
-  document.querySelectorAll<HTMLElement>('.article-detail .article-shell pre').forEach((codeBlock, index) => {
+  document.querySelectorAll<HTMLElement>('.article-shell pre').forEach((codeBlock, index) => {
     if (codeBlock.dataset.copyReady === 'true') return;
     codeBlock.dataset.copyReady = 'true';
     codeBlock.tabIndex = 0;
@@ -195,8 +237,9 @@ const jsonLd = {
       try {
         await navigator.clipboard.writeText(code);
         button.textContent = '已复制';
+        playSound('chime');
       } catch {
-        button.textContent = '复制失败，请手动选择';
+        button.textContent = '复制失败';
       }
       window.setTimeout(() => { button.textContent = '复制'; }, 1800);
     });
@@ -204,44 +247,245 @@ const jsonLd = {
 </script>
 
 <style>
-  .article-header { display: grid; gap: var(--space-7); border-bottom: 1px solid var(--color-border-strong); padding-block: clamp(3.5rem, 8vw, 7rem) var(--space-7); }
-  .article-header__meta { grid-column: 1 / span 3; color: var(--color-text-muted); font: 600 .74rem/1.6 var(--font-mono); }
-  .article-header__meta a { color: var(--color-accent-strong); }
-  .article-header__body { grid-column: 4 / -1; }
-  .article-header__body h1 { max-width: 16ch; font-size: clamp(2.8rem, 7vw, 6.5rem); }
-  :global(.code-copy-shell) { position: relative; margin-block: 1.5rem; }
-  :global(.code-copy-shell pre) { margin-block: 0; padding-top: 3.2rem; }
-  :global(.code-copy-button) { position: absolute; z-index: 2; top: .65rem; right: .65rem; max-width: calc(100% - 1.3rem); overflow: hidden; border: 1px solid color-mix(in srgb, var(--color-blog) 45%, var(--color-border)); border-radius: var(--radius-pill); padding: .42rem .7rem; background: color-mix(in srgb, var(--color-surface) 92%, transparent); color: var(--color-text); font: 700 .68rem/1 var(--font-mono); text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
-  :global(.code-copy-button:hover) { border-color: var(--color-blog); background: var(--color-blue-soft); }
-  @media (max-width: 48rem) { .article-header__meta, .article-header__body { grid-column: 1 / -1; } }
-  .project-header { display: grid; grid-template-columns: minmax(0, 8fr) auto; align-items: end; gap: var(--space-7); border-top: .5rem solid var(--color-accent); border-bottom: 1px solid var(--color-border-strong); padding: clamp(2rem, 6vw, 5rem) clamp(0rem, 3vw, 2rem); }
-  .project-header h1 { max-width: 16ch; font-size: clamp(2.7rem, 6vw, 5.8rem); }
-  .project-header .lede { max-width: 52rem; }
-  .project-back { border-bottom: 1px solid currentColor; color: var(--color-text); font-weight: 750; text-decoration: none; }
-  @media (max-width: 48rem) { .project-header { grid-template-columns: 1fr; align-items: start; } }
-  .engineering-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 1px solid var(--color-border-strong); }
-  .engineering-summary > div { display: grid; align-content: start; gap: .45rem; min-height: 6rem; border-right: 1px solid var(--color-border); padding: var(--space-4); }
-  .engineering-summary > div:nth-child(4n) { border-right: 0; }
-  .engineering-summary__wide { grid-column: span 2; }
-  .engineering-summary dt { color: var(--color-accent-strong); font: 750 .64rem/1.3 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
-  .engineering-summary dd { margin: 0; color: var(--color-text); font-size: .88rem; line-height: 1.55; overflow-wrap: anywhere; }
-  @media (max-width: 54rem) { .engineering-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } .engineering-summary > div:nth-child(odd) { border-right: 1px solid var(--color-border); } .engineering-summary > div:nth-child(even) { border-right: 0; } }
-  @media (max-width: 32rem) { .engineering-summary { grid-template-columns: 1fr; } .engineering-summary > div, .engineering-summary > div:nth-child(odd) { min-height: 0; border-right: 0; border-bottom: 1px solid var(--color-border); padding-inline: 0; } .engineering-summary > div:last-child { border-bottom: 0; } .engineering-summary__wide { grid-column: auto; } }
-  .article-rail { position: sticky; top: var(--space-5); display: grid; gap: var(--space-5); color: var(--color-text-muted); font-size: .78rem; }
-  .article-rail > div:first-child { display: grid; gap: .35rem; border-top: 1px solid var(--color-border-strong); padding-top: var(--space-3); }
-  .article-rail > div:first-child strong { color: var(--color-text); font-size: .9rem; }
-  .article-rail nav { max-height: min(44vh, 25rem); overflow: auto; }
-  .article-rail ol { display: grid; gap: .2rem; margin: 0; padding: 0; list-style: none; }
-  .article-rail li[data-depth='3'] { padding-left: var(--space-3); }
-  .article-rail a { display: block; border-left: 2px solid var(--color-border); padding: .36rem .65rem; color: var(--color-text-muted); line-height: 1.35; text-decoration: none; }
-  .article-rail a:hover, .article-rail a[aria-current='location'] { border-left-color: var(--color-accent); color: var(--color-text); }
-  .article-rail__empty { color: var(--color-text-muted); }
-  .article-rail__progress { display: grid; gap: .45rem; }
-  .article-rail__progress > div { display: flex; justify-content: space-between; gap: var(--space-3); font: 650 .68rem/1.4 var(--font-mono); }
-  .article-rail progress { width: 100%; height: .35rem; border: 0; border-radius: var(--radius-pill); background: var(--color-surface-strong); color: var(--color-accent); accent-color: var(--color-accent); }
-  .article-rail progress::-webkit-progress-bar { border-radius: var(--radius-pill); background: var(--color-surface-strong); }
-  .article-rail progress::-webkit-progress-value { border-radius: var(--radius-pill); background: var(--color-accent); }
-  .article-rail button { width: fit-content; border: 0; border-bottom: 1px solid currentColor; padding: .25rem 0; background: transparent; color: var(--color-text); font: 700 .72rem/1.4 var(--font-mono); cursor: pointer; }
-  @media (max-width: 64rem) { .article-rail { display: none; } }
-  @media (prefers-reduced-motion: reduce) { .article-rail { scroll-behavior: auto; } }
+  .detail-page {
+    display: grid;
+    gap: 32px;
+  }
+
+  .detail-header {
+    display: grid;
+    gap: 20px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .detail-header__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .back-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    font-size: 12.5px;
+    font-weight: 550;
+    text-decoration: none;
+    transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  }
+  .back-pill:hover {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
+  }
+
+  .detail-header__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font: 500 11.5px/1.3 var(--font-mono);
+    color: var(--color-text-muted);
+  }
+
+  .detail-header__copy {
+    display: grid;
+    gap: 12px;
+  }
+  .detail-header__copy h1 {
+    font-size: clamp(1.75rem, 3.2vw, 2.45rem);
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.025em;
+    max-width: 28ch;
+  }
+
+  .summary-stack {
+    display: grid;
+    gap: 10px;
+  }
+  .engineering-summary {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+  }
+  .engineering-summary--compact {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  }
+  .engineering-summary--wide {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .summary-cell {
+    display: grid;
+    align-content: start;
+    gap: 5px;
+    padding: 13px 15px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .summary-cell dt {
+    color: var(--color-text-muted);
+    font: 600 11px/1.3 var(--font-mono);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .summary-cell dd {
+    margin: 0;
+    color: var(--color-text);
+    font-size: 13.5px;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+
+  @media (max-width: 44rem) {
+    .engineering-summary--wide {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .publish-notice {
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    display: grid;
+    gap: 4px;
+    font-size: 13.5px;
+  }
+  .publish-notice strong {
+    color: var(--color-text);
+    font-size: 12.5px;
+    font-family: var(--font-mono);
+  }
+
+  /* 右侧目录卡片 */
+  .article-rail {
+    position: sticky;
+    top: calc(var(--topbar-height) + 20px);
+  }
+  .rail-card {
+    display: grid;
+    gap: 12px;
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    font-size: 12.5px;
+  }
+  .rail-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .rail-card__head strong {
+    font-size: 12.5px;
+    font-weight: 650;
+    color: var(--color-text);
+  }
+  .rail-card__percent {
+    font: 600 11px/1 var(--font-mono);
+    color: var(--color-text-muted);
+  }
+  .rail-card progress {
+    width: 100%;
+    height: 4px;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-border);
+    accent-color: var(--color-accent);
+  }
+  .rail-card progress::-webkit-progress-bar {
+    border-radius: var(--radius-pill);
+    background: var(--color-border);
+  }
+  .rail-card progress::-webkit-progress-value {
+    border-radius: var(--radius-pill);
+    background: var(--color-accent);
+  }
+  .rail-card nav {
+    max-height: min(46vh, 24rem);
+    overflow-y: auto;
+  }
+  .rail-card ol {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .rail-card li[data-depth='3'] {
+    padding-left: 12px;
+  }
+  .rail-card a {
+    display: block;
+    border-left: 2px solid transparent;
+    border-radius: 0 6px 6px 0;
+    padding: 5px 8px;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+    text-decoration: none;
+    transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  }
+  .rail-card a:hover,
+  .rail-card a[aria-current='location'] {
+    border-left-color: var(--color-accent);
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-weight: 550;
+  }
+  .article-rail__empty {
+    color: var(--color-text-muted);
+  }
+  .rail-top-btn {
+    width: 100%;
+    padding: 7px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    font: 550 12px/1.2 var(--font-mono);
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+  }
+  .rail-top-btn:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text);
+  }
+
+  /* 代码复制按钮 */
+  :global(.code-copy-shell) {
+    position: relative;
+    margin-block: 0.75rem;
+  }
+  :global(.code-copy-shell pre) {
+    margin-block: 0;
+    padding-top: 2.75rem;
+  }
+  :global(.code-copy-button) {
+    position: absolute;
+    z-index: 2;
+    top: 8px;
+    right: 8px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    padding: 4px 10px;
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    font: 600 11px/1.2 var(--font-mono);
+    cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  }
+  :global(.code-copy-button:hover) {
+    border-color: var(--color-border-strong);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
 </style>

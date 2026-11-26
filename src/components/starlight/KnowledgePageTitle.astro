@@ -13,28 +13,44 @@ const relatedPosts = path
   : [];
 ---
 
-<h1 id="_top">{title}</h1>
+<div class="kb-title-wrap">
+  <p class="kb-eyebrow">{root ? 'KNOWLEDGE BASE · 知识路径' : 'KNOWLEDGE · 文档'}</p>
+  <h1 id="_top">{title}</h1>
+</div>
+
 {root && (
-  <nav id="技术方向" aria-labelledby="knowledge-garden-title">
+  <nav class="kb-section" id="技术方向" aria-labelledby="knowledge-garden-title">
     <h2 id="knowledge-garden-title">知识路径</h2>
-    <ul>
-      {knowledgePaths.map(({ href, title, description, matches }) => (
+    <ul class="kb-cards">
+      {knowledgePaths.map(({ href, title, description, matches }, idx) => (
         <li>
-          <a href={href}>{title}</a>
-          <span>{description} · {posts.filter(({ data }) => matches(data.slug)).length} 篇相关笔记</span>
+          <a class="kb-card" href={href}>
+            <div class="kb-card__top">
+              <span class="kb-card__meta">Path 0{idx + 1} · {posts.filter(({ data }) => matches(data.slug)).length} 篇相关笔记</span>
+              <span class="kb-card__arrow" aria-hidden="true">↗</span>
+            </div>
+            <strong class="kb-card__title">{title}</strong>
+            <span class="kb-card__desc">{description}</span>
+          </a>
         </li>
       ))}
     </ul>
   </nav>
 )}
+
 {path && relatedPosts.length > 0 && (
-  <nav aria-label={`${path.title}相关文章`}>
+  <nav class="kb-section" aria-label={`${path.title}相关文章`}>
     <h2>沿此路径继续</h2>
-    <ul>
+    <ul class="kb-cards">
       {relatedPosts.map(({ data }) => (
         <li>
-          <a href={`/notes/${data.slug}/`}>{data.title}</a>
-          <time datetime={data.updated.toISOString()}>{formatDate(data.updated)}</time>
+          <a class="kb-card" href={`/notes/${data.slug}/`}>
+            <div class="kb-card__top">
+              <time class="kb-card__meta" datetime={data.updated.toISOString()}>{formatDate(data.updated)}</time>
+              <span class="kb-card__arrow" aria-hidden="true">↗</span>
+            </div>
+            <strong class="kb-card__title">{data.title}</strong>
+          </a>
         </li>
       ))}
     </ul>
@@ -42,11 +58,102 @@ const relatedPosts = path
 )}
 
 <style>
-  h1 { margin-top: 0; }
-  nav { margin-block: var(--space-6); }
-  nav h2 { font-size: 1.35rem; }
-  ul { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: 0 var(--space-5); margin: 0; padding: 0; list-style: none; }
-  li { display: grid; gap: var(--space-1); border-bottom: 1px solid var(--color-border); padding-block: var(--space-3); }
-  a { font-weight: 700; }
-  time, span { color: var(--color-text-muted); font-size: .82rem; }
+  .kb-title-wrap {
+    display: grid;
+    gap: 8px;
+  }
+  .kb-eyebrow {
+    margin: 0;
+    font: 600 11px/1.3 var(--font-mono);
+    color: var(--color-text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  h1 {
+    margin: 0;
+  }
+  .kb-section {
+    margin-block: 24px 8px;
+    display: grid;
+    gap: 12px;
+  }
+  .kb-section h2 {
+    margin: 0 !important;
+    padding-top: 0 !important;
+    border-top: 0 !important;
+    font-size: 0.85rem !important;
+    color: var(--color-text-muted) !important;
+    font-family: var(--font-mono) !important;
+    font-weight: 600 !important;
+  }
+  .kb-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .kb-card {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    height: 100%;
+    padding: 16px 18px;
+    border-radius: 16px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    text-decoration: none !important;
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .kb-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-soft);
+  }
+  .kb-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .kb-card__meta {
+    font: 500 11px/1.3 var(--font-mono);
+    color: var(--color-text-muted);
+  }
+  .kb-card__title {
+    font-size: 15px;
+    font-weight: 650;
+    color: var(--color-text);
+    line-height: 1.4;
+  }
+  .kb-card__desc {
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+    line-height: 1.55;
+  }
+  .kb-card__arrow {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    display: grid;
+    place-items: center;
+    font-size: 11.5px;
+    flex-shrink: 0;
+    transition: background 150ms ease, color 150ms ease, transform 150ms ease;
+  }
+  .kb-card:hover .kb-card__arrow {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-accent-ink);
+    transform: translate(2px, -2px);
+  }
+  @media (max-width: 40rem) {
+    .kb-cards {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

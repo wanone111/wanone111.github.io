@@ -1,0 +1,99 @@
+---
+// src/components/BrandLogo.astro
+---
+
+<div class="brand-wrap">
+  <button
+    type="button"
+    class="brand-logo__mark"
+    data-brand-logo
+    title="点击切换 W 标志样式"
+    aria-label="切换 Wanone 标志样式"
+  >
+    <svg data-logo="0" data-active="true" viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="8" fill="var(--color-accent, #181715)" />
+      <path d="M7.5 10.5L11.5 21.5L16 12.5L20.5 21.5L24.5 10.5" stroke="var(--color-accent-ink, #FFFFFF)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    <svg data-logo="1" viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="8" fill="var(--color-accent, #181715)" />
+      <path d="M7 11L10.5 21L14.5 13L18.5 21L22 11" stroke="var(--color-accent-ink, #FFFFFF)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+      <circle cx="24.5" cy="20.5" r="2.2" fill="var(--color-accent-ink, #FFFFFF)" />
+      <path d="M24.5 11V16" stroke="var(--color-accent-ink, #FFFFFF)" stroke-width="2.2" stroke-linecap="round" />
+    </svg>
+    <svg data-logo="2" viewBox="0 0 32 32" fill="none">
+      <rect width="32" height="32" rx="8" fill="var(--color-accent, #181715)" />
+      <path d="M8 9H12.2L14 17.5L16 11.5L18 17.5L19.8 9H24L20.5 23H16.8L16 19.8L15.2 23H11.5L8 9Z" fill="var(--color-accent-ink, #FFFFFF)" />
+    </svg>
+  </button>
+  <a class="brand-logo__name" href="/" data-sound="tick">Wanone</a>
+</div>
+
+<script>
+  import { playSound } from '../lib/sound';
+
+  const KEY = 'wanone-logo-variant';
+  const COUNT = 3;
+
+  const applyAll = (idx: number) => {
+    const safeIdx = ((idx % COUNT) + COUNT) % COUNT;
+    document.querySelectorAll<HTMLElement>('[data-brand-logo]').forEach((btn) => {
+      const svgs = Array.from(btn.querySelectorAll<SVGElement>('svg'));
+      svgs.forEach((svg, n) => {
+        svg.dataset.active = String(n === safeIdx);
+      });
+    });
+    localStorage.setItem(KEY, String(safeIdx));
+  };
+
+  let currentIdx = Number(localStorage.getItem(KEY) ?? '0');
+  if (Number.isNaN(currentIdx)) currentIdx = 0;
+  applyAll(currentIdx);
+
+  document.querySelectorAll<HTMLButtonElement>('[data-brand-logo]').forEach((btn) => {
+    if (btn.dataset.ready === 'true') return;
+    btn.dataset.ready = 'true';
+    btn.addEventListener('click', () => {
+      currentIdx = (currentIdx + 1) % COUNT;
+      applyAll(currentIdx);
+      playSound('chime');
+    });
+  });
+</script>
+
+<style>
+  .brand-wrap {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .brand-logo__mark {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    display: inline-flex;
+    flex-shrink: 0;
+    cursor: pointer;
+    border-radius: 7px;
+    transition: transform 0.16s ease, opacity 0.16s ease;
+  }
+  .brand-logo__mark:hover {
+    transform: scale(1.06);
+  }
+  .brand-logo__mark svg {
+    width: 100%;
+    height: 100%;
+    display: none;
+  }
+  .brand-logo__mark svg[data-active='true'] {
+    display: block;
+  }
+  .brand-logo__name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--color-text);
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+</style>
