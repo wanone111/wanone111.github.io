@@ -8,7 +8,7 @@ slug: robotics/ros2-notes
 created: 2025-09-16
 updated: 2026-11-27
 published: 2025-09-16
-category: 机器人
+category: 机器人系统
 tags:
   - ROS 2
   - PX4
@@ -138,4 +138,12 @@ ros2 topic hz <topic>
 | PX4 收到了吗？ | 把机载发送记录和飞控外部视觉输入按时间戳、坐标系逐条对齐。 |
 | 飞控采用融合了吗？ | 查飞控日志里的视觉拒绝原因和融合状态切换时间。 |
 
-有一次只读台架测试里，里程计频率还有 233 Hz，但最后一次有效图像更新其实已经过去了 1.19 秒。排查这类问题时，把同一次试验的 ROS 记录、桥接诊断和飞控日志一起留存，标清各自的时钟源，才能看出数据是在哪一跳变旧的。[室内无人机自主飞行控制系统](/projects/indoor-autonomous-drone/)
+有一次只读台架测试里，里程计频率还有 233 Hz，但最后一次有效图像更新其实已经过去了 1.19 秒。排查这类问题时，把同一次试验的 ROS 记录、桥接诊断和飞控日志一起留存，标清各自的时钟源，才能看出数据是在哪一跳变旧的。
+
+接入 PX4 EKF2 前，还要重点核对四项数据语义：
+- **坐标系对齐**：ROS/VIO 常见约定是世界系 `ENU`、机体系 `FLU`，而 PX4 使用 `NED` 与 `FRD`；姿态四元数必须通过旋转复合转换，不能按位置向量直接换轴。
+- **协方差同步变换**：坐标轴变换后，协方差矩阵须同步按 `P_new = R · P_old · Rᵀ` 变换；不确定或不可用字段按 `VehicleOdometry` 约定标注，不要随意填 `0`（`0` 常表示极度可信）。
+- **时钟域分离**：严格区分 `timestamp`（发送时间）与 `timestamp_sample`（采样时间），避免混用主机 Unix 时间与 PX4 启动单调时间。
+- **单通路注入**：DDS（`/fmu/in/vehicle_visual_odometry`）与 MAVROS 仅启用其一，避免同一份视觉里程计被重复融合。
+
+相关原理与项目实践见 [机器人状态估计与 SLAM](/notes/algorithms/state-estimation-and-slam/) 与 [室内无人机自主飞行控制系统](/projects/indoor-autonomous-drone/)。

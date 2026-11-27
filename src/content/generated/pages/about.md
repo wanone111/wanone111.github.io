@@ -26,8 +26,8 @@ featured: false
 ## 常用硬件与软件
 
 - **嵌入式与控制**：STM32、C/C++、UART/SPI/I²C、ESP8266 无线调试。
-- **机器人与仿真**：BX72 麦轮小车、ACG720 六足、ROS 2、Nav2、SLAM Toolbox、OpenVINS、PX4、Gazebo 与 QGroundControl。
-- **FPGA 与边缘推理**：Vivado、Verilog/HLS、高云 FPGA（Tang Primer 20K/25K）、PYNQ-Z2（HDMI 直通）与昇腾 310B（YOLO 后端）。
+- **机器人与算法**：BX72 麦轮小车、ACG720 六足、ROS 2、Nav2、SLAM Toolbox、OpenVINS、PX4、Gazebo；梳理并实践状态估计（EKF/ESKF/因子图）、路径规划与运动控制（PID/LQR/MPC/ADRC）。
+- **FPGA 与边缘推理**：Vivado、Verilog/HLS、高云 FPGA（Tang Primer 20K/25K）、PYNQ-Z2（HDMI 直通）、Jetson（TensorRT + ByteTrack）与昇腾 310B（YOLO 后端）。
 - **开发环境与站点**：Linux、Python、Git、Shell；本站用私有 Obsidian 知识库维护源稿，通过白名单脚本单向同步到 Astro，经 GitHub Actions 构建并部署到 GitHub Pages。
 
 ## 做过的项目

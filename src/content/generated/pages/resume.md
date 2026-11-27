@@ -6,7 +6,7 @@ status: published
 visibility: public
 slug: resume
 created: 2026-07-13
-updated: 2026-11-24
+updated: 2026-11-27
 published: 2026-07-13
 category: profile
 tags:
