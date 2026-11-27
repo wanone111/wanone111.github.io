@@ -58,7 +58,7 @@ featured: false
 
 - 使用 C/C++、Linux 和 Git 开发调试。用 ROS 2 的 launch 组织节点和参数，使用 colcon 构建功能包，结合话题和日志排查通信问题。
 - 使用 STM32 HAL 调试串口、定时器、中断和 PWM。在 FPGA 上使用 Verilog，做过时钟与引脚约束、板级接口联调，也有 HLS 开发经验。
-- 在本地 Obsidian 知识库维护工程笔记，编写内容同步和链接检查脚本，通过 Astro 构建个人网站。 [网站发布系统](/projects/obsidian-astro-publishing/)
+- 在本地 Obsidian 知识库维护工程笔记，编写白名单同步脚本，通过 Astro 构建并自动部署个人网站。
 - 大学英语四级（CET-4）。
 
 ## 校园经历

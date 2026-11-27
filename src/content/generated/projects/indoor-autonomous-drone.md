@@ -67,4 +67,4 @@ validation: 旧版 MAVROS 仿真还验证了任务进程停止后控制节点接
 
 当前配置默认使用 DDS，控制后端只读，视觉回传和自动任务均默认关闭。接下来先用当前代码重新构建、重跑仿真，核对命令超时和状态反馈，再在机载台架上检查双目与 IMU 的标定、时间同步，以及 PX4 接收和持续融合视觉数据的情况。当前版本的实机自主任务仍待验收。
 
-[ROS 2 与 PX4 仿真学习路径](/knowledge/robotics/ros2-and-simulation/)
+[ROS 2、PX4 与 Gazebo 仿真开发](/notes/robotics/ros2-notes/)

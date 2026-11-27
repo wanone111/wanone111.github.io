@@ -102,9 +102,7 @@ const jsonLd = {
         <h1>{data.title}</h1>
         <p class="lede">{data.description}</p>
         <div class="tag-row">
-          {data.tags.map((tag) => project
-            ? <span class="tag">{tag}</span>
-            : <a class="tag" href={`/tags/#${encodeURIComponent(tag)}`}>{tag}</a>)}
+          {data.tags.map((tag) => <span class="tag">{tag}</span>)}
         </div>
       </div>
 
@@ -136,12 +134,6 @@ const jsonLd = {
 
     <div class="article-layout">
       <div class="article-shell prose">
-        {project?.slug === 'obsidian-astro-publishing' && (
-          <aside class="publish-notice" aria-label="当前发布方式">
-            <strong>当前发布方式</strong>
-            <p>下文记录初版流程。现在本地运行 <code>npm run content:publish</code> 同步并构建，推送至 main 后由 GitHub Actions 构建并部署到 GitHub Pages。</p>
-          </aside>
-        )}
         <Content />
       </div>
 
@@ -348,21 +340,6 @@ const jsonLd = {
     .engineering-summary--wide {
       grid-template-columns: 1fr;
     }
-  }
-
-  .publish-notice {
-    padding: 14px 16px;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border);
-    background: var(--color-surface);
-    display: grid;
-    gap: 4px;
-    font-size: 13.5px;
-  }
-  .publish-notice strong {
-    color: var(--color-text);
-    font-size: 12.5px;
-    font-family: var(--font-mono);
   }
 
   /* 右侧目录卡片 */

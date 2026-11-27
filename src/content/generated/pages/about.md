@@ -1,12 +1,12 @@
 ---
 title: 关于
-description: 万志成的学习背景、工程方向与项目实践。
+description: 万志成的学习背景、工程方向、常用软硬件工具与项目实践。
 content_type: page
 status: published
 visibility: public
 slug: about
 created: 2026-07-13
-updated: 2026-11-26
+updated: 2026-11-27
 published: 2026-07-13
 category: profile
 tags:
@@ -23,12 +23,12 @@ featured: false
 
 万志成，集美大学微电子科学与技术本科生。平时主要折腾嵌入式软件、ROS 2 机器人、FPGA 视频链路和边缘 AI 部署。
 
-## 日常在用的东西
+## 常用硬件与软件
 
-- 嵌入式：STM32、C/C++、UART/SPI/I²C 与 ESP8266 无线调试。
-- 机器人：ROS 2、PX4、MAVLink、Gazebo 和 QGroundControl。
-- 硬件与边缘推理：Vivado、Verilog/HLS、高云 FPGA、PYNQ-Z2 和昇腾 310B。
-- 开发环境：Linux、Git、Shell 和日志脚本。
+- **嵌入式与控制**：STM32、C/C++、UART/SPI/I²C、ESP8266 无线调试。
+- **机器人与仿真**：BX72 麦轮小车、ACG720 六足、ROS 2、Nav2、SLAM Toolbox、OpenVINS、PX4、Gazebo 与 QGroundControl。
+- **FPGA 与边缘推理**：Vivado、Verilog/HLS、高云 FPGA（Tang Primer 20K/25K）、PYNQ-Z2（HDMI 直通）与昇腾 310B（YOLO 后端）。
+- **开发环境与站点**：Linux、Python、Git、Shell；本站用私有 Obsidian 知识库维护源稿，通过白名单脚本单向同步到 Astro，经 GitHub Actions 构建并部署到 GitHub Pages。
 
 ## 做过的项目
 
@@ -38,10 +38,9 @@ featured: false
 
 ## 做工程的习惯
 
-遇到软硬件联调出问题，我习惯先固定输入、画清数据流边界，再去对照板端计数、通信日志和上位机状态，一次只改一个变量。
+遇到软硬件联调出问题，先固定输入、画清数据流边界，再对照板端计数、通信日志和上位机状态，一次只改一个变量。
 
-## 联系与站点
+## 联系与友链
 
-- [GitHub](https://github.com/wanone111) · [个人简历](/resume/) · [友链](/links/)
-
-这个站点用 Obsidian 写草稿，通过白名单脚本同步到 Astro 和 Starlight 构建发布。
+- [GitHub](https://github.com/wanone111) · [个人简历](/resume/)
+- 友链：[panjie9284.github.io](https://panjie9284.github.io/) — 朋友的个人网站。

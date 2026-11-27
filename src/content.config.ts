@@ -1,8 +1,6 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
-import { docsLoader } from '@astrojs/starlight/loaders';
-import { docsSchema } from '@astrojs/starlight/schema';
 
 const publishingStatus = z.enum(['draft', 'review', 'ready', 'published']);
 const visibility = z.enum(['private', 'public']);
@@ -55,7 +53,6 @@ const pages = defineCollection({
 });
 
 export const collections = {
-  docs: defineCollection({ loader: docsLoader(), schema: docsSchema() }),
   blog,
   projects,
   pages,

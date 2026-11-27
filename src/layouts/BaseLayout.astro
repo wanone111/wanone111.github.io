@@ -41,8 +41,6 @@ const navLinks = [
   { href: '/', label: '首页' },
   { href: '/projects/', label: '项目' },
   { href: '/notes/', label: '笔记' },
-  { href: '/knowledge/', label: '知识库' },
-  { href: '/uses/', label: '工作台' },
   { href: '/about/', label: '关于' },
 ];
 
@@ -155,8 +153,6 @@ const pageTitle = isHome ? title : (title === 'Wanone' ? title : `${title} · Wa
               );
             })}
             <a class="mobile-link" href="/resume/">简历</a>
-            <a class="mobile-link" href="/archive/">归档</a>
-            <a class="mobile-link" href="/tags/">标签</a>
           </nav>
         </div>
       </div>
@@ -175,11 +171,8 @@ const pageTitle = isHome ? title : (title === 'Wanone' ? title : `${title} · Wa
           <nav class="site-footer__nav" aria-label="页脚导航">
             <a href="/projects/">项目</a>
             <a href="/notes/">笔记</a>
-            <a href="/knowledge/">知识库</a>
-            <a href="/uses/">工作台</a>
-            <a href="/archive/">归档</a>
-            <a href="/tags/">标签</a>
-            <a href="/links/">友链</a>
+            <a href="/about/">关于</a>
+            <a href="/resume/">简历</a>
             <a href="/rss.xml">RSS</a>
             <a href="https://github.com/wanone111" target="_blank" rel="me noreferrer">GitHub ↗</a>
           </nav>

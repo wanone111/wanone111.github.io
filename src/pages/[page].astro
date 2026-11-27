@@ -7,9 +7,8 @@ import { isPublic } from '../lib/content';
 export async function getStaticPaths() {
   const pages = await getCollection('pages', isPublic);
   return [
-    { slug: 'about', title: '关于', description: '万志成的学习背景、工程方向、项目实践与工作方法。' },
+    { slug: 'about', title: '关于', description: '万志成的学习背景、工程方向、常用软硬件工具与项目实践。' },
     { slug: 'resume', title: '简历', description: '万志成的教育背景、专业技能与项目经历。' },
-    { slug: 'links', title: '友链', description: '经确认后公开的朋友站点与独立网站链接。' },
   ].map(({ slug, title, description }) => ({
     params: { page: slug },
     props: { page: pages.find((entry) => entry.data.slug === slug), title, description },

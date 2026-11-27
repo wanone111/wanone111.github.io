@@ -14,7 +14,8 @@ tags:
   - FPGA
   - 地图融合
   - 相机标定
-featured: false
+featured: true
+featured_order: 1
 time_range: 2026.11—至今
 role: 机器人感知 / 多机协同开发
 hardware: 高云 ACG720 六足、BX72 小车、树莓派、Jetson、激光雷达和相机

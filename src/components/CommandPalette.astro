@@ -1,3 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import { byFeaturedOrder, byNewest, isPublic } from '../lib/content';
+
+const [projects, posts] = await Promise.all([
+  getCollection('projects', isPublic),
+  getCollection('blog', isPublic),
+]);
+
+const searchIndex = [
+  ...projects.sort(byFeaturedOrder).map(({ data }) => ({
+    type: '项目',
+    title: data.title,
+    description: data.description,
+    url: `/projects/${data.slug}/`,
+    keywords: [data.title, data.description, data.category ?? '', ...data.tags, ...data.stack].join(' ').toLocaleLowerCase('zh-CN'),
+  })),
+  ...posts.sort(byNewest).map(({ data }) => ({
+    type: '笔记',
+    title: data.title,
+    description: data.description,
+    url: `/notes/${data.slug}/`,
+    keywords: [data.title, data.description, data.category ?? '', ...data.tags].join(' ').toLocaleLowerCase('zh-CN'),
+  })),
+];
+---
+
 <dialog class="command-palette" data-command-palette aria-labelledby="command-palette-title">
   <div class="command-palette__topbar">
     <div>
@@ -7,40 +34,37 @@
     <form method="dialog"><button type="submit" class="command-palette__close" aria-label="关闭搜索面板">✕</button></form>
   </div>
   <label class="command-palette__search">
-    <span class="sr-only">搜索文章、项目和知识库</span>
-    <input type="search" placeholder="搜索项目、笔记或知识库（例如：ROS 2、STM32、PYNQ）…" autocomplete="off" data-command-search aria-controls="command-search-results" />
+    <span class="sr-only">搜索项目和笔记</span>
+    <input type="search" placeholder="搜索项目或笔记（例如：ROS 2、STM32、PYNQ）…" autocomplete="off" data-command-search aria-controls="command-search-results" />
   </label>
 
   <section class="command-palette__quick" data-command-quick>
     <p class="command-palette__section-label">快速导航</p>
     <nav aria-label="快速导航入口">
-      <a href="/" data-command-item data-command="首页 画廊 home gallery"><strong>首页画廊</strong><span>返回瀑布流作品与笔记总览</span></a>
+      <a href="/" data-command-item data-command="首页 画廊 home gallery"><strong>首页</strong><span>作品与交互实验台</span></a>
       <a href="/projects/" data-command-item data-command="项目 project software"><strong>项目档案</strong><span>查看全部公开工程项目</span></a>
-      <a href="/notes/" data-command-item data-command="笔记 博客 notes blog writing"><strong>工程笔记</strong><span>阅读开发记录与实验文章</span></a>
-      <a href="/knowledge/" data-command-item data-command="知识 knowledge garden starlight"><strong>Starlight 知识库</strong><span>沿公开技术路径继续探索</span></a>
-      <a href="/uses/" data-command-item data-command="工具 uses setup device"><strong>工作区 /uses</strong><span>硬件设备、软件栈与排障工作流</span></a>
+      <a href="/notes/" data-command-item data-command="笔记 博客 notes blog writing"><strong>工程笔记</strong><span>阅读开发记录与技术文章</span></a>
+      <a href="/about/" data-command-item data-command="关于 工具 友链 about uses links wanone"><strong>关于我</strong><span>作者介绍、常用工具与友链</span></a>
       <a href="/resume/" data-command-item data-command="简历 resume cv"><strong>个人简历 / CV</strong><span>教育背景、专业技能与项目经历</span></a>
-      <a href="/about/" data-command-item data-command="关于 about wanone"><strong>关于我</strong><span>了解作者与工程方法</span></a>
     </nav>
   </section>
 
-  <section class="command-palette__results" id="command-search-results" hidden data-pagefind-section>
+  <section class="command-palette__results" id="command-search-results" hidden data-search-section>
     <div class="command-palette__results-heading">
       <p class="command-palette__section-label">站内索引</p>
       <p role="status" aria-live="polite" data-search-status></p>
     </div>
-    <div class="command-palette__result-list" data-pagefind-results></div>
+    <div class="command-palette__result-list" data-search-results></div>
   </section>
   <p class="command-palette__empty" hidden data-command-empty>没有匹配内容，换一个工程术语试试。</p>
   <p class="command-palette__hint"><kbd>↑</kbd><kbd>↓</kbd> 选择 · <kbd>Enter</kbd> 打开 · <kbd>Esc</kbd> 关闭</p>
+  <script type="application/json" data-search-index set:html={JSON.stringify(searchIndex)} />
 </dialog>
 
 <script>
   import { playSound } from '../lib/sound';
 
-  interface PagefindData { url: string; excerpt?: string; meta?: Record<string, string>; }
-  interface PagefindResult { data: () => Promise<PagefindData>; }
-  interface PagefindModule { init?: () => Promise<void>; search: (query: string) => Promise<{ results: PagefindResult[] }>; }
+  interface SearchItem { type: string; title: string; description: string; url: string; keywords: string; }
 
   document.querySelectorAll<HTMLDialogElement>('[data-command-palette]').forEach((dialog) => {
     if (dialog.dataset.ready === 'true') return;
@@ -48,13 +72,12 @@
     const search = dialog.querySelector<HTMLInputElement>('[data-command-search]');
     const quick = dialog.querySelector<HTMLElement>('[data-command-quick]');
     const quickItems = [...dialog.querySelectorAll<HTMLAnchorElement>('[data-command]')];
-    const resultSection = dialog.querySelector<HTMLElement>('[data-pagefind-section]');
-    const resultList = dialog.querySelector<HTMLElement>('[data-pagefind-results]');
+    const resultSection = dialog.querySelector<HTMLElement>('[data-search-section]');
+    const resultList = dialog.querySelector<HTMLElement>('[data-search-results]');
     const status = dialog.querySelector<HTMLElement>('[data-search-status]');
     const empty = dialog.querySelector<HTMLElement>('[data-command-empty]');
-    let pagefind: PagefindModule | null = null;
-    let debounce = 0;
-    let searchVersion = 0;
+    const indexEl = dialog.querySelector<HTMLScriptElement>('[data-search-index]');
+    const items: SearchItem[] = indexEl?.textContent ? JSON.parse(indexEl.textContent) : [];
     let restoreTarget: HTMLElement | null = null;
 
     const visibleItems = () => [...dialog.querySelectorAll<HTMLElement>('[data-command-item]')]
@@ -67,55 +90,23 @@
       }
       search?.focus();
     };
-    const inferType = (url: string, declared?: string) => {
-      if (declared && declared !== '页面') return declared;
-      if (url.startsWith('/projects/')) return '项目';
-      if (url.startsWith('/notes/')) return '笔记';
-      if (url.startsWith('/knowledge/')) return '知识库';
-      return '页面';
-    };
-    const loadPagefind = async () => {
-      if (pagefind) return pagefind;
-      const pagefindPath = '/pagefind/pagefind.js';
-      pagefind = await import(/* @vite-ignore */ pagefindPath) as PagefindModule;
-      await pagefind.init?.();
-      return pagefind;
-    };
-    const renderResults = (items: PagefindData[]) => {
+    const renderResults = (matches: SearchItem[]) => {
       if (!resultList) return;
       resultList.replaceChildren();
-      items.forEach((item) => {
+      matches.forEach((item) => {
         const link = document.createElement('a');
         link.href = item.url;
         link.dataset.commandItem = '';
         const type = document.createElement('span');
         type.className = 'command-result__type';
-        type.textContent = inferType(new URL(item.url, window.location.origin).pathname, item.meta?.type);
+        type.textContent = item.type;
         const title = document.createElement('strong');
-        title.textContent = item.meta?.title ?? item.url;
+        title.textContent = item.title;
         const excerpt = document.createElement('small');
-        excerpt.textContent = (item.excerpt ?? '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        excerpt.textContent = item.description;
         link.append(type, title, excerpt);
         resultList.append(link);
       });
-    };
-    const updateEmpty = () => empty?.toggleAttribute('hidden', visibleItems().length > 0 || Boolean(status?.textContent?.includes('搜索中')));
-    const runSearch = async (query: string, version: number) => {
-      if (status) status.textContent = '搜索中…';
-      resultSection?.removeAttribute('hidden');
-      try {
-        const index = await loadPagefind();
-        const response = await index.search(query);
-        const items = await Promise.all(response.results.slice(0, 8).map((result) => result.data()));
-        if (version !== searchVersion) return;
-        renderResults(items);
-        if (status) status.textContent = `${items.length} 条结果`;
-      } catch {
-        if (version !== searchVersion) return;
-        renderResults([]);
-        if (status) status.textContent = '搜索索引暂不可用';
-      }
-      updateEmpty();
     };
     const filter = () => {
       const query = search?.value.trim().toLocaleLowerCase('zh-CN') ?? '';
@@ -124,18 +115,18 @@
         item.hidden = query.length > 0 && !haystack.includes(query);
       });
       quick?.toggleAttribute('data-querying', query.length > 0);
-      window.clearTimeout(debounce);
-      searchVersion += 1;
-      if (query.length < 2) {
+      if (!query) {
         resultSection?.setAttribute('hidden', '');
         renderResults([]);
         if (status) status.textContent = '';
-        updateEmpty();
-        return;
+      } else {
+        const tokens = query.split(/\s+/).filter(Boolean);
+        const matches = items.filter((item) => tokens.every((token) => item.keywords.includes(token)));
+        resultSection?.removeAttribute('hidden');
+        renderResults(matches);
+        if (status) status.textContent = `${matches.length} 条结果`;
       }
-      const version = searchVersion;
-      debounce = window.setTimeout(() => runSearch(query, version), 160);
-      updateEmpty();
+      empty?.toggleAttribute('hidden', visibleItems().length > 0);
     };
 
     document.querySelectorAll<HTMLButtonElement>('[data-command-trigger]').forEach((trigger) => {

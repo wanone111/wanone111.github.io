@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import LidarSandbox from '../components/LidarSandbox.astro';
-import { knowledgePaths } from '../data/knowledge';
 import { byFeaturedOrder, byNewest, formatDate, isPublic } from '../lib/content';
 
 const projects = (await getCollection('projects', isPublic)).sort(byFeaturedOrder);
@@ -84,7 +83,6 @@ const domainColorClass = (cat = '') => {
       <div class="hero__stats">
         <div><strong>{projects.length}</strong><span>项目</span></div>
         <div><strong>{posts.length}</strong><span>笔记</span></div>
-        <div><strong>{knowledgePaths.length}</strong><span>知识路径</span></div>
         <div><strong>42.4×</strong><span>时序裕量优化</span></div>
       </div>
     </div>
@@ -292,15 +290,15 @@ const domainColorClass = (cat = '') => {
         <img src="/images/showcase/tang-20k.jpg" alt="Tang Primer 20K 六足控制板" loading="lazy" />
       </div>
       <div class="tile__body-row">
-        <h3>硬件工作台 /uses</h3>
-        <a class="circle-arrow" href="/uses/" aria-label="打开工作台" data-sound="pop">↗</a>
+        <h3>六足硬件控制板</h3>
+        <a class="circle-arrow" href="/projects/hexapod-robot-cooperative-mapping/" aria-label="查看协同建图项目" data-sound="pop">↗</a>
       </div>
     </article>
 
     <article class="tile d-tool stack-tile">
       <div class="tile__top">
         <span class="tile__label"><span class="dot"></span>技术栈</span>
-        <a class="text-link" href="/knowledge/" data-sound="tick">知识库 ↗</a>
+        <a class="text-link" href="/about/" data-sound="tick">关于 ↗</a>
       </div>
       <div class="stack-chips">
         <span class="schip d-robot">ROS 2</span>
