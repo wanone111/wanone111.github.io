@@ -2,11 +2,12 @@
 title: 机器人地图与实时观测的融合
 description: 从数据来源、时间和坐标入手，理解历史地图、实时障碍和规划视图之间的关系。
 content_type: blog
-status: ready
+status: published
 visibility: public
 slug: robotics/map-and-live-observations
 created: 2026-11-12
 updated: 2026-11-12
+published: 2026-11-27
 category: 机器人系统
 tags:
   - ROS2

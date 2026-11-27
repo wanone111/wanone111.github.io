@@ -2,11 +2,12 @@
 title: 机器人状态估计与 SLAM：从 EKF、ESKF 到因子图优化
 description: 梳理递归贝叶斯滤波（EKF、UKF、ESKF、PF）与因子图批优化的数学定位、工程权衡及 VIO/LIO 多传感器融合边界。
 content_type: blog
-status: ready
+status: published
 visibility: public
 slug: algorithms/state-estimation-and-slam
 created: 2026-11-27
 updated: 2026-11-27
+published: 2026-11-27
 category: 算法与控制
 tags:
   - 状态估计

@@ -2,11 +2,12 @@
 title: 机器人运动控制算法选型：PID、LQR、MPC、ADRC 与 SMC
 description: 梳理常见机器人控制算法的核心机制、适用场景与算力边界，帮助在底层伺服与高层轨迹跟踪之间做工程取舍。
 content_type: blog
-status: ready
+status: published
 visibility: public
 slug: algorithms/robot-motion-control-overview
 created: 2026-11-27
 updated: 2026-11-27
+published: 2026-11-27
 category: 算法与控制
 tags:
   - 控制算法

@@ -2,11 +2,12 @@
 title: 机器人路径规划与局部避障：图搜索、采样与轨迹优化
 description: 从前端几何搜索（A*、Hybrid A*、RRT*）到后端轨迹优化与局部避障（Minimum Snap、B 样条、DWA、TEB、MPPI），梳理机器人规划栈的分层思路。
 content_type: blog
-status: ready
+status: published
 visibility: public
 slug: algorithms/path-and-trajectory-planning
 created: 2026-11-27
 updated: 2026-11-27
+published: 2026-11-27
 category: 算法与控制
 tags:
   - 路径规划

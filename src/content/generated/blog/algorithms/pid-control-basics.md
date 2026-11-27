@@ -2,11 +2,12 @@
 title: PID 控制基础：误差、离散实现与调参边界
 description: 用离散时间形式梳理比例、积分、微分三项的作用，并列出调参和工程实现中需要先确认的约束。
 content_type: blog
-status: ready
+status: published
 visibility: public
 slug: algorithms/pid-control-basics
 created: 2025-09-18
 updated: 2026-11-27
+published: 2026-11-27
 category: 算法与控制
 tags:
   - PID

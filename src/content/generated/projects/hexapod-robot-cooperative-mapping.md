@@ -2,11 +2,12 @@
 title: 六足机器人与小车协同建图
 description: 基于高云 FPGA 与 Jetson 的异构多机协同系统，结合 BX72 麦轮小车与 ACG720 六足机器人，通过共同标定板实现跨机地图对齐与视觉任务协同。
 content_type: project
-status: ready
+status: published
 visibility: public
 slug: hexapod-robot-cooperative-mapping
 created: 2026-11-12
 updated: 2026-11-27
+published: 2026-11-27
 category: robotics
 tags:
   - ROS2
